@@ -1,306 +1,379 @@
-import panelOfDoctorsVideo from "../assets/videos/panel of doctors.mp4";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Film, X, ZoomIn } from "lucide-react";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
-import bedFacilitiesImg from "../assets/images/Bed Facilities.jpeg";
-import hospitalExteriorViewImg from "../assets/images/hospital exterior view.jpeg";
-import inpatientImg from "../assets/images/inpatient services.png";
-import medicalNurseImg from "../assets/images/medical-nurse.jpg";
-import preventiveHealthCheckupsImg from "../assets/images/preventive health checkups.png";
-import roomFacilitiesImg from "../assets/images/Room facilities.jpeg";
-import stretcherBedImg from "../assets/images/Stretcher Bed.jpeg";
-import receptionViewImg from "../assets/images/slideimage5.jpeg";
-import fullHospitalViewImg from "../assets/images/slideimage6.jpeg";
-import slideimage7Img from "../assets/images/slideimage7.png";
-import womenDoctorServiceImg from "../assets/images/women-doctor-service.png";
 
-const cardsContainer = {
-    hidden: {},
-    visible: {
-        transition: { staggerChildren: 0.12 },
-    },
-};
+import panelOfDoctorsVideo from "../assets/videos/panel of doctors.mp4";
 
-const popCard = {
-    hidden: { opacity: 0, scale: 0.9, y: 24, rotateX: -6 },
-    visible: {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        rotateX: 0,
-        transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-    },
-};
-
-const galleryPhotos = [
-    { id: "bed-facilities", title: "Comfortable Bed Facilities", image: bedFacilitiesImg },
-    { id: "hospital-exterior-view", title: "Hospital Exterior", image: hospitalExteriorViewImg },
-    { id: "inpatient-services", title: "Inpatient Care Services", image: inpatientImg },
-    { id: "medical-nurse", title: "Skilled Doctors Care Team", image: medicalNurseImg },
-    { id: "preventive-health-checkups", title: "Preventive Health Checkup", image: preventiveHealthCheckupsImg },
-    { id: "room-facilities", title: "Patient Room Facilities", image: roomFacilitiesImg },
-    { id: "stretcher-bed", title: "Emergency Stretcher Support", image: stretcherBedImg },
-    { id: "reception-view", title: "Reception and Front Desk", image: receptionViewImg },
-    { id: "full-hospital-view", title: "Full View of Hospital", image: fullHospitalViewImg },
-    { id: "hospital-care-view", title: "Hospital Care View", image: slideimage7Img },
-    { id: "women-doctor-service", title: "Personalized Doctor Consultation", image: womenDoctorServiceImg },
+/* ── data ───────────────────────────────────────────────────────────────── */
+const PHOTOS = [
+    { id: 1,  title: "Trinay Hospital Facilities",          tag: "Facilities",  src: "/IMAGES/1.jpeg" },
+    { id: 2,  title: "Advanced Medical Infrastructure",     tag: "Facilities",  src: "/IMAGES/2.jpeg" },
+    { id: 3,  title: "Patient Care Services",               tag: "Services",    src: "/IMAGES/3.jpeg" },
+    { id: 4,  title: "Diagnostic Centre",                   tag: "Services",    src: "/IMAGES/4.jpeg" },
+    { id: 5,  title: "Expert Medical Team",                 tag: "Team",        src: "/IMAGES/5.jpeg" },
+    { id: 6,  title: "Hospital Interior",                   tag: "Facilities",  src: "/IMAGES/6.jpeg" },
+    { id: 7,  title: "Emergency & Trauma Support",          tag: "Emergency",   src: "/IMAGES/7.jpeg" },
+    { id: 8,  title: "ICU & Critical Care Unit",            tag: "Facilities",  src: "/IMAGES/8.jpeg" },
+    { id: 9,  title: "Patient Recovery Ward",               tag: "Facilities",  src: "/IMAGES/9.jpeg" },
+    { id: 10, title: "Specialist Consultation Room",        tag: "Services",    src: "/IMAGES/10.jpeg" },
+    { id: 11, title: "Advanced Healthcare Wing",            tag: "Facilities",  src: "/IMAGES/11.jpeg" },
+    { id: 12, title: "Dedicated Care Team",                 tag: "Team",        src: "/IMAGES/12.jpeg" },
+    { id: 13, title: "Hospital Campus",                     tag: "Building",    src: "/IMAGES/81.jpeg" },
+    { id: 14, title: "World-Class Medical Facilities",      tag: "Facilities",  src: "/IMAGES/86.jpeg" },
+    { id: 15, title: "Compassionate Patient Care",          tag: "Services",    src: "/IMAGES/88.jpeg" },
+    { id: 16, title: "Modern Treatment Centre",             tag: "Facilities",  src: "/IMAGES/89.jpeg" },
+    { id: 17, title: "Trinay Hospital — Campus View",       tag: "Building",    src: "/IMAGES/CCCC2x.jpg.jpeg" },
+    { id: 18, title: "State-of-the-Art Medical Campus",     tag: "Building",    src: "/IMAGES/_DSC82422x.jpg.jpeg" },
+    { id: 19, title: "Medical Professionals at Work",       tag: "Team",        src: "/IMAGES/_DSC82432x.jpg.jpeg" },
+    { id: 20, title: "Trinay Hospital Infrastructure",      tag: "Building",    src: "/IMAGES/_DSC82612x.jpg.jpeg" },
+    { id: 21, title: "Healing Environment",                 tag: "Facilities",  src: "/IMAGES/_DSC82642x.jpg.jpeg" },
 ];
 
-const videoGallery = [
-    { id: "vid-1", title: "Advanced Healthcare Facilities", url: panelOfDoctorsVideo },
-    { id: "vid-2", title: "Patient Care Journey", url: panelOfDoctorsVideo },
-    { id: "vid-3", title: "Our Expert Panel of Doctors", url: panelOfDoctorsVideo },
-    { id: "vid-4", title: "Emergency & Critical Care", url: panelOfDoctorsVideo },
-    { id: "vid-5", title: "Diagnostic & Lab Infrastructure", url: panelOfDoctorsVideo },
-    { id: "vid-6", title: "Community Health Programs", url: panelOfDoctorsVideo },
+const VIDEOS = [
+    { id: "v1", title: "Advanced Healthcare Facilities",   src: panelOfDoctorsVideo },
+    { id: "v2", title: "Expert Panel of Doctors",          src: panelOfDoctorsVideo },
+    { id: "v3", title: "Emergency & Critical Care",        src: panelOfDoctorsVideo },
+    { id: "v4", title: "Patient Care Journey",             src: panelOfDoctorsVideo },
+    { id: "v5", title: "Diagnostic Infrastructure",        src: panelOfDoctorsVideo },
+    { id: "v6", title: "Community Health Programmes",      src: panelOfDoctorsVideo },
 ];
 
-const Gallery = () => {
-    const [selectedPhotoId, setSelectedPhotoId] = useState(null);
-    const [lightboxDirection, setLightboxDirection] = useState(1);
+const TAGS = ["All", ...Array.from(new Set(PHOTOS.map(p => p.tag)))];
 
-    const selectedPhotoIndex = useMemo(
-        () => galleryPhotos.findIndex((photo) => photo.id === selectedPhotoId),
-        [selectedPhotoId]
+/* ── animation ─────────────────────────────────────────────────────────── */
+const cardAnim = {
+    hidden:  { opacity: 0, y: 30, scale: 0.96 },
+    visible: (i) => ({
+        opacity: 1, y: 0, scale: 1,
+        transition: { delay: i * 0.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    }),
+};
+
+/* ── Photo card ─────────────────────────────────────────────────────────── */
+const PhotoCard = ({ photo, index, onClick }) => (
+    <motion.button
+        type="button"
+        custom={index}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={cardAnim}
+        whileHover="hover"
+        onClick={onClick}
+        className="group relative rounded-2xl overflow-hidden aspect-[4/3] w-full cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+    >
+        <motion.img
+            src={photo.src}
+            alt={photo.title}
+            loading="lazy"
+            className="w-full h-full object-cover"
+            variants={{ hover: { scale: 1.08 } }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+        />
+        {/* overlay */}
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+            <span className="inline-flex items-center gap-1.5 text-white text-xs font-black uppercase tracking-widest mb-1.5">
+                <ZoomIn size={13} /> View Full Screen
+            </span>
+            <p className="text-white font-bold text-sm leading-snug">{photo.title}</p>
+        </div>
+        {/* tag pill */}
+        <span className="absolute top-3 left-3 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest bg-white/20 backdrop-blur-md text-white rounded-full border border-white/20">
+            {photo.tag}
+        </span>
+    </motion.button>
+);
+
+/* ── Video card ─────────────────────────────────────────────────────────── */
+const VideoCard = ({ video, index }) => {
+    const ref = useRef(null);
+    return (
+        <motion.div
+            custom={index}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={cardAnim}
+            className="group rounded-2xl overflow-hidden bg-slate-900 border border-white/5"
+            onMouseEnter={() => ref.current?.play()}
+            onMouseLeave={() => { if (ref.current) { ref.current.pause(); ref.current.currentTime = 0; } }}
+        >
+            <div className="aspect-video relative">
+                <video
+                    ref={ref}
+                    src={video.src}
+                    muted
+                    loop
+                    preload="metadata"
+                    controls
+                    className="w-full h-full object-cover"
+                />
+            </div>
+            <div className="p-4">
+                <p className="text-white font-bold text-sm leading-snug">{video.title}</p>
+                <p className="text-slate-400 text-xs mt-1 font-medium">Trinay Hospital — Jodhpur</p>
+            </div>
+        </motion.div>
     );
-    const selectedPhoto = selectedPhotoIndex >= 0 ? galleryPhotos[selectedPhotoIndex] : null;
+};
 
-    const handleOpenPhoto = useCallback((photoId, direction = 1) => {
-        setLightboxDirection(direction);
-        setSelectedPhotoId(photoId);
-    }, []);
-    const handleClosePhoto = useCallback(() => setSelectedPhotoId(null), []);
-    const handlePrevPhoto = useCallback(() => {
-        if (selectedPhotoIndex < 0) return;
-        const prevIndex = (selectedPhotoIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
-        setLightboxDirection(-1);
-        setSelectedPhotoId(galleryPhotos[prevIndex].id);
-    }, [selectedPhotoIndex]);
-    const handleNextPhoto = useCallback(() => {
-        if (selectedPhotoIndex < 0) return;
-        const nextIndex = (selectedPhotoIndex + 1) % galleryPhotos.length;
-        setLightboxDirection(1);
-        setSelectedPhotoId(galleryPhotos[nextIndex].id);
-    }, [selectedPhotoIndex]);
+/* ── Lightbox ───────────────────────────────────────────────────────────── */
+const Lightbox = ({ photos, index, onClose, direction, setIndex, setDirection }) => {
+    const photo = photos[index];
+    const thumbsRef = useRef(null);
+
+    const prev = useCallback(() => {
+        setDirection(-1);
+        setIndex((i) => (i - 1 + photos.length) % photos.length);
+    }, [photos.length, setIndex, setDirection]);
+
+    const next = useCallback(() => {
+        setDirection(1);
+        setIndex((i) => (i + 1) % photos.length);
+    }, [photos.length, setIndex, setDirection]);
 
     useEffect(() => {
-        if (!selectedPhoto) return undefined;
-
-        const onKeyDown = (event) => {
-            if (event.key === "Escape") handleClosePhoto();
-            if (event.key === "ArrowLeft") handlePrevPhoto();
-            if (event.key === "ArrowRight") handleNextPhoto();
+        const onKey = (e) => {
+            if (e.key === "Escape") onClose();
+            if (e.key === "ArrowLeft") prev();
+            if (e.key === "ArrowRight") next();
         };
-
-        window.addEventListener("keydown", onKeyDown);
+        window.addEventListener("keydown", onKey);
         document.body.style.overflow = "hidden";
-
         return () => {
-            window.removeEventListener("keydown", onKeyDown);
+            window.removeEventListener("keydown", onKey);
             document.body.style.overflow = "";
         };
-    }, [selectedPhoto, handleClosePhoto, handlePrevPhoto, handleNextPhoto]);
+    }, [onClose, prev, next]);
+
+    useEffect(() => {
+        const el = thumbsRef.current?.children[index];
+        el?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }, [index]);
 
     return (
-        <div className="min-h-screen bg-[#F5F9FF]">
+        <motion.div
+            className="fixed inset-0 z-[9999] bg-black/97 backdrop-blur-sm flex flex-col"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={onClose}
+        >
+            {/* Top bar */}
+            <div className="flex items-center justify-between px-5 py-3 shrink-0" onClick={e => e.stopPropagation()}>
+                <span className="text-white/60 text-sm font-mono">{index + 1} / {photos.length}</span>
+                <span className="text-white font-bold text-sm truncate max-w-[60vw] text-center">{photo.title}</span>
+                <button
+                    onClick={onClose}
+                    className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                >
+                    <X size={18} />
+                </button>
+            </div>
+
+            {/* Main image area */}
+            <div className="flex-1 flex items-center justify-center relative px-4 min-h-0" onClick={e => e.stopPropagation()}>
+                {/* Prev */}
+                <button
+                    onClick={prev}
+                    className="absolute left-3 md:left-6 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 border border-white/10 flex items-center justify-center text-white transition-all hover:scale-110"
+                >
+                    <ChevronLeft size={22} />
+                </button>
+
+                {/* Image */}
+                <AnimatePresence mode="wait" initial={false} custom={direction}>
+                    <motion.img
+                        key={photo.id}
+                        src={photo.src}
+                        alt={photo.title}
+                        custom={direction}
+                        initial={{ opacity: 0, x: direction * 80 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -direction * 80 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                        className="max-h-[calc(100vh-200px)] max-w-full object-contain rounded-xl shadow-2xl"
+                    />
+                </AnimatePresence>
+
+                {/* Next */}
+                <button
+                    onClick={next}
+                    className="absolute right-3 md:right-6 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 border border-white/10 flex items-center justify-center text-white transition-all hover:scale-110"
+                >
+                    <ChevronRight size={22} />
+                </button>
+            </div>
+
+            {/* Thumbnail strip */}
+            <div className="shrink-0 pb-4 pt-3 px-4" onClick={e => e.stopPropagation()}>
+                <div ref={thumbsRef} className="flex gap-2 overflow-x-auto pb-1 justify-start md:justify-center" style={{ scrollbarWidth: "none" }}>
+                    {photos.map((p, i) => (
+                        <button
+                            key={p.id}
+                            onClick={() => { setDirection(i > index ? 1 : -1); setIndex(i); }}
+                            className={`shrink-0 w-14 h-10 rounded-lg overflow-hidden border-2 transition-all ${i === index ? "border-cyan-400 scale-110" : "border-transparent opacity-50 hover:opacity-80"}`}
+                        >
+                            <img src={p.src} alt={p.title} className="w-full h-full object-cover" />
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
+/* ── Page ───────────────────────────────────────────────────────────────── */
+const Gallery = () => {
+    const [tab, setTab] = useState("photos");
+    const [activeTag, setActiveTag] = useState("All");
+    const [lightboxIdx, setLightboxIdx] = useState(null);
+    const [direction, setDirection] = useState(1);
+
+    const filtered = activeTag === "All" ? PHOTOS : PHOTOS.filter(p => p.tag === activeTag);
+
+    const openPhoto = useCallback((idx) => {
+        setDirection(1);
+        setLightboxIdx(idx);
+    }, []);
+
+    return (
+        <div className="min-h-screen bg-slate-950 font-sans">
             <Navbar />
 
-            <section className="pt-16 md:pt-20">
-                <div className="mt-6 bg-blue-800 text-white">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8 text-center">
-                        <h2 className="text-2xl md:text-3xl font-semibold">Photo Gallery</h2>
-                        <p className="text-blue-100 mt-2 text-sm md:text-base">
-                            Explore our facility and healthcare infrastructure
-                        </p>
-                    </div>
-                </div>
-            </section>
+            {/* ── HERO ── */}
+            <section
+                className="relative pt-32 pb-16 md:pt-44 md:pb-24 overflow-hidden"
+                style={{ background: "linear-gradient(135deg,#001f4d 0%,#003366 55%,#1e40af 100%)" }}
+            >
+                <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
+                    style={{ backgroundImage: "radial-gradient(white 1px,transparent 1px)", backgroundSize: "28px 28px" }} />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[140px] pointer-events-none"
+                    style={{ background: "rgba(96,165,250,0.17)" }} />
 
-            <section className="py-12">
-                <div className="max-w-7xl mx-auto px-6 lg:px-10">
-                    <motion.div
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-                        variants={cardsContainer}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, amount: 0.2 }}
-                    >
-                        {galleryPhotos.map((photo) => (
-                            <motion.button
-                                key={photo.title}
-                                type="button"
-                                variants={popCard}
-                                whileHover={{ y: -8, scale: 1.02 }}
-                                transition={{ type: "spring", stiffness: 240, damping: 18 }}
-                                onClick={() => handleOpenPhoto(photo.id)}
-                                className="text-left bg-white/95 border border-blue-100 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden group"
-                            >
-                                <div className="relative h-48 bg-blue-50">
-                                    <img
-                                        src={photo.image}
-                                        alt={photo.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        loading="lazy"
-                                        decoding="async"
-                                    />
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/55 via-black/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                                        <div className="px-4 pb-3 text-white text-xs font-medium tracking-wide">
-                                            Click to view
-                                        </div>
-                                    </div>
-                                </div>
-                                <p className="px-4 py-3 text-sm md:text-base font-semibold text-blue-800 text-center">
-                                    {photo.title}
-                                </p>
-                            </motion.button>
+                <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+                        className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-blue-200 text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full mb-6">
+                        <Camera size={14} /> Trinay Hospital — Visual Tour
+                    </motion.div>
+
+                    <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12, duration: 0.6 }}
+                        className="text-5xl md:text-7xl font-black text-white mb-5 leading-tight tracking-tight">
+                        Our{" "}
+                        <span style={{
+                            background: "linear-gradient(to right,#67e8f9,#93c5fd)",
+                            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                        }}>
+                            Gallery
+                        </span>
+                    </motion.h1>
+
+                    <motion.p initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22, duration: 0.6 }}
+                        className="text-blue-100/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-8">
+                        Explore our world-class facilities, expert medical team, and the healing environment of Trinay Hospital.
+                    </motion.p>
+
+                    {/* Stats */}
+                    <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32, duration: 0.6 }}
+                        className="flex flex-wrap justify-center gap-4">
+                        {[
+                            { icon: <Camera size={16} />, label: `${PHOTOS.length} Photos` },
+                            { icon: <Film size={16} />,   label: `${VIDEOS.length} Videos` },
+                        ].map(({ icon, label }) => (
+                            <div key={label} className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-full text-white text-sm font-bold">
+                                {icon} {label}
+                            </div>
                         ))}
                     </motion.div>
                 </div>
             </section>
 
-            {/* Video Gallery Section */}
-            <section className="pt-8">
-                <div className="bg-blue-800 text-white">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8 text-center">
-                        <h2 className="text-2xl md:text-3xl font-semibold">Video Gallery</h2>
-                        <p className="text-blue-100 mt-2 text-sm md:text-base">
-                            Watch our hospital facilities and patient care in action
-                        </p>
-                    </div>
+            {/* ── TABS ── */}
+            <div className="bg-slate-900 border-b border-white/5 sticky top-0 z-30">
+                <div className="max-w-7xl mx-auto px-6 flex items-center gap-2 py-3">
+                    {[
+                        { id: "photos", label: "Photos", icon: <Camera size={15} /> },
+                        { id: "videos", label: "Videos", icon: <Film size={15} /> },
+                    ].map(t => (
+                        <button key={t.id} onClick={() => setTab(t.id)}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
+                                tab === t.id
+                                    ? "bg-[#003366] text-white shadow-lg"
+                                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                            }`}>
+                            {t.icon} {t.label}
+                        </button>
+                    ))}
                 </div>
-            </section>
+            </div>
 
-            <section className="py-12">
-                <div className="max-w-7xl mx-auto px-6 lg:px-10">
-                    <motion.div
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-                        variants={cardsContainer}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, amount: 0.2 }}
-                    >
-                        {videoGallery.map((video) => (
-                            <motion.div
-                                key={video.id}
-                                variants={popCard}
-                                whileHover={{ y: -8, scale: 1.02 }}
-                                transition={{ type: "spring", stiffness: 240, damping: 18 }}
-                                className="bg-white/95 border border-blue-100 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col"
-                            >
-                                <div className="relative aspect-video bg-blue-50">
-                                    <video
-                                        src={video.url}
-                                        controls
-                                        preload="metadata"
-                                        muted
-                                        className="w-full h-full object-cover"
-                                    ></video>
-                                </div>
-                                <div className="flex-1 flex items-center justify-center p-4">
-                                    <p className="text-sm md:text-base font-semibold text-blue-800 text-center">
-                                        {video.title}
-                                    </p>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </div>
-            </section>
+            {/* ── PHOTOS ── */}
+            {tab === "photos" && (
+                <section className="py-12">
+                    <div className="max-w-7xl mx-auto px-6">
+                        {/* Tag filters */}
+                        <div className="flex flex-wrap gap-2 mb-8">
+                            {TAGS.map(tag => (
+                                <button key={tag} onClick={() => setActiveTag(tag)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                                        activeTag === tag
+                                            ? "bg-[#003366] text-white shadow-md"
+                                            : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                                    }`}>
+                                    {tag}
+                                </button>
+                            ))}
+                            <span className="ml-auto text-slate-500 text-xs font-semibold self-center">
+                                {filtered.length} photo{filtered.length !== 1 ? "s" : ""}
+                            </span>
+                        </div>
 
-            <AnimatePresence>
-                {selectedPhoto && (
-                    <motion.div
-                        className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={handleClosePhoto}
-                    >
+                        {/* Grid */}
                         <motion.div
-                            className="w-full max-w-4xl bg-white rounded-2xl overflow-hidden shadow-2xl"
-                            initial={{ scale: 0.92, y: 14, opacity: 0 }}
-                            animate={{ scale: 1, y: 0, opacity: 1 }}
-                            exit={{ scale: 0.94, y: 10, opacity: 0 }}
-                            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                            onClick={(event) => event.stopPropagation()}
+                            key={activeTag}
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
                         >
-                            <div className="flex items-center justify-between px-4 py-3 border-b border-blue-100">
-                                <h4 className="text-base md:text-lg font-semibold text-blue-800">
-                                    {selectedPhoto.title}
-                                </h4>
-                                <button
-                                    type="button"
-                                    onClick={handleClosePhoto}
-                                    className="inline-flex items-center gap-1 rounded-lg border border-blue-200 px-3 py-1.5 text-sm font-medium text-blue-800 hover:bg-blue-50 transition-colors"
-                                >
-                                    <X className="w-4 h-4" aria-hidden="true" />
-                                    Close
-                                </button>
-                            </div>
-                            <div className="relative bg-blue-50">
-                                <button
-                                    type="button"
-                                    onClick={handlePrevPhoto}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white/90 border border-blue-200 text-blue-800 flex items-center justify-center hover:bg-white transition-colors"
-                                    aria-label="Previous photo"
-                                >
-                                    <ChevronLeft className="h-5 w-5" />
-                                </button>
-                                <AnimatePresence mode="wait" initial={false}>
-                                    <motion.img
-                                        key={selectedPhoto.id}
-                                        src={selectedPhoto.image}
-                                        alt={selectedPhoto.title}
-                                        className="w-full max-h-[75vh] object-contain"
-                                        initial={{ opacity: 0, x: lightboxDirection * 90, scale: 0.96 }}
-                                        animate={{ opacity: 1, x: 0, scale: 1 }}
-                                        exit={{ opacity: 0, x: -lightboxDirection * 90, scale: 0.96 }}
-                                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                            <AnimatePresence>
+                                {filtered.map((photo, i) => (
+                                    <PhotoCard
+                                        key={photo.id}
+                                        photo={photo}
+                                        index={i}
+                                        onClick={() => openPhoto(PHOTOS.findIndex(p => p.id === photo.id))}
                                     />
-                                </AnimatePresence>
-                                <button
-                                    type="button"
-                                    onClick={handleNextPhoto}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white/90 border border-blue-200 text-blue-800 flex items-center justify-center hover:bg-white transition-colors"
-                                    aria-label="Next photo"
-                                >
-                                    <ChevronRight className="h-5 w-5" />
-                                </button>
-                            </div>
-                            <div className="px-4 py-3 border-t border-blue-100 bg-white">
-                                <div className="flex gap-2 overflow-x-auto pb-1">
-                                    {galleryPhotos.map((photo) => {
-                                        const isSelected = photo.id === selectedPhoto.id;
-                                        return (
-                                            <button
-                                                key={photo.id}
-                                                type="button"
-                                                onClick={() =>
-                                                    handleOpenPhoto(
-                                                        photo.id,
-                                                        selectedPhotoIndex >= 0 &&
-                                                            galleryPhotos.findIndex((item) => item.id === photo.id) < selectedPhotoIndex
-                                                            ? -1
-                                                            : 1
-                                                    )
-                                                }
-                                                className={`relative h-14 w-20 rounded-md overflow-hidden border shrink-0 ${isSelected ? "border-blue-700 ring-1 ring-blue-700" : "border-blue-200"
-                                                    }`}
-                                            >
-                                                <img
-                                                    src={photo.image}
-                                                    alt={photo.title}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                                ))}
+                            </AnimatePresence>
                         </motion.div>
-                    </motion.div>
+                    </div>
+                </section>
+            )}
+
+            {/* ── VIDEOS ── */}
+            {tab === "videos" && (
+                <section className="py-12">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <p className="text-slate-400 text-sm font-semibold mb-6">{VIDEOS.length} videos</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                            {VIDEOS.map((video, i) => (
+                                <VideoCard key={video.id} video={video} index={i} />
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* ── LIGHTBOX ── */}
+            <AnimatePresence>
+                {lightboxIdx !== null && (
+                    <Lightbox
+                        photos={PHOTOS}
+                        index={lightboxIdx}
+                        onClose={() => setLightboxIdx(null)}
+                        direction={direction}
+                        setIndex={setLightboxIdx}
+                        setDirection={setDirection}
+                    />
                 )}
             </AnimatePresence>
 
@@ -310,8 +383,3 @@ const Gallery = () => {
 };
 
 export default Gallery;
-
-
-
-
-

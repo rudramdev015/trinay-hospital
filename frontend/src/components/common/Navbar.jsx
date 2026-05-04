@@ -1,315 +1,239 @@
-import { useState, useEffect, useRef } from "react";
-import { ChevronDown, Home, Stethoscope, UserRound, Shield, Phone, Image, Info, CalendarCheck, Facebook, Instagram } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { 
+    ChevronDown, Home, Stethoscope, UserRound, Shield, 
+    Phone, Image, Info, CalendarCheck, Facebook, 
+    Instagram, Menu, X, Search, PhoneCall, MapPin, Clock
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import LoadingLink from "./LoadingLink";
-import hospitalLogo from "../../assets/images/reallogo1.png";
-
-const aboutMenuLinks = [
-    { label: "About Us", to: "/about", icon: Info },
-    { label: "Gallery", to: "/gallery", icon: Image },
-];
-
-const navLinks = [
-    { label: "Home", to: "/", icon: Home },
-    { label: "Services", to: "/services", icon: Stethoscope },
-    { label: "Doctors", to: "/doctors", icon: UserRound },
-    { label: "Insurance", to: "/insurance", icon: Shield },
-    { label: "Contact", to: "/contact", icon: Phone },
-];
+import hospitalLogo from "./trinayhospital_logo.jpg"; // Correct path from your screenshot
 
 const Navbar = () => {
-    const [open, setOpen] = useState(false);
-    const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
-    const [animateIn, setAnimateIn] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const menuRef = useRef(null);
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const location = useLocation();
 
-    const closeMobileMenu = () => {
-        setAnimateIn(false);
-        setTimeout(() => {
-            setOpen(false);
-            setMobileAboutOpen(false);
-        }, 250);
-    };
-
-    const toggleMobileMenu = () => {
-        if (open) {
-            closeMobileMenu();
-        } else {
-            setOpen(true);
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => setAnimateIn(true));
-            });
-        }
-    };
-
-    // Close menu on route change
+    // Handle Scroll for sticky effect
     useEffect(() => {
-        setOpen(false);
-        setAnimateIn(false);
-        setMobileAboutOpen(false);
-    }, [location.pathname]);
-
-    // Scroll blur effect — passive listener for zero perf impact
-    useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 10);
-        window.addEventListener("scroll", onScroll, { passive: true });
-        return () => window.removeEventListener("scroll", onScroll);
+        const handleScroll = () => setScrolled(window.scrollY > 40);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Close menu on outside click
+    // Close menu when route changes
     useEffect(() => {
-        if (!open) return;
-        const handleClick = (e) => {
-            if (menuRef.current && !menuRef.current.contains(e.target)) {
-                closeMobileMenu();
-            }
-        };
-        document.addEventListener("mousedown", handleClick);
-        return () => document.removeEventListener("mousedown", handleClick);
-    }, [open]);
+        setIsOpen(false);
+    }, [location]);
 
-    // Lock body scroll when menu is open
-    useEffect(() => {
-        document.body.style.overflow = open ? "hidden" : "";
-        return () => { document.body.style.overflow = ""; };
-    }, [open]);
+    const navLinks = [
+        { label: "Home", to: "/" },
+        { label: "Services", to: "/services" },
+        { label: "Doctors", to: "/doctors" },
+        { label: "Insurance", to: "/insurance" },
+        { label: "Contact", to: "/contact" },
+    ];
 
-    const isActive = (to) => location.pathname === to;
+    const aboutLinks = [
+        { label: "About Our Hospital", to: "/about", icon: Info },
+        { label: "Photo Gallery", to: "/gallery", icon: Image },
+        { label: "Our Mission", to: "/mission", icon: Shield },
+    ];
 
     return (
-        <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-white/80 backdrop-blur-md shadow-sm shadow-blue-100/60" : "bg-transparent"}`}>
-            <div>
-                <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 sm:h-20 lg:px-8 xl:px-10">
-                    <Link to="/" className="inline-flex items-center h-full cursor-pointer">
-                        <img
-                            src={hospitalLogo}
-                            alt="Cure 24 Hospital"
-                            className="h-[70%] w-auto max-h-full max-w-[100px] sm:max-w-[150px] md:max-w-[200px] object-contain transition-transform hover:scale-105"
-                        />
-                    </Link>
+        <header className="fixed top-0 left-0 w-full z-[1000] font-sans">
+            {/* --- 1. TOP INFO BAR (Hidden on Small Mobile) --- */}
+            <div className="hidden sm:block bg-[#003366] text-white py-2 px-6 lg:px-12">
+                <div className="max-w-[1600px] mx-auto flex justify-between items-center text-[12px] lg:text-[14px] font-medium">
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 text-orange-400">
+                            <PhoneCall size={16} className="animate-bounce" />
+                            {/* Updated with Trinay Emergency Number */}
+                            <span className="font-bold">24/7 EMERGENCY: +91 91191 91622</span>
+                        </div>
+                        <div className="hidden lg:flex items-center gap-2 opacity-90">
+                            <MapPin size={14} />
+                            {/* Updated with Trinay Address */}
+                            <span>Opp. Chopasni Garden, PF Office Road, Jodhpur</span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                        <div className="hidden xl:flex items-center gap-2 opacity-90">
+                            <Clock size={14} />
+                            {/* Updated with Trinay OPD Timings */}
+                            <span>OPD: Mon-Sat 9:00 AM - 8:00 PM</span>
+                        </div>
+                        <div className="flex items-center gap-4 border-l border-white/20 pl-4">
+                            {/* Connected Trinay Social Links */}
+                            <a href="https://www.facebook.com/profile.php?id=61568442437621" target="_blank" rel="noreferrer" aria-label="Facebook">
+                                <Facebook size={16} className="hover:text-blue-400 cursor-pointer transition-all" />
+                            </a>
+                            <a href="https://www.instagram.com/trinayhospital/" target="_blank" rel="noreferrer" aria-label="Instagram">
+                                <Instagram size={16} className="hover:text-pink-400 cursor-pointer transition-all" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <nav className="hidden lg:flex items-center gap-7 text-[0.95rem] font-medium text-blue-800">
-                        <Link
-                            to="/"
-                            className="relative inline-block text-blue-800 transition-all duration-300 hover:scale-110 hover:text-blue-900"
-                        >
-                            Home
+            {/* --- 2. MAIN NAVIGATION --- */}
+            <nav className={`w-full transition-all duration-500 border-b ${
+                scrolled 
+                ? "bg-white/95 backdrop-blur-md py-2 shadow-lg border-slate-100" 
+                : "bg-white py-4 border-transparent"
+            }`}>
+                <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12">
+                    <div className="flex justify-between items-center">
+                        
+                        {/* Logo - Responsive sizes */}
+                        <Link to="/" className="flex-shrink-0 group">
+                            <img 
+                                src={hospitalLogo} 
+                                alt="Trinay Hospital" 
+                                className={`transition-all duration-500 object-contain ${
+                                    scrolled ? "h-14 lg:h-16" : "h-16 lg:h-24"
+                                }`}
+                            />
                         </Link>
 
-                        <div className="relative group">
-                            <button
-                                type="button"
-                                className="inline-flex items-center gap-1 text-blue-800 transition-all duration-300 hover:scale-110 hover:text-blue-900"
-                                aria-haspopup="menu"
+                        {/* Desktop Menu (Large screens and 4K) */}
+                        <div className="hidden lg:flex items-center gap-8 xl:gap-10">
+                            <Link to="/" className="text-[15px] xl:text-[16px] font-bold text-slate-700 hover:text-[#003366] transition-all">HOME</Link>
+                            
+                            {/* Premium Dropdown */}
+                            <div 
+                                className="relative py-4 group cursor-pointer"
+                                onMouseEnter={() => setActiveDropdown('about')}
+                                onMouseLeave={() => setActiveDropdown(null)}
                             >
-                                About
-                                <ChevronDown className="h-4 w-4" aria-hidden="true" />
-                            </button>
-
-                            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 transition-all duration-200">
-                                <div className="min-w-[11rem] rounded-xl border border-blue-100 bg-white shadow-lg p-2">
-                                    {aboutMenuLinks.map((link) => (
-                                        <Link
-                                            key={link.label}
-                                            to={link.to}
-                                            className="block px-3 py-2 text-sm rounded-lg text-blue-800 hover:bg-blue-50 hover:text-blue-900"
+                                <span className="text-[15px] xl:text-[16px] font-bold text-slate-700 group-hover:text-[#003366] flex items-center gap-1 uppercase">
+                                    ABOUT <ChevronDown size={16} className={`transition-transform ${activeDropdown === 'about' ? 'rotate-180' : ''}`} />
+                                </span>
+                                <div className={`absolute top-full left-0 w-64 bg-white shadow-2xl rounded-xl border border-slate-100 p-2 transition-all duration-300 origin-top ${
+                                    activeDropdown === 'about' ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'
+                                }`}>
+                                    {aboutLinks.map((item) => (
+                                        <Link 
+                                            key={item.to} 
+                                            to={item.to} 
+                                            className="flex items-center gap-3 px-4 py-3 text-[14px] text-slate-600 hover:bg-blue-50 hover:text-[#003366] rounded-lg transition-all"
                                         >
-                                            {link.label}
+                                            <item.icon size={18} />
+                                            {item.label}
                                         </Link>
                                     ))}
                                 </div>
                             </div>
+
+                            {navLinks.slice(1).map((link) => (
+                                <Link 
+                                    key={link.to} 
+                                    to={link.to} 
+                                    className="text-[15px] xl:text-[16px] font-bold text-slate-700 hover:text-[#003366] transition-all uppercase"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
                         </div>
 
-                        {navLinks.slice(1).map((link) => (
+                        {/* Search & Appointment Action Buttons */}
+                        <div className="hidden lg:flex items-center gap-4">
+                            <button className="p-3 text-slate-500 hover:bg-slate-100 rounded-full transition-all">
+                                <Search size={20} />
+                            </button>
+                            <Link 
+                                to="/appointment" 
+                                className="bg-[#003366] hover:bg-blue-800 text-white px-7 xl:px-10 py-3.5 rounded-full text-[14px] xl:text-[15px] font-black uppercase tracking-widest transition-all shadow-xl hover:shadow-blue-200 active:scale-95"
+                            >
+                                Book Appointment
+                            </Link>
+                        </div>
+
+                        {/* Mobile Menu Button (Tablets and Phones) */}
+                        <div className="lg:hidden flex items-center gap-4">
+                            {/* Updated Mobile Call Button with Trinay Number */}
+                            <a href="tel:+919119191622" className="sm:hidden p-2 text-red-600">
+                                <PhoneCall size={24} />
+                            </a>
+                            <button 
+                                onClick={() => setIsOpen(!isOpen)}
+                                className="p-2 text-[#003366] hover:bg-blue-50 rounded-lg transition-all"
+                            >
+                                {isOpen ? <X size={32} /> : <Menu size={32} />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            {/* --- 3. MOBILE MENU OVERLAY (Full Responsive Sidebar) --- */}
+            <div className={`lg:hidden fixed inset-0 z-[2000] transition-all duration-500 ${
+                isOpen ? "translate-x-0" : "translate-x-full"
+            }`}>
+                {/* Backdrop */}
+                <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+                
+                {/* Panel */}
+                <div className="absolute top-0 right-0 h-full w-[85%] max-w-md bg-white shadow-2xl flex flex-col">
+                    <div className="p-6 flex justify-between items-center border-b border-slate-100">
+                        <img src={hospitalLogo} alt="Logo" className="h-14" />
+                        <button onClick={() => setIsOpen(false)} className="p-2 bg-slate-100 rounded-full">
+                            <X size={24} />
+                        </button>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                        {navLinks.map((link) => (
                             <Link
-                                key={link.label}
+                                key={link.to}
                                 to={link.to}
-                                className="relative inline-block text-blue-800 transition-all duration-300 hover:scale-110 hover:text-blue-900"
+                                onClick={() => setIsOpen(false)}
+                                className={`flex items-center gap-4 p-4 rounded-xl text-lg font-bold transition-all ${
+                                    location.pathname === link.to ? "bg-blue-50 text-[#003366]" : "text-slate-700 hover:bg-slate-50"
+                                }`}
                             >
                                 {link.label}
                             </Link>
                         ))}
-
-                        <LoadingLink
-                            to="/appointment"
-                            className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-blue-700 active:scale-95"
-                        >
-                            Book Appointment 
-                        </LoadingLink>
-
-                        <div className="flex items-center gap-3 ml-2">
-                            <a href="https://www.facebook.com/share/17xjxcuYXM/" target="_blank" rel="noreferrer" aria-label="Facebook" className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-white transition-all duration-300 hover:bg-[#1877F2] hover:scale-110 shadow-sm hover:shadow-md">
-                                <Facebook className="h-[20px] w-[20px]" />
-                            </a>
-                            <a href="https://www.instagram.com/cure24multispecialityhospital?utm_source=qr&igsh=aGxsaDM0MGM4cWFr" target="_blank" rel="noreferrer" aria-label="Instagram" className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-white transition-all duration-300 hover:bg-[#E1306C] hover:scale-110 shadow-sm hover:shadow-md">
-                                <Instagram className="h-[20px] w-[20px]" />
-                            </a>
-                        </div>
-                    </nav>
-
-                    {/* Animated Hamburger / X button */}
-                    <button
-                        className="relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-100 text-blue-700 transition-all duration-300 hover:bg-blue-50 active:scale-90 lg:hidden"
-                        onClick={toggleMobileMenu}
-                        aria-label="Toggle menu"
-                        aria-expanded={open}
-                    >
-                        <div className="w-5 h-5 flex flex-col items-center justify-center">
-                            <span
-                                className={`block h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${open ? "translate-y-[3px] rotate-45" : "-translate-y-1"}`}
-                            />
-                            <span
-                                className={`block h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${open ? "opacity-0 scale-0" : "opacity-100"}`}
-                            />
-                            <span
-                                className={`block h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${open ? "-translate-y-[3px] -rotate-45" : "translate-y-1"}`}
-                            />
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            {/* Mobile Menu Overlay + Panel */}
-            {open && (
-                <div
-                    className={`lg:hidden fixed inset-0 top-16 sm:top-20 z-40 transition-opacity duration-300 ${animateIn ? "opacity-100" : "opacity-0"}`}
-                >
-                    {/* Backdrop */}
-                    <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={closeMobileMenu} />
-
-                    {/* Menu Panel */}
-                    <div
-                        ref={menuRef}
-                        className={`relative mx-3 mt-2 rounded-2xl backdrop-blur-xl shadow-2xl shadow-blue-900/30 border border-[#0a2bbf]/40 overflow-hidden transition-all duration-300 ease-out ${animateIn ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"}`}
-                        style={{ background: "linear-gradient(to bottom, #041AA9, #031590)" }}
-                    >
-                        {/* Decorative top accent */}
-                        <div className="h-1 bg-gradient-to-r from-cyan-400 via-white/60 to-cyan-400" />
-
-                        <div className="px-4 py-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
-                            {/* Nav Links */}
-                            <div className="space-y-1">
-                                {/* Home */}
-                                <Link
-                                    to="/"
-                                    onClick={closeMobileMenu}
-                                    className={`flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all duration-200 ${isActive("/")
-                                        ? "bg-white/20 text-white"
-                                        : "text-blue-100 hover:bg-white/10 hover:text-white active:bg-white/15"
-                                        }`}
-                                    style={{ animationDelay: "50ms" }}
+                        
+                        <div className="pt-4 border-t border-slate-100">
+                            <p className="px-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest">About Trinay Hospital</p>
+                            {aboutLinks.map((item) => (
+                                <Link 
+                                    key={item.to} 
+                                    to={item.to} 
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex items-center gap-4 p-4 text-slate-700 font-semibold"
                                 >
-                                    <span className={`flex items-center justify-center w-9 h-9 rounded-lg ${isActive("/") ? "bg-white/25 text-white" : "bg-white/10 text-blue-200"}`}>
-                                        <Home className="w-[18px] h-[18px]" />
-                                    </span>
-                                    <span>Home</span>
-                                    {isActive("/") && (
-                                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white" />
-                                    )}
+                                    <item.icon size={20} className="text-[#003366]" />
+                                    {item.label}
                                 </Link>
+                            ))}
+                        </div>
+                    </div>
 
-                                {/* About Dropdown */}
-                                <div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setMobileAboutOpen((prev) => !prev)}
-                                        className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all duration-200 ${(isActive("/about") || isActive("/gallery"))
-                                            ? "bg-white/20 text-white"
-                                            : "text-blue-100 hover:bg-white/10 hover:text-white active:bg-white/15"
-                                            }`}
-                                        aria-expanded={mobileAboutOpen}
-                                    >
-                                        <span className={`flex items-center justify-center w-9 h-9 rounded-lg ${(isActive("/about") || isActive("/gallery")) ? "bg-white/25 text-white" : "bg-white/10 text-blue-200"}`}>
-                                            <Info className="w-[18px] h-[18px]" />
-                                        </span>
-                                        <span>About</span>
-                                        <ChevronDown
-                                            className={`ml-auto h-4 w-4 text-blue-200 transition-transform duration-300 ${mobileAboutOpen ? "rotate-180" : ""}`}
-                                            aria-hidden="true"
-                                        />
-                                    </button>
-
-                                    <div className={`overflow-hidden transition-all duration-300 ease-out ${mobileAboutOpen ? "max-h-40 opacity-100 mt-1" : "max-h-0 opacity-0"}`}>
-                                        <div className="ml-6 pl-4 border-l-2 border-white/20 space-y-1 py-1">
-                                            {aboutMenuLinks.map((link) => {
-                                                const Icon = link.icon;
-                                                return (
-                                                    <Link
-                                                        key={link.label}
-                                                        to={link.to}
-                                                        onClick={closeMobileMenu}
-                                                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-200 ${isActive(link.to)
-                                                            ? "bg-white/20 text-white font-medium"
-                                                            : "text-blue-200 hover:bg-white/10 hover:text-white"
-                                                            }`}
-                                                    >
-                                                        <Icon className="w-4 h-4" />
-                                                        <span>{link.label}</span>
-                                                    </Link>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Other Nav Links */}
-                                {navLinks.slice(1).map((link) => {
-                                    const Icon = link.icon;
-                                    return (
-                                        <Link
-                                            key={link.label}
-                                            to={link.to}
-                                            onClick={closeMobileMenu}
-                                            className={`flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-all duration-200 ${isActive(link.to)
-                                                ? "bg-white/20 text-white"
-                                                : "text-blue-100 hover:bg-white/10 hover:text-white active:bg-white/15"
-                                                }`}
-                                        >
-                                            <span className={`flex items-center justify-center w-9 h-9 rounded-lg ${isActive(link.to) ? "bg-white/25 text-white" : "bg-white/10 text-blue-200"}`}>
-                                                <Icon className="w-[18px] h-[18px]" />
-                                            </span>
-                                            <span>{link.label}</span>
-                                            {isActive(link.to) && (
-                                                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white" />
-                                            )}
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-
-                            {/* Divider */}
-                            <div className="my-3 border-t border-white/15" />
-
-                            {/* CTA Buttons */}
-                            <div className="space-y-2">
-                                <LoadingLink
-                                    to="/appointment"
-                                    onClick={closeMobileMenu}
-                                    className="flex items-center justify-center gap-2 w-full bg-white text-blue-700 px-4 py-3 rounded-xl font-semibold shadow-lg shadow-black/10 transition-all duration-200 hover:bg-blue-50 active:scale-[0.98]"
-                                >
-                                    <CalendarCheck className="w-[18px] h-[18px]" />
-                                    Book Appointment
-                                </LoadingLink>
-
-                                <div className="flex items-center justify-center gap-6 w-full pt-3 pb-2">
-                                    <a href="https://www.facebook.com/share/17xjxcuYXM/" target="_blank" rel="noreferrer" aria-label="Facebook" className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-blue-700 transition-all duration-300 hover:bg-[#1877F2] hover:text-white hover:scale-110 shadow-lg">
-                                        <Facebook className="h-6 w-6" />
-                                    </a>
-                                    <a href="https://www.instagram.com/cure24multispecialityhospital?utm_source=qr&igsh=aGxsaDM0MGM4cWFr" target="_blank" rel="noreferrer" aria-label="Instagram" className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-blue-700 transition-all duration-300 hover:bg-[#E1306C] hover:text-white hover:scale-110 shadow-lg">
-                                        <Instagram className="h-6 w-6" />
-                                    </a>
-                                </div>
-                            </div>
+                    <div className="p-6 border-t border-slate-100 space-y-4">
+                        <Link 
+                            to="/appointment" 
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center justify-center gap-3 w-full bg-[#003366] text-white py-5 rounded-2xl text-[16px] font-black uppercase shadow-lg shadow-blue-100"
+                        >
+                            <CalendarCheck size={22} />
+                            Book Appointment
+                        </Link>
+                        <div className="flex justify-center gap-8 py-2">
+                            {/* Connected Trinay Mobile Social Links */}
+                            <a href="https://www.facebook.com/profile.php?id=61568442437621" target="_blank" rel="noreferrer" aria-label="Facebook">
+                                <Facebook className="text-slate-400 hover:text-blue-600 transition-colors" size={24} />
+                            </a>
+                            <a href="https://www.instagram.com/trinayhospital/" target="_blank" rel="noreferrer" aria-label="Instagram">
+                                <Instagram className="text-slate-400 hover:text-pink-600 transition-colors" size={24} />
+                            </a>
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
         </header>
     );
 };
 
 export default Navbar;
-

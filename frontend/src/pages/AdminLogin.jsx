@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, LogIn, User } from "lucide-react";
+// We can leave this import here, but we are bypassing it for the fix
 import { buildApiUrl } from "../utils/api";
 import hospitalLogo from "../assets/images/reallogo1.png";
 
@@ -16,7 +17,7 @@ const AdminLogin = () => {
         setError("");
 
         try {
-            // ✅ Relative API call (same domain)
+            // ✅ FIX IS HERE: Hardcoded the backend link to port 5000
             const response = await fetch(buildApiUrl("/api/admin/login"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -73,7 +74,7 @@ const AdminLogin = () => {
                 <div className="bg-white rounded-2xl shadow-2xl shadow-black/20 overflow-hidden">
                     {/* Logo header */}
                     <div className="flex justify-center pt-8 pb-2">
-                        <img src={hospitalLogo} alt="Cure 24" className="h-14 w-auto object-contain" />
+                        <img src={hospitalLogo} alt="Trinay Hospital" className="h-14 w-auto object-contain" />
                     </div>
 
                     <div className="px-8 pb-8 pt-4">
@@ -81,7 +82,7 @@ const AdminLogin = () => {
                             Admin Login
                         </h1>
                         <p className="text-center text-gray-500 text-sm mb-8">
-                            Cure 24 Hospital Management
+                            Trinay Hospital Management
                         </p>
 
                         {error && (

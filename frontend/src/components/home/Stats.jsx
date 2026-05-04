@@ -1,85 +1,60 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
+import { HeartPulse, Users, LayoutGrid, Smile } from "lucide-react";
 
-const statsData = [
-    {
-        value: 24,
-        suffix: "/7",
-        label: "Emergency Care",
-    },
-    {
-        value: 50,
-        suffix: "+",
-        label: "Expert Doctors",
-    },
-    {
-        value: 15,
-        suffix: "+",
-        label: "Departments",
-    },
-    {
-        value: 50,
-        suffix: "k+",
-        label: "Happy Patients",
-    },
+const STATS = [
+    { value: 24, suffix: "/7",  label: "Emergency Care",   Icon: HeartPulse, color: "text-rose-500",  bg: "bg-rose-50",  ring: "ring-rose-100"  },
+    { value: 50, suffix: "+",   label: "Expert Doctors",   Icon: Users,      color: "text-blue-600", bg: "bg-blue-50",  ring: "ring-blue-100"  },
+    { value: 15, suffix: "+",   label: "Departments",      Icon: LayoutGrid, color: "text-teal-600", bg: "bg-teal-50",  ring: "ring-teal-100"  },
+    { value: 50, suffix: "k+",  label: "Happy Patients",   Icon: Smile,      color: "text-amber-500",bg: "bg-amber-50", ring: "ring-amber-100" },
 ];
 
-const StatCard = ({ value, suffix, label, duration = 1200 }) => {
-    const cardRef = useRef(null);
-    const isInView = useInView(cardRef, { once: true, amount: 0.35 });
+const StatCard = ({ value, suffix, label, Icon, color, bg, ring, duration = 1300 }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, amount: 0.35 });
     const [count, setCount] = useState(0);
 
     useEffect(() => {
         if (!isInView) return;
         let frameId;
-        const startTime = performance.now();
-
+        const start = performance.now();
         const animate = (now) => {
-            const progress = Math.min((now - startTime) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const current = Math.max(1, Math.round(eased * value));
-            setCount(current);
-            if (progress < 1) {
-                frameId = requestAnimationFrame(animate);
-            }
+            const p = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            setCount(Math.max(1, Math.round(eased * value)));
+            if (p < 1) frameId = requestAnimationFrame(animate);
         };
-
         frameId = requestAnimationFrame(animate);
-        return () => {
-            if (frameId) cancelAnimationFrame(frameId);
-        };
+        return () => cancelAnimationFrame(frameId);
     }, [isInView, value, duration]);
 
     return (
-        <div ref={cardRef} className="text-center">
-            <h3 className="text-3xl font-bold tracking-[-0.04em] text-[#041AA9] sm:text-4xl md:text-5xl">
-                {count}
-                {suffix}
-            </h3>
-            <p className="mt-2 text-sm font-medium text-blue-700 sm:text-base">{label}</p>
+        <div ref={ref} className="flex flex-col items-center gap-3 text-center group">
+            <div className={`w-14 h-14 rounded-2xl ${bg} ring-2 ${ring} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
+                <Icon size={26} className={color} />
+            </div>
+            <div>
+                <p className="text-3xl md:text-4xl lg:text-5xl font-black text-[#003366] tracking-tight tabular-nums">
+                    {count}{suffix}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-slate-500">{label}</p>
+            </div>
         </div>
     );
 };
 
-const Stats = () => {
-    return (
-        <section className="relative z-10 -mt-10 pb-10 sm:-mt-14 md:-mt-20 md:pb-14 lg:-mt-24">
-            <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-                <div className="overflow-hidden rounded-[26px] border border-white/70 bg-white/82 px-6 py-7 shadow-[0_20px_70px_rgba(4,26,169,0.14)] backdrop-blur-xl sm:px-8 md:px-10 md:py-8">
-                    <div className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-6">
-                        {statsData.map((item) => (
-                            <StatCard
-                                key={item.label}
-                                value={item.value}
-                                suffix={item.suffix}
-                                label={item.label}
-                            />
-                        ))}
-                    </div>
+const Stats = () => (
+    <section className="relative z-10 -mt-10 pb-10 sm:-mt-14 md:-mt-20 md:pb-14 lg:-mt-24">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+            <div className="overflow-hidden rounded-[26px] border border-white/60 bg-white/90 px-6 py-8 shadow-[0_20px_70px_rgba(4,26,169,0.13)] backdrop-blur-xl sm:px-10 md:px-14 md:py-10">
+                <div className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-6">
+                    {STATS.map((s) => (
+                        <StatCard key={s.label} {...s} />
+                    ))}
                 </div>
             </div>
-        </section>
-    );
-};
+        </div>
+    </section>
+);
 
 export default Stats;

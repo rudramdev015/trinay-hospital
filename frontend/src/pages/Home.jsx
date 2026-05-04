@@ -1,38 +1,84 @@
 import { Suspense, lazy } from 'react';
 import Hero from '../components/home/Hero';
+import Stats from '../components/home/Stats';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 
-const About = lazy(() => import('../components/home/About'));
+// Lazy loading components for better performance
+const About           = lazy(() => import('../components/home/About'));
 const ServicesPreview = lazy(() => import('../components/home/ServicesPreview'));
-const KeyServices = lazy(() => import('../components/home/KeyServices'));
-const Testimonials = lazy(() => import('../components/home/Testimonials'));
-const CallToAction = lazy(() => import('../components/home/CallToAction'));
+const KeyServices     = lazy(() => import('../components/home/KeyServices'));
+const DoctorsPreview  = lazy(() => import('../components/home/DoctorsPreview'));
+const Facilities      = lazy(() => import('../components/home/Facilities'));
+const HealthPackages  = lazy(() => import('../components/home/HealthPackages'));
+const InsurancePartners = lazy(() => import('../components/home/InsurancePartners'));
+const CallToAction    = lazy(() => import('../components/home/CallToAction'));
+const Testimonials    = lazy(() => import('../components/home/Testimonials'));
 
-const SectionFallback = ({ height = 'min-h-[220px]' }) => (
-    <div className={`${height} bg-transparent`} />
+const Skeleton = ({ h = 'min-h-[320px]' }) => (
+    <div className={`${h} bg-slate-50 animate-pulse mx-auto w-full`} />
 );
 
 const Home = () => {
     return (
-        <div className="min-h-screen bg-[#F5F9FF]">
+        <div className="min-h-screen bg-white selection:bg-blue-100 selection:text-blue-900">
+            {/* Header */}
             <Navbar />
-            <Hero />
-            <Suspense fallback={<SectionFallback height="min-h-[520px]" />}>
-                <About />
-            </Suspense>
-            <Suspense fallback={<SectionFallback height="min-h-[420px]" />}>
-                <ServicesPreview />
-            </Suspense>
-            <Suspense fallback={<SectionFallback height="min-h-[420px]" />}>
-                <KeyServices />
-            </Suspense>
-            <Suspense fallback={<SectionFallback height="min-h-[260px]" />}>
-                <CallToAction />
-            </Suspense>
-            <Suspense fallback={null}>
-                <Testimonials />
-            </Suspense>
+
+            <main>
+                {/* 1. Hero Section with Mobile Video Background */}
+                <Hero />
+
+                {/* 2. Stats Section (Responsive Overlay) */}
+                <Stats />
+
+                {/* 3. About Section */}
+                <Suspense fallback={<Skeleton h="min-h-[560px]" />}>
+                    <About />
+                </Suspense>
+
+                {/* 4. Why Choose Us */}
+                <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
+                    <ServicesPreview />
+                </Suspense>
+
+                {/* 5. Medical Specialties */}
+                <Suspense fallback={<Skeleton h="min-h-[560px]" />}>
+                    <KeyServices />
+                </Suspense>
+
+                {/* 6. Doctors Section */}
+                <Suspense fallback={<Skeleton h="min-h-[500px]" />}>
+                    <DoctorsPreview />
+                </Suspense>
+
+                {/* 7. Facilities & Infrastructure */}
+                <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
+                    <Facilities />
+                </Suspense>
+
+                {/* 8. Health Packages */}
+                <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
+                    <HealthPackages />
+                </Suspense>
+
+                {/* 9. Insurance Partners */}
+                <Suspense fallback={<Skeleton h="min-h-[220px]" />}>
+                    <InsurancePartners />
+                </Suspense>
+
+                {/* 10. Emergency Call to Action */}
+                <Suspense fallback={<Skeleton h="min-h-[300px]" />}>
+                    <CallToAction />
+                </Suspense>
+
+                {/* 11. Testimonials */}
+                <Suspense fallback={null}>
+                    <Testimonials />
+                </Suspense>
+            </main>
+
+            {/* Footer */}
             <Footer />
         </div>
     );
