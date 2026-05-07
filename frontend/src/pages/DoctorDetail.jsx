@@ -1,11 +1,13 @@
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
     ArrowLeft, Calendar, Clock, Award, GraduationCap,
     Star, Phone, CheckCircle2, ChevronRight,
-    MapPin, Languages, Users, Stethoscope, BadgeCheck,
+    MapPin, Languages, Users, Stethoscope, BadgeCheck, Loader2,
 } from "lucide-react";
 import { findDoctor, DOCTORS } from "../data/doctorsData";
+import { buildApiUrl } from "../utils/api";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 
@@ -40,13 +42,68 @@ const Section = ({ title, children, delay = 0 }) => (
     </motion.div>
 );
 
+/* ── normalize a dynamic doctor from API to match static shape ── */
+const FEMALE_SET = ["RASHMI","PRIYANKA","PUSHPA","POOJA","KULDEEP","JAISHREE","RITU","CHITRA","VIDHI","METALI","SHALINI"];
+
+const normalizeDynamic = (d) => {
+    const isFemale = FEMALE_SET.some((n) => d.name.toUpperCase().includes(n));
+    const nameTitled = d.name.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+    return {
+        ...d,
+        id: d._id,
+        nameTitled,
+        isFemale,
+        isSenior: (d.designation || "").includes("SR."),
+        avatar: d.photo || null,
+        days: "Mon – Sat",
+        languages: ["Hindi", "English", "Rajasthani"],
+        color: "blue",
+        gradient: "from-blue-600 to-blue-800",
+        deptDisplay: d.dept.charAt(0).toUpperCase() + d.dept.slice(1).toLowerCase(),
+        patients: `${(d.experience || 1) * 500}+`,
+        education: [],
+        achievements: Array.isArray(d.achievements) ? d.achievements : [],
+        expertise: Array.isArray(d.expertise) ? d.expertise : [],
+        bio: d.bio || `${nameTitled} is a specialist in ${d.dept.charAt(0).toUpperCase() + d.dept.slice(1).toLowerCase()} with ${d.experience}+ years of experience at Trinay Hospital, Jodhpur.`,
+        camp: d.camp || null,
+    };
+};
+
 /* ─────────────────────────────────────────────────────────────────────────── */
 const DoctorDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const doc = findDoctor(id);
 
-    if (!doc) {
+    const [doc, setDoc]           = useState(() => findDoctor(id) || null);
+    const [loading, setLoading]   = useState(false);
+    const [notFound, setNotFound] = useState(false);
+
+    useEffect(() => {
+        if (doc) return;
+        if (!/^[0-9a-f]{24}$/i.test(id)) { setNotFound(true); return; }
+        setLoading(true);
+        fetch(buildApiUrl(`/api/doctors/dynamic/${id}`))
+            .then((r) => (r.ok ? r.json() : null))
+            .then((data) => {
+                if (data?.success && data.doctor) setDoc(normalizeDynamic(data.doctor));
+                else setNotFound(true);
+            })
+            .catch(() => setNotFound(true))
+            .finally(() => setLoading(false));
+    }, [id]);
+
+    /* ── loading state ── */
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
+                <Loader2 size={48} className="text-blue-500 animate-spin" />
+                <p className="text-slate-500 font-semibold">Loading doctor profile…</p>
+            </div>
+        );
+    }
+
+    /* ── not found ── */
+    if (notFound || !doc) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-6 px-4">
                 <Stethoscope size={64} className="text-slate-200" />
@@ -58,7 +115,7 @@ const DoctorDetail = () => {
         );
     }
 
-    /* Related doctors — same dept, different id, max 3 */
+    /* Related doctors — same dept, different id, max 3 (static only) */
     const related = DOCTORS.filter((d) => d.dept === doc.dept && d.id !== doc.id).slice(0, 3);
 
     return (
@@ -141,21 +198,23 @@ const DoctorDetail = () => {
                         </div>
 
                         {/* Right — photo */}
-                        <motion.div
-                            variants={fadeIn(0.3)}
-                            initial="hidden"
-                            animate="visible"
-                            className="hidden lg:flex items-end justify-center"
-                        >
-                            <div className="relative w-64 xl:w-72">
-                                <div className="absolute inset-x-0 bottom-0 h-3/4 rounded-t-[2rem] bg-white/10 backdrop-blur-sm" />
-                                <img
-                                    src={doc.avatar}
-                                    alt={doc.nameTitled}
-                                    className="relative w-full object-contain drop-shadow-2xl"
-                                />
-                            </div>
-                        </motion.div>
+                        {doc.avatar && (
+                            <motion.div
+                                variants={fadeIn(0.3)}
+                                initial="hidden"
+                                animate="visible"
+                                className="hidden lg:flex items-end justify-center"
+                            >
+                                <div className="relative w-64 xl:w-72">
+                                    <div className="absolute inset-x-0 bottom-0 h-3/4 rounded-t-[2rem] bg-white/10 backdrop-blur-sm" />
+                                    <img
+                                        src={doc.avatar}
+                                        alt={doc.nameTitled}
+                                        className="relative w-full object-contain drop-shadow-2xl"
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
                     </div>
                 </div>
 
@@ -175,7 +234,7 @@ const DoctorDetail = () => {
                         {[
                             { Icon: Clock,     text: `OPD: ${doc.timing}` },
                             { Icon: MapPin,    text: "Trinay Hospital, Jodhpur" },
-                            { Icon: Languages, text: doc.languages.join(", ") },
+                            { Icon: Languages, text: (doc.languages || []).join(", ") },
                             { Icon: BadgeCheck,text: "NABH Accredited Hospital" },
                         ].map(({ Icon, text }) => (
                             <span key={text} className="flex items-center gap-2 bg-white border border-slate-100 shadow-sm text-slate-600 text-sm font-medium px-4 py-2.5 rounded-full">
@@ -203,37 +262,41 @@ const DoctorDetail = () => {
                     </Section>
 
                     {/* Expertise */}
-                    <Section title="Areas of Expertise" delay={0.1}>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {doc.expertise.map((exp) => (
-                                <div key={exp} className="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-3">
-                                    <CheckCircle2 size={16} className="text-blue-500 shrink-0" />
-                                    <span className="text-sm text-slate-700 font-medium">{exp}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </Section>
+                    {doc.expertise?.length > 0 && (
+                        <Section title="Areas of Expertise" delay={0.1}>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                {doc.expertise.map((exp) => (
+                                    <div key={exp} className="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-3">
+                                        <CheckCircle2 size={16} className="text-blue-500 shrink-0" />
+                                        <span className="text-sm text-slate-700 font-medium">{exp}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </Section>
+                    )}
 
-                    {/* Education */}
-                    <Section title="Education & Qualifications" delay={0.15}>
-                        <ol className="relative border-l-2 border-blue-100 space-y-6 ml-2">
-                            {doc.education.map((edu, i) => (
-                                <motion.li
-                                    key={i}
-                                    variants={slideLeft(i * 0.08)}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true }}
-                                    className="pl-6 relative"
-                                >
-                                    <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-linear-to-br ${doc.gradient} ring-2 ring-white shadow`} />
-                                    <p className="text-xs font-bold text-blue-500 uppercase tracking-widest">{edu.year}</p>
-                                    <p className="text-base font-black text-[#003366] mt-0.5">{edu.degree}</p>
-                                    <p className="text-sm text-slate-500 mt-0.5">{edu.college}</p>
-                                </motion.li>
-                            ))}
-                        </ol>
-                    </Section>
+                    {/* Education — only show if data exists */}
+                    {doc.education?.length > 0 && (
+                        <Section title="Education & Qualifications" delay={0.15}>
+                            <ol className="relative border-l-2 border-blue-100 space-y-6 ml-2">
+                                {doc.education.map((edu, i) => (
+                                    <motion.li
+                                        key={i}
+                                        variants={slideLeft(i * 0.08)}
+                                        initial="hidden"
+                                        whileInView="visible"
+                                        viewport={{ once: true }}
+                                        className="pl-6 relative"
+                                    >
+                                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-linear-to-br ${doc.gradient} ring-2 ring-white shadow`} />
+                                        <p className="text-xs font-bold text-blue-500 uppercase tracking-widest">{edu.year}</p>
+                                        <p className="text-base font-black text-[#003366] mt-0.5">{edu.degree}</p>
+                                        <p className="text-sm text-slate-500 mt-0.5">{edu.college}</p>
+                                    </motion.li>
+                                ))}
+                            </ol>
+                        </Section>
+                    )}
 
                     {/* Achievements */}
                     {doc.achievements?.length > 0 && (
@@ -302,7 +365,13 @@ const DoctorDetail = () => {
                             <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/10 blur-3xl" />
                             <div className="relative">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <img src={doc.avatar} alt="" className="w-14 h-14 rounded-2xl border-2 border-white/30 object-cover bg-white/10 p-1" />
+                                    {doc.avatar ? (
+                                        <img src={doc.avatar} alt="" className="w-14 h-14 rounded-2xl border-2 border-white/30 object-cover bg-white/10" />
+                                    ) : (
+                                        <div className="w-14 h-14 rounded-2xl border-2 border-white/30 bg-white/10 flex items-center justify-center">
+                                            <Stethoscope size={24} className="text-white/60" />
+                                        </div>
+                                    )}
                                     <div>
                                         <p className="font-black text-base leading-tight">{doc.nameTitled}</p>
                                         <p className="text-white/70 text-xs">{doc.deptDisplay}</p>

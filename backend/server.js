@@ -55,8 +55,8 @@ app.use(
 );
 
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json({ limit: '100kb' }));
-app.use(express.urlencoded({ extended: true, limit: '100kb' }));
+app.use(express.json({ limit: '8mb' }));
+app.use(express.urlencoded({ extended: true, limit: '8mb' }));
 
 const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
 app.use('/api', apiLimiter);
@@ -141,6 +141,26 @@ const attendanceSchema = new mongoose.Schema(
 attendanceSchema.index({ staffId: 1, date: 1 }, { unique: true });
 
 const Attendance = mongoose.model('Attendance', attendanceSchema);
+
+const dynamicDoctorSchema = new mongoose.Schema(
+    {
+        name: { type: String, required: true, trim: true },
+        designation: { type: String, required: true, trim: true, default: 'CONSULTANT' },
+        dept: { type: String, required: true, trim: true },
+        qualification: { type: String, required: true, trim: true },
+        timing: { type: String, required: true, trim: true },
+        experience: { type: Number, required: true },
+        camp: { type: String, default: '', trim: true },
+        bio: { type: String, default: '', trim: true },
+        expertise: [{ type: String, trim: true }],
+        photo: { type: String, default: '' }, // base64 data URL
+        staticId: { type: Number, default: null }, // numeric ID of static doctor this overrides
+        isActive: { type: Boolean, default: true },
+    },
+    { timestamps: true }
+);
+
+const DynamicDoctor = mongoose.model('DynamicDoctor', dynamicDoctorSchema);
 
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -545,6 +565,89 @@ app.get('/api/admin/attendance/today', authenticate, async (req, res) => {
         const today = getISTDateString();
         const records = await Attendance.find({ date: today }).sort({ checkIn: 1 });
         return res.json({ success: true, date: today, attendance: records });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+
+// ── Dynamic Doctor Routes ─────────────────────────────────────────────────────
+
+app.get('/api/doctors/dynamic', async (req, res) => {
+    try {
+        const doctors = await DynamicDoctor.find({ isActive: true }).sort({ name: 1 }).select('-photo');
+        return res.json({ success: true, doctors });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/doctors/dynamic/:id', async (req, res) => {
+    try {
+        const doctor = await DynamicDoctor.findById(req.params.id);
+        if (!doctor) return res.status(404).json({ success: false, message: 'Doctor not found' });
+        return res.json({ success: true, doctor });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/admin/doctors', authenticate, async (req, res) => {
+    try {
+        const doctors = await DynamicDoctor.find().sort({ name: 1 }).select('-photo');
+        return res.json({ success: true, doctors });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.post('/api/admin/doctors', authenticate, async (req, res) => {
+    try {
+        const { name, designation, dept, qualification, timing, experience, camp, bio, expertise, photo } = req.body || {};
+        if (!name || !dept || !qualification || !timing || !experience) {
+            return res.status(400).json({ success: false, message: 'Name, department, qualification, timing and experience are required' });
+        }
+        const doctor = await DynamicDoctor.create({
+            name: name.trim().toUpperCase(),
+            designation: (designation || 'CONSULTANT').trim().toUpperCase(),
+            dept: dept.trim().toUpperCase(),
+            qualification: qualification.trim().toUpperCase(),
+            timing: timing.trim(),
+            experience: Number(experience),
+            camp: camp?.trim() || '',
+            bio: bio?.trim() || '',
+            expertise: Array.isArray(expertise) ? expertise.filter(Boolean) : [],
+            photo: photo || '',
+        });
+        return res.status(201).json({ success: true, doctor });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.patch('/api/admin/doctors/:id', authenticate, async (req, res) => {
+    try {
+        const update = {};
+        const fields = ['name', 'designation', 'dept', 'qualification', 'timing', 'experience', 'camp', 'bio', 'expertise', 'photo', 'isActive'];
+        for (const f of fields) {
+            if (req.body[f] !== undefined) update[f] = req.body[f];
+        }
+        if (update.name) update.name = String(update.name).trim().toUpperCase();
+        if (update.designation) update.designation = String(update.designation).trim().toUpperCase();
+        if (update.dept) update.dept = String(update.dept).trim().toUpperCase();
+        if (update.qualification) update.qualification = String(update.qualification).trim().toUpperCase();
+        const doctor = await DynamicDoctor.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
+        if (!doctor) return res.status(404).json({ success: false, message: 'Doctor not found' });
+        return res.json({ success: true, doctor });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.delete('/api/admin/doctors/:id', authenticate, async (req, res) => {
+    try {
+        await DynamicDoctor.findByIdAndDelete(req.params.id);
+        return res.json({ success: true });
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
     }

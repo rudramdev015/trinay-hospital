@@ -1,18 +1,16 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   TRINAY HOSPITAL — COMPLETE DOCTORS DATA
+   TRINAY HOSPITAL — COMPLETE DOCTORS DATA  v2
    Used by: Doctors.jsx, DoctorDetail.jsx, Appointment.jsx
 ───────────────────────────────────────────────────────────────────────────── */
 
-const FEMALE_NAMES = ["RASHMI", "PRIYANKA", "PUSHPA", "POOJA", "KULDEEP", "JAISHREE", "RITU", "CHITRA", "VIDHI", "METALI"];
+const FEMALE_NAMES = ["RASHMI", "PRIYANKA", "PUSHPA", "POOJA", "KULDEEP", "JAISHREE", "RITU", "CHITRA", "VIDHI", "METALI", "SHALINI"];
 const isFemale = (name) => FEMALE_NAMES.some((n) => name.toUpperCase().includes(n));
 
-/* Local avatar fallbacks — offline, no CDN dependency */
 import dummyMaleAvatar   from "../assets/images/dummyMaleDoctor.png";
 import dummyFemaleAvatar from "../assets/images/dummyFemaleDoctor.png";
 const maleAvatar   = dummyMaleAvatar;
 const femaleAvatar = dummyFemaleAvatar;
 
-/* Department → accent color mapping */
 const DEPT_COLOR = {
     "ANAESTHESIA & CRITICAL CARE":    { color: "indigo",  gradient: "from-indigo-600 to-indigo-800" },
     "CARDIOLOGY":                      { color: "rose",    gradient: "from-rose-600   to-rose-800"   },
@@ -29,29 +27,30 @@ const DEPT_COLOR = {
     "SURGICAL ONCOLOGY":               { color: "red",     gradient: "from-red-600    to-red-800"    },
     "ENT":                             { color: "emerald", gradient: "from-emerald-600 to-emerald-800"},
     "PLASTIC & COSMETIC SURGERY":      { color: "purple",  gradient: "from-purple-600 to-purple-800" },
+    "RESPIRATORY MEDICINE":            { color: "sky",     gradient: "from-sky-500    to-cyan-700"   },
+    "PAEDIATRICS":                     { color: "pink",    gradient: "from-pink-500   to-rose-600"   },
 };
 
-/* ─── DOCTOR PHOTO MAP (public/DOCTOR IAMGES/) ──────────────────────────── */
 const PHOTO_MAP = {
-    12003: "/DOCTOR IAMGES/dr. priyanka tetarwal.png",   // Dr. Priyanka Tetarwal
-    12004: "/DOCTOR IAMGES/Dr. Dhruva Sharma.png",        // Dr. Dhruva Sharma
-    12005: "/DOCTOR IAMGES/Dr. Om prakash Suthar.png",    // Dr. Om Prakash Suthar
-    12007: "/DOCTOR IAMGES/11 (7).jpg",                   // Dr. Kamlesh Goyal
-    12010: "/DOCTOR IAMGES/Dr. Rakesh Choudhary.png",     // Dr. Rakesh Choudhary
-    12017: "/DOCTOR IAMGES/dr. tejpal faroda.png",         // Dr. Tejpal Faroda
-    12018: "/DOCTOR IAMGES/Dr Pushpa Mathuriya.png",       // Dr. Pushpa Mathuria
-    12020: "/DOCTOR IAMGES/dr amit k. sharma.png",         // Dr. Amit Sharma
-    12021: "/DOCTOR IAMGES/Dr Pushpa Barath.png",          // Dr. Pushpa Barath
-    12022: "/DOCTOR IAMGES/Dr Pooja mehta.png",            // Dr. Pooja Mehta
-    12024: "/DOCTOR IAMGES/dr. priyank bhargava.png",      // Dr. Priyank Bhargava
-    12027: "/DOCTOR IAMGES/Dr Sumeet godhwani.png",        // Dr. Sumeet Godhwani
-    12001: "/DOCTOR IAMGES/Dr kuldeep kaur.png",           // Ms. Kuldeep Kaur
-    12033: "/DOCTOR IAMGES/Dr. Jaishree Sharma.png",       // Dr. Jaishree Sharma
-    12036: "/DOCTOR IAMGES/Dr. Ritu Choudhary.png",        // Dr. Ritu Choudhary
-    12038: "/DOCTOR IAMGES/Dr chitra Agarwal.png",         // Dr. Chitra Agarwal
+    12003: "/DOCTOR IAMGES/dr. priyanka tetarwal.png",
+    12004: "/DOCTOR IAMGES/Dr. Dhruva Sharma.png",
+    12005: "/DOCTOR IAMGES/Dr. Om prakash Suthar.png",
+    12010: "/DOCTOR IAMGES/Dr. Rakesh Choudhary.png",
+    12017: "/DOCTOR IAMGES/dr. tejpal faroda.png",
+    12018: "/DOCTOR IAMGES/Dr Pushpa Mathuriya.png",
+    12020: "/DOCTOR IAMGES/dr amit k. sharma.png",
+    12021: "/DOCTOR IAMGES/Dr Pushpa Barath.png",
+    12022: "/DOCTOR IAMGES/Dr Pooja mehta.png",
+    12024: "/DOCTOR IAMGES/dr. priyank bhargava.png",
+    12027: "/DOCTOR IAMGES/Dr Sumeet godhwani.png",
+    12001: "/DOCTOR IAMGES/Dr kuldeep kaur.png",
+    12033: "/DOCTOR IAMGES/Dr. Jaishree Sharma.png",
+    12036: "/DOCTOR IAMGES/Dr. Ritu Choudhary.png",
+    12038: "/DOCTOR IAMGES/Dr chitra Agarwal.png",
+    12056: "/DOCTOR IAMGES/MITALI RAI.jpeg",
+    12061: "/DOCTOR IAMGES/ANIL KUMAR ARORA.jpeg",
 };
 
-/* ─── RAW DOCTOR RECORDS ────────────────────────────────────────────────── */
 const RAW = [
     {
         id: 12002,
@@ -61,13 +60,13 @@ const RAW = [
         qualification: "MBBS/MD",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 14,
-        patients: "10,000+",
-        bio: "Dr. Rashmi Sharma is a highly experienced anaesthesiologist specialising in perioperative medicine and critical care. Over her 14-year career she has managed thousands of complex surgical cases, earning a reputation for precision and patient safety. She takes a patient-first approach to pain management and ICU care.",
+        experience: 26,
+        patients: "20,000+",
+        bio: "Dr. Rashmi Sharma is a highly experienced anaesthesiologist specialising in perioperative medicine and critical care. Over her 26-year career she has managed thousands of complex surgical cases, earning a reputation for precision and patient safety. She takes a patient-first approach to pain management and ICU care.",
         expertise: ["General Anaesthesia", "Regional & Spinal Blocks", "Epidural Anaesthesia", "Acute Pain Management", "ICU & Critical Care", "Paediatric Anaesthesia", "Obstetric Anaesthesia"],
         education: [
-            { degree: "MBBS", college: "S.M.S. Medical College, Jaipur", year: "2005" },
-            { degree: "MD – Anaesthesiology", college: "S.M.S. Medical College, Jaipur", year: "2009" },
+            { degree: "MBBS", college: "S.M.S. Medical College, Jaipur", year: "1995" },
+            { degree: "MD – Anaesthesiology", college: "S.M.S. Medical College, Jaipur", year: "1999" },
         ],
         achievements: ["Fellow, Indian Society of Anaesthesiologists", "State Award – Best Anaesthesiologist 2022"],
     },
@@ -79,14 +78,14 @@ const RAW = [
         qualification: "MBBS/DA/DNB",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 9,
-        patients: "6,000+",
+        experience: 7,
+        patients: "5,000+",
         bio: "Dr. Priyanka Tetarwal is a dedicated consultant anaesthesiologist with specialisation in regional anaesthesia and post-operative pain management. She brings a calm, methodical approach to the operating theatre and is highly regarded by both colleagues and patients for her technical skill.",
         expertise: ["Regional Anaesthesia", "Labour Epidurals", "Post-Op Pain Protocol", "Day-Care Anaesthesia", "Haemodynamic Monitoring"],
         education: [
-            { degree: "MBBS", college: "Rajasthan University of Health Sciences, Jaipur", year: "2011" },
-            { degree: "DA – Diploma in Anaesthesiology", college: "M.G.M. Medical College, Jaipur", year: "2014" },
-            { degree: "DNB – Anaesthesiology", college: "National Board of Examinations", year: "2016" },
+            { degree: "MBBS", college: "Rajasthan University of Health Sciences, Jaipur", year: "2014" },
+            { degree: "DA – Diploma in Anaesthesiology", college: "M.G.M. Medical College, Jaipur", year: "2017" },
+            { degree: "DNB – Anaesthesiology", college: "National Board of Examinations", year: "2019" },
         ],
         achievements: ["Member, Indian Medical Association", "Presenter at National Pain Conference 2023"],
     },
@@ -98,14 +97,14 @@ const RAW = [
         qualification: "MBBS/MD/DM",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 17,
-        patients: "18,000+",
-        bio: "Dr. Dhruva Sharma is one of Jodhpur's most trusted cardiologists, with 17 years of experience in interventional cardiology. He has performed over 5,000 coronary procedures and pioneered advanced cardiac care programmes at Trinay Hospital. His calm demeanour and deep expertise make him the go-to doctor for complex heart conditions.",
+        experience: 22,
+        patients: "22,000+",
+        bio: "Dr. Dhruva Sharma is one of Jodhpur's most trusted cardiologists, with 22 years of experience in interventional cardiology. He has performed over 5,000 coronary procedures and pioneered advanced cardiac care programmes at Trinay Hospital. His calm demeanour and deep expertise make him the go-to doctor for complex heart conditions.",
         expertise: ["Coronary Artery Disease", "Angioplasty & Stenting", "Heart Failure Management", "Arrhythmia & ECG", "Hypertension", "Echocardiography (2D Echo)", "Preventive Cardiology"],
         education: [
-            { degree: "MBBS", college: "S.M.S. Medical College, Jaipur", year: "2003" },
-            { degree: "MD – Medicine", college: "S.M.S. Medical College, Jaipur", year: "2007" },
-            { degree: "DM – Cardiology", college: "AIIMS New Delhi", year: "2011" },
+            { degree: "MBBS", college: "S.M.S. Medical College, Jaipur", year: "1999" },
+            { degree: "MD – Medicine", college: "S.M.S. Medical College, Jaipur", year: "2003" },
+            { degree: "DM – Cardiology", college: "AIIMS New Delhi", year: "2007" },
         ],
         achievements: ["Fellow, Cardiological Society of India", "Best Interventional Cardiologist – Rajasthan, 2021", "Speaker at AHA Conference 2022"],
     },
@@ -117,14 +116,14 @@ const RAW = [
         qualification: "MBBS/MD/DNB",
         timing: "10:00 AM – 5:00 PM",
         camp: "EVERY 4th SUNDAY – POKRAN CAMP",
-        experience: 11,
-        patients: "9,500+",
+        experience: 6,
+        patients: "4,500+",
         bio: "Dr. Om Prakash Suthar is a dedicated cardiologist with expertise in non-invasive cardiology and heart disease prevention. He runs a monthly camp in Pokran to extend cardiac care to rural populations, demonstrating his commitment to community health beyond hospital walls.",
         expertise: ["Non-Invasive Cardiology", "Stress Testing (TMT)", "Holter Monitoring", "Heart Disease Prevention", "Lipid Management", "Hypertension Protocol"],
         education: [
-            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2009" },
-            { degree: "MD – Medicine", college: "Dr. S.N. Medical College, Jodhpur", year: "2013" },
-            { degree: "DNB – Cardiology", college: "National Board of Examinations", year: "2016" },
+            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2014" },
+            { degree: "MD – Medicine", college: "Dr. S.N. Medical College, Jodhpur", year: "2018" },
+            { degree: "DNB – Cardiology", college: "National Board of Examinations", year: "2021" },
         ],
         achievements: ["Community Health Initiative Award 2023", "Member, Cardiological Society of India"],
     },
@@ -136,14 +135,14 @@ const RAW = [
         qualification: "MBBS/MD/DM",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 13,
-        patients: "11,000+",
+        experience: 3,
+        patients: "2,500+",
         bio: "Dr. Kamlesh Goyal combines deep academic training with hands-on clinical expertise to deliver evidence-based cardiac care. His focus areas include complex arrhythmia management and cardiac rehabilitation, helping patients regain quality of life after major cardiac events.",
         expertise: ["Cardiac Electrophysiology", "Arrhythmia Management", "Cardiac Rehabilitation", "Heart Valve Disease", "Acute MI Management", "Peripheral Vascular Disease"],
         education: [
-            { degree: "MBBS", college: "Sawai Man Singh Medical College, Jaipur", year: "2007" },
-            { degree: "MD – Internal Medicine", college: "Sawai Man Singh Medical College, Jaipur", year: "2011" },
-            { degree: "DM – Cardiology", college: "PGI Chandigarh", year: "2014" },
+            { degree: "MBBS", college: "Sawai Man Singh Medical College, Jaipur", year: "2017" },
+            { degree: "MD – Internal Medicine", college: "Sawai Man Singh Medical College, Jaipur", year: "2021" },
+            { degree: "DM – Cardiology", college: "PGI Chandigarh", year: "2024" },
         ],
         achievements: ["Fellow, European Society of Cardiology", "Best Research Paper – Indian Heart Rhythm Society 2022"],
     },
@@ -155,14 +154,14 @@ const RAW = [
         qualification: "MBBS/MD/DM",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 12,
-        patients: "10,200+",
+        experience: 7,
+        patients: "6,000+",
         bio: "Dr. Rakesh Choudhary is a skilled interventional cardiologist known for swift, accurate diagnosis and successful outcomes in emergency cardiac care. He has special interest in primary angioplasty for heart attacks and has significantly improved door-to-balloon time at Trinay Hospital.",
         expertise: ["Primary Angioplasty", "Acute Coronary Syndrome", "Coronary Angiography", "Structural Heart Disease", "Pericardial Disease", "Cardiac Imaging"],
         education: [
-            { degree: "MBBS", college: "Mahatma Gandhi Medical College, Jaipur", year: "2008" },
-            { degree: "MD – Medicine", college: "Mahatma Gandhi Medical College, Jaipur", year: "2012" },
-            { degree: "DM – Cardiology", college: "G.B. Pant Hospital, New Delhi", year: "2015" },
+            { degree: "MBBS", college: "Mahatma Gandhi Medical College, Jaipur", year: "2013" },
+            { degree: "MD – Medicine", college: "Mahatma Gandhi Medical College, Jaipur", year: "2017" },
+            { degree: "DM – Cardiology", college: "G.B. Pant Hospital, New Delhi", year: "2020" },
         ],
         achievements: ["IMA Award for Emergency Cardiac Services 2022", "Cardiological Society of India – Life Member"],
     },
@@ -174,15 +173,15 @@ const RAW = [
         qualification: "MBBS/MS/FACS/FRCS",
         timing: "10:00 AM – 4:00 PM",
         camp: "",
-        experience: 22,
-        patients: "25,000+",
-        bio: "Dr. Kamal Kant is a highly accomplished surgeon with international credentials (FACS, FRCS), bringing over 22 years of operative excellence. He has trained in advanced minimally invasive techniques and has been instrumental in establishing the laparoscopic surgery programme at Trinay Hospital.",
+        experience: 46,
+        patients: "40,000+",
+        bio: "Dr. Kamal Kant is a legendary surgeon with 46 years of operative excellence and international credentials (FACS, FRCS). He has trained generations of surgeons and has been instrumental in establishing the laparoscopic surgery programme at Trinay Hospital, combining unmatched experience with modern minimally invasive techniques.",
         expertise: ["Laparoscopic Surgery", "Hernia Repair", "Appendix Surgery", "GI Surgery", "Thyroid & Breast Surgery", "Colorectal Surgery", "Emergency Surgery"],
         education: [
-            { degree: "MBBS", college: "Jodhpur Medical College", year: "1998" },
-            { degree: "MS – General Surgery", college: "S.M.S. Medical College, Jaipur", year: "2003" },
-            { degree: "FACS", college: "American College of Surgeons", year: "2010" },
-            { degree: "FRCS", college: "Royal College of Surgeons, Edinburgh", year: "2012" },
+            { degree: "MBBS", college: "Jodhpur Medical College", year: "1975" },
+            { degree: "MS – General Surgery", college: "S.M.S. Medical College, Jaipur", year: "1980" },
+            { degree: "FACS", college: "American College of Surgeons", year: "1990" },
+            { degree: "FRCS", college: "Royal College of Surgeons, Edinburgh", year: "1995" },
         ],
         achievements: ["Fellow, American College of Surgeons", "Fellow, Royal College of Surgeons (Edinburgh)", "Rajasthan Surgeon of the Year 2020"],
     },
@@ -194,14 +193,14 @@ const RAW = [
         qualification: "MBBS/MS/MCH",
         timing: "11:00 AM – 3:00 PM",
         camp: "",
-        experience: 10,
-        patients: "7,000+",
-        bio: "Dr. Tejpal Faroda is a skilled neurosurgeon with expertise in spine surgery and neuro-oncology. He performs complex brain and spinal procedures using modern microsurgical techniques, combining technical precision with compassionate patient care to restore neurological function.",
+        experience: 20,
+        patients: "12,000+",
+        bio: "Dr. Tejpal Faroda is a highly skilled neurosurgeon with 20 years of expertise in spine surgery and neuro-oncology. He performs complex brain and spinal procedures using modern microsurgical techniques, combining technical precision with compassionate patient care to restore neurological function.",
         expertise: ["Brain Tumour Surgery", "Spine Surgery", "Head Injury Management", "Cerebrovascular Surgery", "Paediatric Neurosurgery", "Peripheral Nerve Surgery"],
         education: [
-            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2010" },
-            { degree: "MS – General Surgery", college: "Dr. S.N. Medical College, Jodhpur", year: "2014" },
-            { degree: "MCH – Neurosurgery", college: "NIMHANS, Bengaluru", year: "2017" },
+            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2000" },
+            { degree: "MS – General Surgery", college: "Dr. S.N. Medical College, Jodhpur", year: "2004" },
+            { degree: "MCH – Neurosurgery", college: "NIMHANS, Bengaluru", year: "2007" },
         ],
         achievements: ["Member, Neurological Society of India", "Young Neurosurgeon Award – NSI 2022"],
     },
@@ -213,15 +212,15 @@ const RAW = [
         qualification: "MBBS/MS",
         timing: "10:00 AM – 4:00 PM",
         camp: "",
-        experience: 18,
-        patients: "20,000+",
-        bio: "Dr. Pushpa Mathuria is a compassionate and highly experienced gynaecologist and obstetrician who has safely delivered over 12,000 babies in her career. She specialises in high-risk pregnancies, infertility management, and advanced gynaecological surgeries, and is beloved by her patients for her warm, reassuring approach.",
+        experience: 41,
+        patients: "35,000+",
+        bio: "Dr. Pushpa Mathuria is one of Jodhpur's most celebrated gynaecologists with an extraordinary 41-year career. She has safely delivered over 20,000 babies and specialises in high-risk pregnancies, infertility management, and advanced gynaecological surgeries. Patients across generations trust her for her warmth, skill, and compassion.",
         expertise: ["High-Risk Pregnancy", "Normal & Caesarean Delivery", "Infertility Workup", "PCOD Management", "Laparoscopic Gynaecology", "Hysteroscopy", "Menstrual Disorders"],
         education: [
-            { degree: "MBBS", college: "Rajasthan University of Health Sciences", year: "2002" },
-            { degree: "MS – Obstetrics & Gynaecology", college: "S.M.S. Medical College, Jaipur", year: "2006" },
+            { degree: "MBBS", college: "Rajasthan University of Health Sciences", year: "1980" },
+            { degree: "MS – Obstetrics & Gynaecology", college: "S.M.S. Medical College, Jaipur", year: "1984" },
         ],
-        achievements: ["Fellow, Federation of Obstetric and Gynaecological Societies of India", "Trinay Hospital Best Doctor Award 2021 & 2023"],
+        achievements: ["Fellow, Federation of Obstetric and Gynaecological Societies of India", "Trinay Hospital Best Doctor Award 2021 & 2023", "Lifetime Achievement Award – IMA Jodhpur"],
     },
     {
         id: 12020,
@@ -231,13 +230,13 @@ const RAW = [
         qualification: "MBBS/MS",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 12,
-        patients: "13,000+",
-        bio: "Dr. Amit Sharma is a skilled orthopaedic surgeon specialising in joint replacement, trauma surgery, and sports injuries. He performs primary and revision knee and hip replacements using computer-assisted techniques, helping patients regain mobility and live pain-free lives.",
+        experience: 17,
+        patients: "16,000+",
+        bio: "Dr. Amit Sharma is a skilled orthopaedic surgeon with 17 years of expertise in joint replacement, trauma surgery, and sports injuries. He performs primary and revision knee and hip replacements using computer-assisted techniques, helping patients regain mobility and live pain-free lives.",
         expertise: ["Total Knee Replacement", "Total Hip Replacement", "Fracture Surgery", "Sports Medicine", "Arthroscopy", "Spine Disorders", "Paediatric Orthopaedics"],
         education: [
-            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2008" },
-            { degree: "MS – Orthopaedics", college: "S.M.S. Medical College, Jaipur", year: "2012" },
+            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2003" },
+            { degree: "MS – Orthopaedics", college: "S.M.S. Medical College, Jaipur", year: "2007" },
         ],
         achievements: ["Member, Indian Orthopaedic Association", "Fellowship in Joint Replacement, Manipal Hospital Bengaluru"],
     },
@@ -249,13 +248,13 @@ const RAW = [
         qualification: "BPT/MPT",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 8,
-        patients: "5,500+",
-        bio: "Dr. Pushpa Barath is a dedicated physiotherapist with expertise in musculoskeletal rehabilitation and neuro-physiotherapy. She designs personalised rehabilitation programmes to restore function, reduce pain, and prevent re-injury in post-operative and trauma patients.",
+        experience: 15,
+        patients: "10,000+",
+        bio: "Dr. Pushpa Barath is a highly experienced physiotherapist with 15 years of expertise in musculoskeletal rehabilitation and neuro-physiotherapy. She designs personalised rehabilitation programmes to restore function, reduce pain, and prevent re-injury in post-operative and trauma patients.",
         expertise: ["Post-Surgical Rehabilitation", "Neurological Physiotherapy", "Sports Injury Rehab", "Back & Neck Pain", "Chest Physiotherapy", "Paediatric Physiotherapy", "Electrotherapy"],
         education: [
-            { degree: "BPT – Bachelor of Physiotherapy", college: "Rajasthan University of Health Sciences", year: "2012" },
-            { degree: "MPT – Musculoskeletal Physiotherapy", college: "Manipal University", year: "2014" },
+            { degree: "BPT – Bachelor of Physiotherapy", college: "Rajasthan University of Health Sciences", year: "2005" },
+            { degree: "MPT – Musculoskeletal Physiotherapy", college: "Manipal University", year: "2007" },
         ],
         achievements: ["Member, Indian Association of Physiotherapists", "Best Physiotherapy Department – Trinay Hospital 2022"],
     },
@@ -267,13 +266,13 @@ const RAW = [
         qualification: "MBBS/MD",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 9,
-        patients: "12,000+ reports",
-        bio: "Dr. Pooja Mehta is a highly trained radiologist specialising in cross-sectional imaging and intervention radiology. She provides precise and rapid diagnostic reports that drive clinical decision-making across all departments at Trinay Hospital.",
+        experience: 17,
+        patients: "20,000+ reports",
+        bio: "Dr. Pooja Mehta is a highly trained radiologist with 17 years of expertise in cross-sectional imaging and interventional radiology. She provides precise and rapid diagnostic reports that drive clinical decision-making across all departments at Trinay Hospital.",
         expertise: ["CT Scan & MRI Interpretation", "Ultrasound & Doppler", "X-Ray Reporting", "Mammography", "Fluoroscopy", "Image-Guided Biopsy"],
         education: [
-            { degree: "MBBS", college: "Sawai Man Singh Medical College, Jaipur", year: "2011" },
-            { degree: "MD – Radiology & Imaging", college: "Sawai Man Singh Medical College, Jaipur", year: "2015" },
+            { degree: "MBBS", college: "Sawai Man Singh Medical College, Jaipur", year: "2003" },
+            { degree: "MD – Radiology & Imaging", college: "Sawai Man Singh Medical College, Jaipur", year: "2007" },
         ],
         achievements: ["Member, Indian Radiological and Imaging Association", "IRIA Best Paper Award 2023"],
     },
@@ -285,14 +284,14 @@ const RAW = [
         qualification: "MBBS/MS/MCH",
         timing: "10:00 AM – 12:00 Noon",
         camp: "",
-        experience: 11,
-        patients: "8,000+",
+        experience: 6,
+        patients: "4,000+",
         bio: "Dr. Priyank Bhargava is a skilled urologist with comprehensive training in endoscopic, laparoscopic, and robotic urology. He manages a wide spectrum of urological conditions from kidney stones to prostate disease with minimally invasive techniques for faster recovery.",
         expertise: ["Kidney Stone Management (ESWL, PCNL)", "Prostate Disease (BPH & Cancer)", "Bladder Disorders", "Laparoscopic Urology", "Urinary Tract Infections", "Male Reproductive Health"],
         education: [
-            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2009" },
-            { degree: "MS – General Surgery", college: "Dr. S.N. Medical College, Jodhpur", year: "2013" },
-            { degree: "MCH – Urology", college: "P.G.I.M.E.R., Chandigarh", year: "2016" },
+            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2014" },
+            { degree: "MS – General Surgery", college: "Dr. S.N. Medical College, Jodhpur", year: "2018" },
+            { degree: "MCH – Urology", college: "P.G.I.M.E.R., Chandigarh", year: "2021" },
         ],
         achievements: ["Member, Urological Society of India", "Fellowship in Endourology, Singapore General Hospital"],
     },
@@ -304,13 +303,13 @@ const RAW = [
         qualification: "MBBS/MD",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 15,
-        patients: "22,000+",
-        bio: "Dr. Sumeet Godhwani is one of Trinay Hospital's most experienced internists, renowned for his thorough clinical assessment and ability to manage complex multi-system diseases. He is the first point of contact for thousands of patients and is celebrated for his accessibility, thoroughness, and empathy.",
+        experience: 26,
+        patients: "30,000+",
+        bio: "Dr. Sumeet Godhwani is one of Trinay Hospital's most experienced internists with 26 years of practice, renowned for his thorough clinical assessment and ability to manage complex multi-system diseases. He is celebrated for his accessibility, thoroughness, and empathy.",
         expertise: ["Diabetes Management", "Hypertension & Heart Disease", "Respiratory Infections", "Thyroid Disorders", "Fever Workup", "Infectious Disease", "Preventive Medicine"],
         education: [
-            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2005" },
-            { degree: "MD – General Medicine", college: "S.M.S. Medical College, Jaipur", year: "2009" },
+            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "1995" },
+            { degree: "MD – General Medicine", college: "S.M.S. Medical College, Jaipur", year: "1999" },
         ],
         achievements: ["IMA Rajasthan Best Physician Award 2021", "Fellow, API (Association of Physicians of India)"],
     },
@@ -322,13 +321,13 @@ const RAW = [
         qualification: "MSC",
         timing: "9:00 AM – 4:00 PM",
         camp: "",
-        experience: 7,
-        patients: "4,500+",
-        bio: "Ms. Kuldeep Kaur is a qualified clinical dietitian who creates evidence-based, personalised nutrition plans for patients across all departments including diabetics, cardiac patients, bariatrics, and oncology. She is passionate about food as medicine and works closely with the medical team for integrated care.",
+        experience: 12,
+        patients: "8,000+",
+        bio: "Ms. Kuldeep Kaur is a qualified clinical dietitian with 12 years of experience who creates evidence-based, personalised nutrition plans for patients across all departments including diabetics, cardiac patients, bariatrics, and oncology. She is passionate about food as medicine.",
         expertise: ["Diabetes Diet Planning", "Cardiac Nutrition", "Weight Management", "Renal Diet", "Paediatric Nutrition", "Sports Nutrition", "Oncology Diet Support"],
         education: [
-            { degree: "BSc – Dietetics & Nutrition", college: "Punjabi University, Patiala", year: "2013" },
-            { degree: "MSc – Clinical Nutrition", college: "Punjabi University, Patiala", year: "2015" },
+            { degree: "BSc – Dietetics & Nutrition", college: "Punjabi University, Patiala", year: "2009" },
+            { degree: "MSc – Clinical Nutrition", college: "Punjabi University, Patiala", year: "2011" },
         ],
         achievements: ["Registered Dietitian, Indian Dietetic Association", "Certified Diabetes Educator (CDE)"],
     },
@@ -340,15 +339,15 @@ const RAW = [
         qualification: "MBBS/MS",
         timing: "10:00 AM – 4:00 PM",
         camp: "",
-        experience: 16,
-        patients: "17,000+",
-        bio: "Dr. Jaishree Sharma is a senior gynaecologist with vast experience in obstetrics and minimally invasive gynaecological procedures. She is known for her warm bedside manner and has delivered thousands of babies including high-risk and complicated pregnancies, earning the trust of families across Jodhpur.",
+        experience: 42,
+        patients: "28,000+",
+        bio: "Dr. Jaishree Sharma is a senior gynaecologist with an exceptional 42-year career in obstetrics and minimally invasive gynaecological procedures. She is known for her warm bedside manner and has delivered thousands of babies including high-risk and complicated pregnancies, earning the trust of families across generations in Jodhpur.",
         expertise: ["High-Risk Obstetrics", "Normal Delivery", "Caesarean Section", "Endometriosis", "Fibroid Management", "Menopause Care", "Gynaecological Oncology Screening"],
         education: [
-            { degree: "MBBS", college: "Rajasthan University of Health Sciences", year: "2004" },
-            { degree: "MS – Obstetrics & Gynaecology", college: "Dr. S.N. Medical College, Jodhpur", year: "2008" },
+            { degree: "MBBS", college: "Rajasthan University of Health Sciences", year: "1980" },
+            { degree: "MS – Obstetrics & Gynaecology", college: "Dr. S.N. Medical College, Jodhpur", year: "1984" },
         ],
-        achievements: ["Fellow, Royal College of Obstetricians and Gynaecologists (FRCOG)", "FOGSI Life Member"],
+        achievements: ["Fellow, Royal College of Obstetricians and Gynaecologists (FRCOG)", "FOGSI Life Member", "Lifetime Achievement Award – Rajasthan Gynaecological Society"],
     },
     {
         id: 12036,
@@ -358,13 +357,13 @@ const RAW = [
         qualification: "MBBS/MS",
         timing: "10:00 AM – 2:00 PM",
         camp: "",
-        experience: 8,
-        patients: "6,000+",
+        experience: 7,
+        patients: "5,000+",
         bio: "Dr. Ritu Choudhary is a compassionate gynaecologist with a special interest in adolescent health, infertility, and laparoscopic gynaecological surgery. She creates a supportive, non-judgemental environment for her patients and is particularly skilled in managing complex menstrual disorders.",
         expertise: ["Adolescent Gynaecology", "Infertility & IVF Workup", "Laparoscopic Gynaecology", "PCOD & Hormonal Disorders", "Menstrual Problems", "Cervical Cancer Screening"],
         education: [
-            { degree: "MBBS", college: "Mahatma Gandhi Medical College, Jaipur", year: "2012" },
-            { degree: "MS – Obstetrics & Gynaecology", college: "Mahatma Gandhi Medical College, Jaipur", year: "2016" },
+            { degree: "MBBS", college: "Mahatma Gandhi Medical College, Jaipur", year: "2013" },
+            { degree: "MS – Obstetrics & Gynaecology", college: "Mahatma Gandhi Medical College, Jaipur", year: "2017" },
         ],
         achievements: ["FOGSI Member", "Trained in Laparoscopic Gynaecology – AIIMS Delhi"],
     },
@@ -374,15 +373,15 @@ const RAW = [
         designation: "CONSULTANT",
         dept: "DENTISTRY",
         qualification: "BDS/MDS",
-        timing: "10:00 AM – 4:00 PM",
+        timing: "ON CALL",
         camp: "",
-        experience: 10,
-        patients: "8,500+",
-        bio: "Dr. Chitra Agarwal is an accomplished dental surgeon and specialist in oral and maxillofacial surgery. She combines artistry with clinical expertise to deliver smile-transforming and pain-relieving dental treatments, from routine procedures to complex oral surgeries.",
+        experience: 16,
+        patients: "12,000+",
+        bio: "Dr. Chitra Agarwal is an accomplished dental surgeon and specialist in oral and maxillofacial surgery with 16 years of experience. She combines artistry with clinical expertise to deliver smile-transforming and pain-relieving dental treatments, from routine procedures to complex oral surgeries.",
         expertise: ["Dental Implants", "Root Canal Treatment", "Cosmetic Dentistry", "Oral Surgery", "Orthodontics", "Periodontics", "Paediatric Dentistry"],
         education: [
-            { degree: "BDS – Bachelor of Dental Surgery", college: "Darshan Dental College, Jodhpur", year: "2010" },
-            { degree: "MDS – Oral & Maxillofacial Surgery", college: "Rajasthan Dental College, Jaipur", year: "2014" },
+            { degree: "BDS – Bachelor of Dental Surgery", college: "Darshan Dental College, Jodhpur", year: "2004" },
+            { degree: "MDS – Oral & Maxillofacial Surgery", college: "Rajasthan Dental College, Jaipur", year: "2008" },
         ],
         achievements: ["IDA Life Member", "Best Dentist – Jodhpur Dental Association 2022"],
     },
@@ -394,13 +393,13 @@ const RAW = [
         qualification: "MBBS/DNB",
         timing: "10:00 AM – 5:00 PM",
         camp: "",
-        experience: 7,
-        patients: "9,000+ reports",
+        experience: 3,
+        patients: "4,000+ reports",
         bio: "Dr. Vidhi Agarwal is a dedicated radiologist with expertise in interventional radiology and women's imaging. She is skilled in providing real-time guidance for image-guided procedures and has a keen eye for subtle findings on CT, MRI, and ultrasound that help clinicians arrive at the right diagnosis faster.",
         expertise: ["MRI Reporting", "CT Scan Analysis", "Ultrasound & Colour Doppler", "Mammography", "Interventional Radiology", "Women's Imaging"],
         education: [
-            { degree: "MBBS", college: "Sardar Patel Medical College, Bikaner", year: "2013" },
-            { degree: "DNB – Radiodiagnosis", college: "National Board of Examinations", year: "2018" },
+            { degree: "MBBS", college: "Sardar Patel Medical College, Bikaner", year: "2018" },
+            { degree: "DNB – Radiodiagnosis", college: "National Board of Examinations", year: "2023" },
         ],
         achievements: ["Member, Indian Radiological and Imaging Association", "Presented research at IRIA Annual Conference 2023"],
     },
@@ -412,14 +411,14 @@ const RAW = [
         qualification: "MBBS/MS/MCH",
         timing: "ON CALL",
         camp: "",
-        experience: 13,
+        experience: 10,
         patients: "5,000+",
-        bio: "Dr. Rakesh Rathore is a dedicated surgical oncologist with expertise in cancer surgery across multiple anatomical sites. He employs oncoplastic and minimally invasive techniques to ensure tumour-free margins while preserving organ function, offering Jodhpur patients advanced cancer care close to home.",
+        bio: "Dr. Rakesh Rathore is a dedicated surgical oncologist with 10 years of expertise in cancer surgery across multiple anatomical sites. He employs oncoplastic and minimally invasive techniques to ensure tumour-free margins while preserving organ function, offering Jodhpur patients advanced cancer care close to home.",
         expertise: ["Breast Cancer Surgery", "GI Cancer Surgery", "Thyroid & Parathyroid Cancer", "Soft Tissue Sarcoma", "Laparoscopic Oncosurgery", "Sentinel Node Biopsy", "Palliative Surgery"],
         education: [
-            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2007" },
-            { degree: "MS – General Surgery", college: "Dr. S.N. Medical College, Jodhpur", year: "2011" },
-            { degree: "MCH – Surgical Oncology", college: "Tata Memorial Hospital, Mumbai", year: "2015" },
+            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2010" },
+            { degree: "MS – General Surgery", college: "Dr. S.N. Medical College, Jodhpur", year: "2014" },
+            { degree: "MCH – Surgical Oncology", college: "Tata Memorial Hospital, Mumbai", year: "2017" },
         ],
         achievements: ["Fellow, Association of Surgeons of India", "Tata Memorial Hospital – Oncosurgery Training Diploma"],
     },
@@ -433,7 +432,7 @@ const RAW = [
         camp: "",
         experience: 9,
         patients: "11,000+",
-        bio: "Dr. Metali Rai is an experienced ENT surgeon with skill in both paediatric and adult ear, nose, and throat conditions. She performs functional endoscopic sinus surgery (FESS), cochlear implant workups, and micro-ear surgery, helping patients breathe, hear, and speak better.",
+        bio: "Dr. Metali Rai is an experienced ENT surgeon with 9 years of skill in both paediatric and adult ear, nose, and throat conditions. She performs functional endoscopic sinus surgery (FESS), cochlear implant workups, and micro-ear surgery, helping patients breathe, hear, and speak better.",
         expertise: ["FESS – Sinus Surgery", "Tonsillectomy & Adenoidectomy", "Ear Drum Repair", "Neck Mass Surgery", "Nasal Polyps", "Hearing Loss Workup", "Voice & Swallowing Disorders"],
         education: [
             { degree: "MBBS", college: "Mahatma Gandhi Medical College, Jaipur", year: "2011" },
@@ -449,20 +448,55 @@ const RAW = [
         qualification: "MBBS/MS/MCH",
         timing: "11:00 AM – 2:00 PM",
         camp: "",
-        experience: 11,
-        patients: "6,500+",
-        bio: "Dr. Sushil Nahar is a talented plastic and cosmetic surgeon who combines surgical precision with an artistic eye to deliver natural, life-enhancing results. He specialises in reconstructive surgery after trauma or cancer, as well as cosmetic procedures that restore confidence and quality of life.",
+        experience: 21,
+        patients: "10,000+",
+        bio: "Dr. Sushil Nahar is a talented plastic and cosmetic surgeon with 21 years of experience who combines surgical precision with an artistic eye to deliver natural, life-enhancing results. He specialises in reconstructive surgery after trauma or cancer, as well as cosmetic procedures that restore confidence and quality of life.",
         expertise: ["Reconstructive Surgery", "Cleft Lip & Palate", "Burn Reconstruction", "Face Lift & Rhinoplasty", "Liposuction & Body Contouring", "Skin Grafting", "Hand Surgery"],
         education: [
-            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2009" },
-            { degree: "MS – General Surgery", college: "Dr. S.N. Medical College, Jodhpur", year: "2013" },
-            { degree: "MCH – Plastic Surgery", college: "AIIMS New Delhi", year: "2016" },
+            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "2000" },
+            { degree: "MS – General Surgery", college: "Dr. S.N. Medical College, Jodhpur", year: "2004" },
+            { degree: "MCH – Plastic Surgery", college: "AIIMS New Delhi", year: "2007" },
         ],
         achievements: ["Fellow, Association of Plastic Surgeons of India", "Best Research Paper – APSI National Conference 2021"],
     },
+    {
+        id: 12060,
+        name: "DR. SHALINI AGRAHARI",
+        designation: "CONSULTANT",
+        dept: "RESPIRATORY MEDICINE",
+        qualification: "MBBS/MD",
+        timing: "10:00 AM – 2:00 PM",
+        camp: "",
+        experience: 6,
+        patients: "4,000+",
+        bio: "Dr. Shalini Agrahari is a dedicated pulmonologist specialising in respiratory diseases including asthma, COPD, and sleep-related breathing disorders. She provides comprehensive lung care using modern diagnostic tools and evidence-based treatment protocols for patients across all age groups.",
+        expertise: ["Asthma Management", "COPD Treatment", "Pulmonary Function Tests", "Sleep Apnoea", "Interstitial Lung Disease", "Respiratory Infections", "Chest Physiotherapy"],
+        education: [
+            { degree: "MBBS", college: "King George's Medical University, Lucknow", year: "2015" },
+            { degree: "MD – Respiratory Medicine", college: "King George's Medical University, Lucknow", year: "2019" },
+        ],
+        achievements: ["Member, Indian Chest Society", "Certified in Bronchoscopy & Interventional Pulmonology"],
+    },
+    {
+        id: 12061,
+        name: "DR. ANIL KUMAR ARORA",
+        designation: "CONSULTANT",
+        dept: "PAEDIATRICS",
+        qualification: "MBBS/MD",
+        timing: "11:00 AM – 2:00 PM",
+        camp: "",
+        experience: 42,
+        patients: "50,000+",
+        bio: "Dr. Anil Kumar Arora is a legendary paediatrician with an extraordinary 42-year career dedicated to the health of children. Generations of Jodhpur families have trusted him for newborn care, childhood illnesses, developmental assessments, and adolescent health. His gentle, reassuring nature makes him a beloved doctor among children and parents alike.",
+        expertise: ["Newborn & Neonatal Care", "Childhood Infections", "Growth & Development Assessment", "Vaccination Programme", "Adolescent Health", "Paediatric Nutrition", "Childhood Asthma"],
+        education: [
+            { degree: "MBBS", college: "Dr. S.N. Medical College, Jodhpur", year: "1979" },
+            { degree: "MD – Paediatrics", college: "S.M.S. Medical College, Jaipur", year: "1983" },
+        ],
+        achievements: ["Fellow, Indian Academy of Pediatrics", "Lifetime Achievement Award – IAP Rajasthan", "Best Paediatrician – Jodhpur Medical Association 2020"],
+    },
 ];
 
-/* ─── ENRICHED EXPORT ───────────────────────────────────────────────────── */
 export const DOCTORS = RAW.map((doc) => {
     const female = isFemale(doc.name);
     const deptStyle = DEPT_COLOR[doc.dept] ?? { color: "blue", gradient: "from-blue-600 to-blue-800" };
@@ -494,11 +528,9 @@ export const DOCTORS = RAW.map((doc) => {
     };
 });
 
-/* Helper — find by id or slug */
 export const findDoctor = (idOrSlug) => {
     const asNum = Number(idOrSlug);
     return DOCTORS.find((d) => d.id === asNum || d.slug === idOrSlug) ?? null;
 };
 
-/* All unique departments for filter */
 export const DEPARTMENTS = ["All Specialties", ...new Set(DOCTORS.map((d) => d.dept))];

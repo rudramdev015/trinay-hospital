@@ -1,16 +1,21 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
     Search, GraduationCap, Clock, Award,
-    Phone, Calendar, ChevronRight, Users, Star,
+    Phone, Calendar, ChevronRight, Users, Star, Stethoscope,
 } from "lucide-react";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 import { DOCTORS, DEPARTMENTS } from "../data/doctorsData";
+import { buildApiUrl } from "../utils/api";
 
 /* ── Doctor card ──────────────────────────────────────────────────────── */
-const DoctorCard = ({ doc }) => (
+const DoctorCard = ({ doc }) => {
+    const [imgFailed, setImgFailed] = useState(false);
+    const initials = (doc.nameTitled || "").split(" ").filter((w) => /^[A-Za-z]/.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+    const showImg = doc.avatar && !imgFailed;
+    return (
     <motion.article
         layout
         initial={{ opacity: 0, y: 24, scale: 0.97 }}
@@ -22,15 +27,25 @@ const DoctorCard = ({ doc }) => (
     >
         {/* Full-width photo header */}
         <div className={`relative h-56 bg-linear-to-br ${doc.gradient} overflow-hidden shrink-0`}>
-            <img
-                src={doc.avatar}
-                alt={doc.nameTitled}
-                className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.07]"
-                loading="lazy"
-            />
+            {showImg ? (
+                <img
+                    src={doc.avatar}
+                    alt={doc.nameTitled}
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.07]"
+                    onError={() => setImgFailed(true)}
+                />
+            ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                    {initials ? (
+                        <span className="text-7xl font-black text-white/25 select-none tracking-tight">{initials}</span>
+                    ) : (
+                        <Stethoscope size={72} className="text-white/20" />
+                    )}
+                </div>
+            )}
             {/* Bottom gradient overlay */}
             <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-black/60 to-transparent" />
-            {/* Dept badge only — truncated to prevent overlap */}
+            {/* Dept badge */}
             <span className={`absolute top-3 left-3 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full text-white bg-linear-to-r ${doc.gradient} shadow-lg max-w-[80%] truncate`}>
                 {doc.deptDisplay}
             </span>
@@ -94,21 +109,51 @@ const DoctorCard = ({ doc }) => (
             </div>
         </div>
     </motion.article>
-);
+    );
+};
 
 /* ── Doctors Page ─────────────────────────────────────────────────────── */
+const FEMALE_NAMES_SET = ["RASHMI","PRIYANKA","PUSHPA","POOJA","KULDEEP","JAISHREE","RITU","CHITRA","VIDHI","METALI","SHALINI"];
+const isFemaleDoc = (name) => FEMALE_NAMES_SET.some((n) => name.toUpperCase().includes(n));
+
+const normalizeDynamic = (d) => ({
+    ...d,
+    id: d._id,
+    nameTitled: d.name.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" "),
+    slug: d._id,
+    isFemale: isFemaleDoc(d.name),
+    isSenior: d.designation.includes("SR."),
+    avatar: d.photo || null,
+    days: "Mon – Sat",
+    languages: ["Hindi", "English", "Rajasthani"],
+    color: "blue",
+    gradient: "from-blue-600 to-blue-800",
+    deptDisplay: d.dept.charAt(0) + d.dept.slice(1).toLowerCase(),
+    patients: `${d.experience * 500}+`,
+});
+
 const DoctorsPage = () => {
     const [search, setSearch] = useState("");
     const [activeDept, setActiveDept] = useState("All Specialties");
+    const [dynamicDoctors, setDynamicDoctors] = useState([]);
+
+    useEffect(() => {
+        fetch(buildApiUrl("/api/doctors/dynamic"))
+            .then((r) => r.ok ? r.json() : null)
+            .then((data) => { if (data?.success) setDynamicDoctors(data.doctors.map(normalizeDynamic)); })
+            .catch(() => {});
+    }, []);
+
+    const allDoctors = useMemo(() => [...(Array.isArray(DOCTORS) ? DOCTORS : []), ...dynamicDoctors], [dynamicDoctors]);
 
     const filtered = useMemo(() =>
-        DOCTORS.filter((d) => {
+        allDoctors.filter((d) => {
             const matchSearch = d.name.toLowerCase().includes(search.toLowerCase()) ||
                                 d.deptDisplay.toLowerCase().includes(search.toLowerCase());
             const matchDept   = activeDept === "All Specialties" || d.dept === activeDept;
             return matchSearch && matchDept;
         }),
-        [search, activeDept]
+        [search, activeDept, allDoctors]
     );
 
     return (

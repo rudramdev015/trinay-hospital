@@ -21,6 +21,7 @@ const DoctorDetail = lazy(() => import("./pages/DoctorDetail"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Careers = lazy(() => import("./pages/Careers"));
 const StaffPortal = lazy(() => import("./pages/StaffPortal"));
+const Mission = lazy(() => import("./pages/Mission"));
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/staff" element={<StaffPortal />} />
+          <Route path="/mission" element={<Mission />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
