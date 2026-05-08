@@ -5,7 +5,8 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 
 // Lazy loading components for better performance
-const About           = lazy(() => import('../components/home/About'));
+const About              = lazy(() => import('../components/home/About'));
+const Accreditations     = lazy(() => import('../components/home/Accreditations'));
 const ServicesPreview = lazy(() => import('../components/home/ServicesPreview'));
 const KeyServices     = lazy(() => import('../components/home/KeyServices'));
 const DoctorsPreview  = lazy(() => import('../components/home/DoctorsPreview'));
@@ -37,7 +38,12 @@ const Home = () => {
                     <About />
                 </Suspense>
 
-                {/* 4. Why Choose Us */}
+                {/* 4. Accreditations & Certifications */}
+                <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
+                    <Accreditations />
+                </Suspense>
+
+                {/* 5. Why Choose Us */}
                 <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
                     <ServicesPreview />
                 </Suspense>

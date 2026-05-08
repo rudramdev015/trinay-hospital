@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { 
-    ChevronDown, Home, Stethoscope, UserRound, Shield, 
-    Phone, Image, Info, CalendarCheck, Facebook, 
+import {
+    ChevronDown, Home, Stethoscope, UserRound, Shield,
+    Phone, Image, Info, CalendarCheck, Facebook,
     Instagram, Menu, X, Search, PhoneCall, MapPin, Clock
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import hospitalLogo from "./trinayhospital_logo.jpg"; // Correct path from your screenshot
+import hospitalLogo from "./trinayhospital_logo.jpg";
+
+const CERT_LOGOS = [
+    { src: "/DOCTOR IAMGES/NABH.png",       alt: "NABH Accredited" },
+    { src: "/DOCTOR IAMGES/ESIC.png",        alt: "ESIC Empanelled" },
+    { src: "/DOCTOR IAMGES/MAA JOGANA .png", alt: "Maa Yojana Approved" },
+];
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -20,10 +26,12 @@ const Navbar = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Close menu when route changes
-    useEffect(() => {
+    // Close menu on navigation (render-time comparison avoids setState-in-effect)
+    const [prevPath, setPrevPath] = useState(location.pathname);
+    if (location.pathname !== prevPath) {
+        setPrevPath(location.pathname);
         setIsOpen(false);
-    }, [location]);
+    }
 
     const navLinks = [
         { label: "Home", to: "/" },
@@ -84,16 +92,34 @@ const Navbar = () => {
                 <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12">
                     <div className="flex justify-between items-center">
                         
-                        {/* Logo - Responsive sizes */}
-                        <Link to="/" className="flex-shrink-0 group">
-                            <img 
-                                src={hospitalLogo} 
-                                alt="Trinay Hospital" 
-                                className={`transition-all duration-500 object-contain ${
-                                    scrolled ? "h-14 lg:h-16" : "h-16 lg:h-24"
-                                }`}
-                            />
-                        </Link>
+                        {/* Logo + Accreditation badges */}
+                        <div className="flex items-center gap-3 shrink-0">
+                            <Link to="/" className="group">
+                                <img
+                                    src={hospitalLogo}
+                                    alt="Trinay Hospital"
+                                    className={`transition-all duration-500 object-contain ${
+                                        scrolled ? "h-14 lg:h-16" : "h-16 lg:h-24"
+                                    }`}
+                                />
+                            </Link>
+
+                            {/* Certification logos — desktop only, no background */}
+                            <div className="hidden lg:flex items-center gap-3 pl-4 ml-1 border-l border-slate-200">
+                                {CERT_LOGOS.map(({ src, alt }) => (
+                                    <img
+                                        key={alt}
+                                        src={src}
+                                        alt={alt}
+                                        title={alt}
+                                        className={`w-auto object-contain transition-all duration-500 ${
+                                            scrolled ? "h-7" : "h-10"
+                                        }`}
+                                        onError={(e) => { e.currentTarget.style.display = "none"; }}
+                                    />
+                                ))}
+                            </div>
+                        </div>
 
                         {/* Desktop Menu (Large screens and 4K) */}
                         <div className="hidden lg:flex items-center gap-8 xl:gap-10">
