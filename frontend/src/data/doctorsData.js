@@ -6,10 +6,6 @@
 const FEMALE_NAMES = ["RASHMI", "PRIYANKA", "PUSHPA", "POOJA", "KULDEEP", "JAISHREE", "RITU", "CHITRA", "VIDHI", "METALI", "SHALINI"];
 const isFemale = (name) => FEMALE_NAMES.some((n) => name.toUpperCase().includes(n));
 
-import dummyMaleAvatar   from "../assets/images/dummyMaleDoctor.png";
-import dummyFemaleAvatar from "../assets/images/dummyFemaleDoctor.png";
-const maleAvatar   = dummyMaleAvatar;
-const femaleAvatar = dummyFemaleAvatar;
 
 const DEPT_COLOR = {
     "ANAESTHESIA & CRITICAL CARE":    { color: "indigo",  gradient: "from-indigo-600 to-indigo-800" },
@@ -513,7 +509,7 @@ export const DOCTORS = RAW.map((doc) => {
         slug,
         isFemale: female,
         isSenior,
-        avatar: PHOTO_MAP[doc.id] ?? (female ? femaleAvatar : maleAvatar),
+        avatar: PHOTO_MAP[doc.id] ?? null,
         days: doc.days ?? "Mon – Sat",
         languages: doc.languages ?? ["Hindi", "English", "Rajasthani"],
         color: deptStyle.color,
