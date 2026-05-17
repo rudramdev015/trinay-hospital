@@ -592,7 +592,7 @@ app.get('/api/admin/attendance/today', authenticate, async (req, res) => {
 
 app.get('/api/doctors/dynamic', async (req, res) => {
     try {
-        const doctors = await DynamicDoctor.find({ isActive: true }).sort({ name: 1 }).select('-photo');
+        const doctors = await DynamicDoctor.find({ isActive: true }).sort({ name: 1 });
         return res.json({ success: true, doctors });
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
@@ -637,6 +637,16 @@ app.post('/api/admin/doctors', authenticate, async (req, res) => {
             photo: photo || '',
         });
         return res.status(201).json({ success: true, doctor });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/admin/doctors/:id', authenticate, async (req, res) => {
+    try {
+        const doctor = await DynamicDoctor.findById(req.params.id);
+        if (!doctor) return res.status(404).json({ success: false, message: 'Doctor not found' });
+        return res.json({ success: true, doctor });
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
     }

@@ -164,6 +164,7 @@ const AdminDashboard = () => {
     const [doctorFormError, setDoctorFormError] = useState("");
     const [isSavingDoctor, setIsSavingDoctor] = useState(false);
     const [editingDoctor, setEditingDoctor] = useState(null);
+    const [existingPhotoPreview, setExistingPhotoPreview] = useState(null);
     const [pendingDeleteDoctor, setPendingDeleteDoctor] = useState(null);
     const [doctorSearch, setDoctorSearch] = useState("");
     const [doctorFilter, setDoctorFilter] = useState("all"); // "all" | "static" | "custom"
@@ -410,14 +411,18 @@ const AdminDashboard = () => {
         setDoctorFormError("");
         setIsSavingDoctor(true);
         const token = getToken();
+        const isEditingExisting = !!(editingDoctor && editingDoctor._id && !editingDoctor._isStaticDraft);
         const payload = {
             ...doctorForm,
             experience: Number(doctorForm.experience),
             expertise: doctorForm.expertise.split(",").map((s) => s.trim()).filter(Boolean),
             ...(editingDoctor?.staticId != null && { staticId: editingDoctor.staticId }),
         };
+        // When editing an existing doctor without uploading a new photo, omit the photo
+        // field entirely so the backend doesn't overwrite the stored image with an empty string
+        if (isEditingExisting && !payload.photo) delete payload.photo;
         try {
-            const isDynamic = editingDoctor && editingDoctor._id && !editingDoctor._isStaticDraft;
+            const isDynamic = isEditingExisting;
             const url = isDynamic
                 ? buildApiUrl(`/api/admin/doctors/${editingDoctor._id}`)
                 : buildApiUrl("/api/admin/doctors");
@@ -437,6 +442,7 @@ const AdminDashboard = () => {
             }
             setShowAddDoctor(false);
             setEditingDoctor(null);
+            setExistingPhotoPreview(null);
             setDoctorForm(emptyDoctorForm);
         } catch (err) {
             setDoctorFormError(err.message);
@@ -463,16 +469,24 @@ const AdminDashboard = () => {
         }
     };
 
-    const openEditDoctor = (doc) => {
+    const openEditDoctor = async (doc) => {
         setEditingDoctor(doc);
+        setExistingPhotoPreview(null);
         setDoctorForm({
             name: doc.name, designation: doc.designation, dept: doc.dept,
             qualification: doc.qualification, timing: doc.timing,
             experience: String(doc.experience), camp: doc.camp || "",
-            bio: doc.bio || "", expertise: (doc.expertise || []).join(", "), photo: doc.photo || "",
+            bio: doc.bio || "", expertise: (doc.expertise || []).join(", "), photo: "",
         });
         setDoctorFormError("");
         setShowAddDoctor(true);
+        // Fetch existing photo for preview (admin list excludes photo for performance)
+        try {
+            const token = getToken();
+            const r = await fetch(buildApiUrl(`/api/admin/doctors/${doc._id}`), { headers: { Authorization: `Bearer ${token}` } });
+            const d = await r.json();
+            if (d.success && d.doctor?.photo) setExistingPhotoPreview(d.doctor.photo);
+        } catch { /* no preview */ }
     };
 
     const openEditStaticDoctor = (staticDoc) => {
@@ -1257,7 +1271,7 @@ const AdminDashboard = () => {
                                 </div>
                                 <button
                                     type="button"
-                                    onClick={() => { setEditingDoctor(null); setDoctorForm(emptyDoctorForm); setDoctorFormError(""); setShowAddDoctor(true); }}
+                                    onClick={() => { setEditingDoctor(null); setExistingPhotoPreview(null); setDoctorForm(emptyDoctorForm); setDoctorFormError(""); setShowAddDoctor(true); }}
                                     className="flex items-center gap-2 rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 shadow-lg shadow-emerald-200"
                                 >
                                     <Plus className="h-4 w-4" /> Add New Doctor
@@ -1575,7 +1589,7 @@ const AdminDashboard = () => {
                                 <h3 className="text-xl font-bold text-slate-900">{editingDoctor ? "Edit Doctor" : "Add New Doctor"}</h3>
                                 <p className="mt-0.5 text-sm text-slate-500">Fill in the details — the profile appears live on the website.</p>
                             </div>
-                            <button type="button" onClick={() => { setShowAddDoctor(false); setEditingDoctor(null); }} className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                            <button type="button" onClick={() => { setShowAddDoctor(false); setEditingDoctor(null); setExistingPhotoPreview(null); }} className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
@@ -1587,10 +1601,20 @@ const AdminDashboard = () => {
                             {/* Photo upload */}
                             <div className="flex flex-col gap-1.5">
                                 <span className="text-sm font-semibold text-slate-700">Doctor Photo</span>
+                                {/* Show current photo when editing */}
+                                {!doctorForm.photo && existingPhotoPreview && (
+                                    <div className="flex items-center gap-3 rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3">
+                                        <img src={existingPhotoPreview} alt="current" className="h-14 w-14 rounded-xl object-cover border border-slate-200 shrink-0" style={{ objectPosition: "center 15%" }} />
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-600">Current photo</p>
+                                            <p className="text-xs text-slate-400">Upload a new photo below to replace it</p>
+                                        </div>
+                                    </div>
+                                )}
                                 <label className="flex items-center gap-3 cursor-pointer rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50 px-4 py-4 hover:bg-blue-100 transition">
                                     <ImagePlus className="h-6 w-6 text-blue-400 shrink-0" />
                                     <div>
-                                        <p className="text-sm font-semibold text-blue-700">Click to upload photo</p>
+                                        <p className="text-sm font-semibold text-blue-700">{existingPhotoPreview && !doctorForm.photo ? "Click to replace photo" : "Click to upload photo"}</p>
                                         <p className="text-xs text-slate-500">JPG, PNG — auto-compressed to small size</p>
                                     </div>
                                     <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
@@ -1602,8 +1626,11 @@ const AdminDashboard = () => {
                                 </label>
                                 {doctorForm.photo && (
                                     <div className="mt-2 flex items-center gap-3">
-                                        <img src={doctorForm.photo} alt="preview" className="h-16 w-16 rounded-xl object-cover border border-slate-200" />
-                                        <button type="button" onClick={() => setDoctorForm((p) => ({ ...p, photo: "" }))} className="text-xs text-red-600 hover:underline">Remove photo</button>
+                                        <img src={doctorForm.photo} alt="new preview" className="h-16 w-16 rounded-xl object-cover border border-slate-200" />
+                                        <div>
+                                            <p className="text-xs font-bold text-emerald-600">New photo ready</p>
+                                            <button type="button" onClick={() => setDoctorForm((p) => ({ ...p, photo: "" }))} className="text-xs text-red-500 hover:underline">Remove</button>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -1655,7 +1682,7 @@ const AdminDashboard = () => {
                             </label>
 
                             <div className="flex justify-end gap-3 pt-2">
-                                <button type="button" onClick={() => { setShowAddDoctor(false); setEditingDoctor(null); }} className="rounded-2xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+                                <button type="button" onClick={() => { setShowAddDoctor(false); setEditingDoctor(null); setExistingPhotoPreview(null); }} className="rounded-2xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
                                 <button type="submit" disabled={isSavingDoctor} className="rounded-2xl bg-blue-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-60">
                                     {isSavingDoctor ? "Saving…" : editingDoctor ? "Save Changes" : "Add Doctor"}
                                 </button>

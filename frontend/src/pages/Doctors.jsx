@@ -122,18 +122,18 @@ const DoctorCard = memo(({ doc, eager }) => {
                 )}
 
                 {/* Action buttons */}
-                <div className="mt-auto pt-4 flex gap-2">
+                <div className="mt-auto pt-4 flex flex-col xs:flex-row gap-2">
                     <Link
                         to={`/doctors/${doc.id}`}
-                        className="flex-1 flex items-center justify-center gap-1 border-2 border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white font-bold text-xs py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-95"
+                        className="flex-1 flex items-center justify-center gap-1 border-2 border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white font-bold text-[11px] py-2 sm:py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-95 whitespace-nowrap"
                     >
-                        View Profile <ChevronRight size={12} />
+                        Profile <ChevronRight size={11} />
                     </Link>
                     <Link
                         to={`/appointment?doctor=${encodeURIComponent(doc.nameTitled)}&dept=${encodeURIComponent(doc.dept)}`}
-                        className={`flex-1 flex items-center justify-center gap-1 bg-linear-to-r ${TRINAY_G} text-white font-bold text-xs py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-95`}
+                        className={`flex-1 flex items-center justify-center gap-1 bg-linear-to-r ${TRINAY_G} text-white font-bold text-[11px] py-2 sm:py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-95 whitespace-nowrap`}
                     >
-                        Book <Calendar size={12} />
+                        Book <Calendar size={11} />
                     </Link>
                 </div>
             </div>
@@ -154,7 +154,7 @@ const normalizeDynamic = (d) => ({
     slug: d._id,
     isFemale: isFemaleDoc(d.name),
     isSenior: (d.designation || "").includes("SR."),
-    avatar: d.photo ? (d.photo.startsWith("http") ? d.photo : buildApiUrl(d.photo)) : null,
+    avatar: d.photo ? (d.photo.startsWith("data:") || d.photo.startsWith("http") ? d.photo : buildApiUrl(d.photo)) : null,
     days: "Mon – Sat",
     languages: ["Hindi", "English", "Rajasthani"],
     color: "blue",
