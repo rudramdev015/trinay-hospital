@@ -22,6 +22,8 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Careers = lazy(() => import("./pages/Careers"));
 const StaffPortal = lazy(() => import("./pages/StaffPortal"));
 const Mission = lazy(() => import("./pages/Mission"));
+const Leadership = lazy(() => import("./pages/Leadership"));
+const DepartmentDetail = lazy(() => import("./pages/DepartmentDetail"));
 
 function App() {
   return (
@@ -34,6 +36,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/services/:slug" element={<DepartmentDetail />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/doctors/:id" element={<DoctorDetail />} />
           <Route path="/terms" element={<Terms />} />
@@ -48,6 +51,7 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/staff" element={<StaffPortal />} />
           <Route path="/mission" element={<Mission />} />
+          <Route path="/leadership" element={<Leadership />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

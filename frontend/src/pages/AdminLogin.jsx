@@ -2,7 +2,7 @@ import { createElement, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, LogIn, User, Shield, Stethoscope, Activity } from "lucide-react";
 import { buildApiUrl } from "../utils/api";
-import hospitalLogo from "../assets/images/reallogo1.png";
+import hospitalLogo from "../components/common/trinayhospital_logo.jpg";
 
 const AdminLogin = () => {
     const [username, setUsername] = useState("");
@@ -78,7 +78,7 @@ const AdminLogin = () => {
                     {/* Feature pills */}
                     <div className="space-y-3">
                         {[
-                            { icon: Stethoscope, label: "22+ Senior Specialists" },
+                            { icon: Stethoscope, label: "30+ Expert Specialists" },
                             { icon: Activity,    label: "24/7 Emergency & ICU" },
                             { icon: Shield,      label: "Secure Admin Portal" },
                         ].map(({ icon, label }) => (

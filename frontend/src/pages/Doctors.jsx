@@ -28,6 +28,8 @@ const useInView = (rootMargin = "300px") => {
     return [ref, inView];
 };
 
+const TRINAY_G = "from-[#003366] via-[#004d80] to-[#006fa3]";
+
 /* ── Doctor card ──────────────────────────────────────────────────── */
 const DoctorCard = memo(({ doc, eager }) => {
     const [cardRef, inView] = useInView("400px");
@@ -48,7 +50,7 @@ const DoctorCard = memo(({ doc, eager }) => {
             className="group relative bg-white rounded-3xl border border-slate-100 shadow-md hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col"
         >
             {/* Photo header — initials always behind, photo on top */}
-            <div className={`relative h-52 sm:h-56 lg:h-60 bg-linear-to-br ${doc.gradient} overflow-hidden shrink-0`}>
+            <div className={`relative h-44 sm:h-48 md:h-52 bg-linear-to-br ${TRINAY_G} overflow-hidden shrink-0`}>
                 {/* Background initials (always visible fallback) */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
                     {initials
@@ -73,7 +75,7 @@ const DoctorCard = memo(({ doc, eager }) => {
                 <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-black/60 to-transparent" />
 
                 {/* Dept badge */}
-                <span className={`absolute top-3 left-3 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full text-white bg-linear-to-r ${doc.gradient} shadow-lg max-w-[80%] truncate backdrop-blur-sm`}>
+                <span className="absolute top-3 left-3 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full text-white bg-white/20 backdrop-blur-md border border-white/30 shadow-lg max-w-[80%] truncate">
                     {doc.deptDisplay}
                 </span>
             </div>
@@ -129,7 +131,7 @@ const DoctorCard = memo(({ doc, eager }) => {
                     </Link>
                     <Link
                         to={`/appointment?doctor=${encodeURIComponent(doc.nameTitled)}&dept=${encodeURIComponent(doc.dept)}`}
-                        className={`flex-1 flex items-center justify-center gap-1 bg-linear-to-r ${doc.gradient} text-white font-bold text-xs py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-95`}
+                        className={`flex-1 flex items-center justify-center gap-1 bg-linear-to-r ${TRINAY_G} text-white font-bold text-xs py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-95`}
                     >
                         Book <Calendar size={12} />
                     </Link>
@@ -152,7 +154,7 @@ const normalizeDynamic = (d) => ({
     slug: d._id,
     isFemale: isFemaleDoc(d.name),
     isSenior: (d.designation || "").includes("SR."),
-    avatar: d.photo || null,
+    avatar: d.photo ? (d.photo.startsWith("http") ? d.photo : buildApiUrl(d.photo)) : null,
     days: "Mon – Sat",
     languages: ["Hindi", "English", "Rajasthani"],
     color: "blue",
@@ -242,7 +244,7 @@ const DoctorsPage = () => {
                         transition={{ delay: 0.2 }}
                         className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed px-4"
                     >
-                        {Array.isArray(DOCTORS) ? DOCTORS.length : 0}+ highly-qualified specialists across 15+ departments — dedicated to delivering compassionate, world-class care.
+                        {Array.isArray(DOCTORS) ? DOCTORS.length : 0}+ highly-qualified specialists across 17 departments — dedicated to delivering compassionate, world-class care.
                     </motion.p>
 
                     {/* Hero stats */}
@@ -254,8 +256,8 @@ const DoctorsPage = () => {
                     >
                         {[
                             { value: `${Array.isArray(DOCTORS) ? DOCTORS.length : 0}+`, label: "Specialists" },
-                            { value: "15+", label: "Departments" },
-                            { value: "50k+", label: "Patients Served" },
+                            { value: "17", label: "Departments" },
+                            { value: "25k+", label: "Patients Served" },
                             { value: "24/7", label: "Emergency Care" },
                         ].map(({ value, label }) => (
                             <div key={label} className="text-center bg-white/10 border border-white/20 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 backdrop-blur-sm">
@@ -339,7 +341,7 @@ const DoctorsPage = () => {
                 {filtered.length > 0 ? (
                     <motion.div
                         layout
-                        className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
+                        className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-6"
                     >
                         <AnimatePresence mode="popLayout">
                             {filtered.map((doc, index) => (

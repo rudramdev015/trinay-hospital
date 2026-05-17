@@ -162,6 +162,23 @@ const dynamicDoctorSchema = new mongoose.Schema(
 
 const DynamicDoctor = mongoose.model('DynamicDoctor', dynamicDoctorSchema);
 
+const heroMediaSchema = new mongoose.Schema(
+    {
+        type: { type: String, enum: ['image', 'video'], required: true },
+        screenType: { type: String, enum: ['desktop', 'mobile', 'both'], default: 'both' },
+        // base64 data URL for uploaded images; empty for video URL entries
+        data: { type: String, default: '' },
+        // external video URL (YouTube, CDN, Google Drive direct link, etc.)
+        url: { type: String, default: '' },
+        mimeType: { type: String, default: '' },
+        label: { type: String, default: '', trim: true, maxlength: 120 },
+        isActive: { type: Boolean, default: true },
+    },
+    { timestamps: true }
+);
+
+const HeroMedia = mongoose.model('HeroMedia', heroMediaSchema);
+
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -648,6 +665,94 @@ app.delete('/api/admin/doctors/:id', authenticate, async (req, res) => {
     try {
         await DynamicDoctor.findByIdAndDelete(req.params.id);
         return res.json({ success: true });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+
+// ── Hero Media Routes ─────────────────────────────────────────────────────────
+
+// Public: returns all active hero media items (no base64 data, just metadata + url)
+app.get('/api/hero-media', async (req, res) => {
+    try {
+        const items = await HeroMedia.find({ isActive: true }).sort({ updatedAt: -1 });
+        return res.json({ success: true, heroMedia: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Admin: list all hero media (including inactive), without base64 data
+app.get('/api/admin/hero-media', authenticate, async (req, res) => {
+    try {
+        const items = await HeroMedia.find().sort({ updatedAt: -1 }).select('-data');
+        return res.json({ success: true, heroMedia: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Admin: upload new hero media (larger body limit handled inline)
+app.post('/api/admin/hero-media', authenticate, express.json({ limit: '15mb' }), async (req, res) => {
+    try {
+        const { type, screenType, data, url, mimeType, label } = req.body || {};
+        if (!type || !['image', 'video'].includes(type)) {
+            return res.status(400).json({ success: false, message: 'type must be "image" or "video"' });
+        }
+        if (type === 'image' && !data) {
+            return res.status(400).json({ success: false, message: 'Image data (base64) is required' });
+        }
+        if (type === 'video' && !url) {
+            return res.status(400).json({ success: false, message: 'Video URL is required' });
+        }
+        const item = await HeroMedia.create({
+            type,
+            screenType: screenType || 'both',
+            data: type === 'image' ? (data || '') : '',
+            url: type === 'video' ? (url || '') : '',
+            mimeType: mimeType || '',
+            label: label?.trim() || '',
+            isActive: true,
+        });
+        return res.status(201).json({ success: true, heroMedia: { ...item.toObject(), data: undefined } });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Admin: toggle active / update label / screenType
+app.patch('/api/admin/hero-media/:id', authenticate, async (req, res) => {
+    try {
+        const { isActive, label, screenType } = req.body || {};
+        const update = {};
+        if (isActive !== undefined) update.isActive = Boolean(isActive);
+        if (label !== undefined) update.label = String(label).trim();
+        if (screenType !== undefined) update.screenType = screenType;
+        const item = await HeroMedia.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true }).select('-data');
+        if (!item) return res.status(404).json({ success: false, message: 'Hero media not found' });
+        return res.json({ success: true, heroMedia: item });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Admin: delete hero media
+app.delete('/api/admin/hero-media/:id', authenticate, async (req, res) => {
+    try {
+        await HeroMedia.findByIdAndDelete(req.params.id);
+        return res.json({ success: true });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Public: get the active hero image/video data by id (for rendering)
+app.get('/api/hero-media/:id/data', async (req, res) => {
+    try {
+        const item = await HeroMedia.findById(req.params.id);
+        if (!item || !item.isActive) return res.status(404).json({ success: false, message: 'Not found' });
+        return res.json({ success: true, data: item.data, url: item.url, type: item.type, mimeType: item.mimeType });
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
     }

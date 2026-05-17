@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
     ChevronDown, Home, Stethoscope, UserRound, Shield,
     Phone, Image, Info, CalendarCheck, Facebook,
-    Instagram, Menu, X, Search, PhoneCall, MapPin, Clock
+    Instagram, Menu, X, Search, PhoneCall, MapPin, Clock, Users2
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import hospitalLogo from "./trinayhospital_logo.jpg";
@@ -42,9 +42,10 @@ const Navbar = () => {
     ];
 
     const aboutLinks = [
-        { label: "About Our Hospital", to: "/about", icon: Info },
-        { label: "Photo Gallery", to: "/gallery", icon: Image },
-        { label: "Our Mission", to: "/mission", icon: Shield },
+        { label: "About Our Hospital", to: "/about",      icon: Info    },
+        { label: "Leadership Team",    to: "/leadership", icon: Users2  },
+        { label: "Photo Gallery",      to: "/gallery",    icon: Image   },
+        { label: "Our Mission",        to: "/mission",    icon: Shield  },
     ];
 
     return (
@@ -99,7 +100,7 @@ const Navbar = () => {
                                     src={hospitalLogo}
                                     alt="Trinay Hospital"
                                     className={`transition-all duration-500 object-contain ${
-                                        scrolled ? "h-14 lg:h-16" : "h-16 lg:h-24"
+                                        scrolled ? "h-16 lg:h-20" : "h-20 lg:h-32"
                                     }`}
                                 />
                             </Link>
@@ -113,7 +114,7 @@ const Navbar = () => {
                                         alt={alt}
                                         title={alt}
                                         className={`w-auto object-contain transition-all duration-500 ${
-                                            scrolled ? "h-7" : "h-10"
+                                            scrolled ? "h-9" : "h-12"
                                         }`}
                                         onError={(e) => { e.currentTarget.style.display = "none"; }}
                                     />

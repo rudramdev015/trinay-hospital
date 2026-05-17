@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import {
     ClipboardList, MessageSquareQuote, Users, UserPlus,
     Search, Trash2, Eye, EyeOff, X, CalendarDays, Stethoscope, ImagePlus, Plus,
-    Pencil, ExternalLink, Star, Clock, GraduationCap, Filter,
+    Pencil, ExternalLink, Star, Clock, GraduationCap, Filter, Film, LayoutTemplate,
+    ToggleLeft, ToggleRight, Monitor, Smartphone,
 } from "lucide-react";
 import hospitalLogo from "../components/common/trinayhospital_logo.jpg";
 import Toast from "../components/common/Toast";
@@ -24,6 +25,22 @@ const emptyDoctorForm = {
     name: "", designation: "CONSULTANT", dept: "", qualification: "",
     timing: "", experience: "", camp: "", bio: "", expertise: "", photo: "",
 };
+
+const compressHeroImage = (file) => new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+        const MAX = 1920;
+        const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.src = url;
+});
 
 const compressImage = (file) => new Promise((resolve) => {
     const img = new Image();
@@ -165,6 +182,15 @@ const AdminDashboard = () => {
     const [attendanceDate, setAttendanceDate] = useState(() => new Date().toISOString().slice(0, 10));
     const [attendanceRecords, setAttendanceRecords] = useState([]);
     const [isAttendanceLoading, setIsAttendanceLoading] = useState(false);
+
+    // ── hero media state ──
+    const [heroMediaList, setHeroMediaList] = useState([]);
+    const [isHeroLoading, setIsHeroLoading] = useState(false);
+    const [showHeroForm, setShowHeroForm] = useState(false);
+    const [heroForm, setHeroForm] = useState({ type: "image", screenType: "both", label: "", url: "", imageData: "" });
+    const [heroFormError, setHeroFormError] = useState("");
+    const [isSavingHero, setIsSavingHero] = useState(false);
+    const [pendingDeleteHero, setPendingDeleteHero] = useState(null);
 
     const getToken = useCallback(() => localStorage.getItem("adminToken"), []);
 
@@ -467,6 +493,94 @@ const AdminDashboard = () => {
         setShowAddDoctor(true);
     };
 
+    // ── fetch hero media (admin view, no base64) ──
+    const fetchHeroMedia = useCallback(async () => {
+        const token = getToken();
+        if (!token) return;
+        setIsHeroLoading(true);
+        try {
+            const res = await fetch(buildApiUrl("/api/admin/hero-media"), {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.status === 401) { handleUnauthorized(); return; }
+            const data = await res.json();
+            setHeroMediaList(data.heroMedia || []);
+        } catch { /* silent */ }
+        finally { setIsHeroLoading(false); }
+    }, [getToken, handleUnauthorized]);
+
+    useEffect(() => { if (activeSection === "hero") fetchHeroMedia(); }, [activeSection, fetchHeroMedia]);
+
+    // ── upload hero media ──
+    const handleAddHeroMedia = async (e) => {
+        e.preventDefault();
+        setHeroFormError("");
+        setIsSavingHero(true);
+        const token = getToken();
+        try {
+            const payload = {
+                type: heroForm.type,
+                screenType: heroForm.screenType,
+                label: heroForm.label,
+                ...(heroForm.type === "image"
+                    ? { data: heroForm.imageData, mimeType: "image/jpeg" }
+                    : { url: heroForm.url }),
+            };
+            const res = await fetch(buildApiUrl("/api/admin/hero-media"), {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Upload failed");
+            setHeroMediaList((prev) => [data.heroMedia, ...prev]);
+            setShowHeroForm(false);
+            setHeroForm({ type: "image", screenType: "both", label: "", url: "", imageData: "" });
+            showToast("success", "Hero media uploaded", "New background will appear on the home page.");
+        } catch (err) {
+            setHeroFormError(err.message);
+        } finally {
+            setIsSavingHero(false);
+        }
+    };
+
+    // ── toggle hero media active ──
+    const toggleHeroActive = async (item) => {
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/hero-media/${item._id}`), {
+                method: "PATCH",
+                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ isActive: !item.isActive }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error("Failed");
+            setHeroMediaList((prev) => prev.map((m) => m._id === item._id ? data.heroMedia : m));
+            showToast("success", item.isActive ? "Deactivated" : "Activated",
+                `"${item.label || item.type}" is now ${item.isActive ? "hidden" : "live"} on the home page.`);
+        } catch {
+            showToast("error", "Update failed", "Hero media status could not be changed.");
+        }
+    };
+
+    // ── delete hero media ──
+    const handleDeleteHeroMedia = async () => {
+        if (!pendingDeleteHero) return;
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/hero-media/${pendingDeleteHero._id}`), {
+                method: "DELETE", headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Delete failed");
+            setHeroMediaList((prev) => prev.filter((m) => m._id !== pendingDeleteHero._id));
+            showToast("delete", "Deleted", `"${pendingDeleteHero.label || pendingDeleteHero.type}" was removed.`);
+        } catch {
+            showToast("error", "Delete failed", "Hero media could not be removed.");
+        } finally {
+            setPendingDeleteHero(null);
+        }
+    };
+
     // ── appointment/feedback actions ──
     const updateAppointmentFilter = (key, value) => setAppointmentFilters((p) => ({ ...p, [key]: value }));
     const updateFeedbackFilter = (key, value) => setFeedbackFilters((p) => ({ ...p, [key]: value }));
@@ -689,6 +803,13 @@ const AdminDashboard = () => {
                             icon={Stethoscope}
                             label="Doctors"
                             count={DOCTORS.length + doctorList.filter((d) => !d.staticId).length}
+                        />
+                        <SectionTab
+                            active={activeSection === "hero"}
+                            onClick={() => setActiveSection("hero")}
+                            icon={LayoutTemplate}
+                            label="Hero Media"
+                            count={heroMediaList.length}
                         />
                     </div>
                 </section>
@@ -1352,6 +1473,99 @@ const AdminDashboard = () => {
                 </div>
             )}
 
+                {/* ── Hero Media Section ───────────────────────────────── */}
+                {activeSection === "hero" && (
+                    <section className="rounded-[28px] border border-blue-100 bg-white shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)]">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-blue-50 px-5 py-5 sm:px-7">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Hero Section</p>
+                                <h2 className="mt-0.5 text-2xl font-bold text-slate-900">Background Media</h2>
+                                <p className="mt-1 text-sm text-slate-500">Upload images or add video URLs to replace the home page hero background.</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => { setHeroForm({ type: "image", screenType: "both", label: "", url: "", imageData: "" }); setHeroFormError(""); setShowHeroForm(true); }}
+                                className="flex items-center gap-2 rounded-2xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 shadow-lg shadow-blue-200 shrink-0"
+                            >
+                                <Plus className="h-4 w-4" /> Add Media
+                            </button>
+                        </div>
+
+                        {/* Info banner */}
+                        <div className="mx-5 mt-4 sm:mx-7 rounded-2xl bg-blue-50 border border-blue-100 px-4 py-3 text-sm text-blue-800">
+                            <strong>How it works:</strong> Active media overrides the default hospital video. Only one item per screen type (desktop/mobile) is shown — the most recently updated active item wins. Deactivate to fall back to the default video.
+                        </div>
+
+                        <div className="p-5 sm:p-7">
+                            {isHeroLoading ? (
+                                <div className="rounded-3xl border border-blue-100 bg-slate-50 p-16 text-center text-slate-500">
+                                    <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+                                    Loading hero media…
+                                </div>
+                            ) : heroMediaList.length === 0 ? (
+                                <div className="rounded-3xl border border-dashed border-blue-200 bg-slate-50 p-14 text-center">
+                                    <Film className="mx-auto mb-3 h-10 w-10 text-slate-300" />
+                                    <p className="text-lg font-semibold text-slate-700">No custom media uploaded</p>
+                                    <p className="mt-1 text-sm text-slate-400">The default hospital video is currently showing. Add an image or video URL above.</p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                    {heroMediaList.map((item) => (
+                                        <div key={item._id} className={`relative rounded-2xl border-2 ${item.isActive ? "border-emerald-200 bg-emerald-50/40" : "border-slate-200 bg-white"} overflow-hidden`}>
+                                            <div className="flex items-center gap-3 px-4 pt-4 pb-2">
+                                                <div className={`rounded-xl p-2 ${item.type === "image" ? "bg-blue-100" : "bg-purple-100"}`}>
+                                                    {item.type === "image"
+                                                        ? <ImagePlus className={`h-5 w-5 ${item.type === "image" ? "text-blue-600" : "text-purple-600"}`} />
+                                                        : <Film className="h-5 w-5 text-purple-600" />
+                                                    }
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-bold text-slate-900 text-sm truncate">{item.label || (item.type === "image" ? "Image" : "Video")}</p>
+                                                    <div className="flex items-center gap-2 mt-0.5">
+                                                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{item.type}</span>
+                                                        <span className="text-slate-300">·</span>
+                                                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                                                            {item.screenType === "desktop" ? <Monitor className="h-3 w-3" /> : item.screenType === "mobile" ? <Smartphone className="h-3 w-3" /> : null}
+                                                            {item.screenType}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${item.isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                                                    {item.isActive ? "Live" : "Hidden"}
+                                                </span>
+                                            </div>
+
+                                            {item.type === "video" && item.url && (
+                                                <div className="px-4 py-2">
+                                                    <p className="text-xs text-slate-500 truncate">{item.url}</p>
+                                                </div>
+                                            )}
+
+                                            <div className="flex items-center gap-2 px-4 pb-4 pt-2 border-t border-slate-100 mt-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleHeroActive(item)}
+                                                    className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition ${item.isActive ? "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100" : "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"}`}
+                                                >
+                                                    {item.isActive ? <ToggleLeft className="h-4 w-4" /> : <ToggleRight className="h-4 w-4" />}
+                                                    {item.isActive ? "Deactivate" : "Activate"}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setPendingDeleteHero(item)}
+                                                    className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition ml-auto"
+                                                >
+                                                    <Trash2 className="h-3.5 w-3.5" /> Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
+
             {/* ── Add / Edit Doctor Modal ───────────────────────────────── */}
             {showAddDoctor && (
                 <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm overflow-y-auto py-8">
@@ -1447,6 +1661,154 @@ const AdminDashboard = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Add Hero Media Modal ─────────────────────────────────── */}
+            {showHeroForm && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm overflow-y-auto py-8">
+                    <div className="w-full max-w-lg rounded-[28px] border border-blue-100 bg-white shadow-2xl">
+                        <div className="flex items-center justify-between border-b border-blue-100 px-6 py-5">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900">Add Hero Background</h3>
+                                <p className="mt-0.5 text-sm text-slate-500">Upload an image or add a video URL for the home page hero section.</p>
+                            </div>
+                            <button type="button" onClick={() => setShowHeroForm(false)} className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleAddHeroMedia} className="p-6 space-y-4">
+                            {heroFormError && (
+                                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{heroFormError}</div>
+                            )}
+
+                            {/* Type selector */}
+                            <div className="flex flex-col gap-1.5">
+                                <span className="text-sm font-semibold text-slate-700">Media Type *</span>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {["image", "video"].map((t) => (
+                                        <button
+                                            key={t}
+                                            type="button"
+                                            onClick={() => setHeroForm((p) => ({ ...p, type: t }))}
+                                            className={`flex items-center justify-center gap-2 rounded-2xl border-2 py-3 font-semibold text-sm capitalize transition ${heroForm.type === t ? "border-blue-600 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-500 hover:border-slate-300"}`}
+                                        >
+                                            {t === "image" ? <ImagePlus className="h-4 w-4" /> : <Film className="h-4 w-4" />}
+                                            {t === "image" ? "Image" : "Video URL"}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Screen type */}
+                            <div className="flex flex-col gap-1.5">
+                                <span className="text-sm font-semibold text-slate-700">Display On</span>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {[["both", "All Screens"], ["desktop", "Desktop Only"], ["mobile", "Mobile Only"]].map(([val, label]) => (
+                                        <button
+                                            key={val}
+                                            type="button"
+                                            onClick={() => setHeroForm((p) => ({ ...p, screenType: val }))}
+                                            className={`rounded-2xl border-2 py-2.5 text-xs font-bold transition ${heroForm.screenType === val ? "border-blue-600 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-500 hover:border-slate-300"}`}
+                                        >
+                                            {label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Label */}
+                            <label className="flex flex-col gap-1.5 text-sm font-semibold text-slate-700">
+                                Label / Description
+                                <input
+                                    type="text"
+                                    value={heroForm.label}
+                                    onChange={(e) => setHeroForm((p) => ({ ...p, label: e.target.value }))}
+                                    placeholder="e.g. Hospital Main Entrance, Diwali Campaign…"
+                                    className="rounded-2xl border border-slate-200 px-4 py-2.5 font-normal outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                            </label>
+
+                            {/* Image upload */}
+                            {heroForm.type === "image" && (
+                                <div className="flex flex-col gap-1.5">
+                                    <span className="text-sm font-semibold text-slate-700">Image File * <span className="text-slate-400 font-normal">(JPG/PNG — auto-resized to 1920px)</span></span>
+                                    <label className="flex items-center gap-3 cursor-pointer rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50 px-4 py-4 hover:bg-blue-100 transition">
+                                        <ImagePlus className="h-6 w-6 text-blue-400 shrink-0" />
+                                        <div>
+                                            <p className="text-sm font-semibold text-blue-700">Click to upload image</p>
+                                            <p className="text-xs text-slate-500">Recommended: 1920×1080 or wider landscape image</p>
+                                        </div>
+                                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            const b64 = await compressHeroImage(file);
+                                            setHeroForm((p) => ({ ...p, imageData: b64 }));
+                                        }} />
+                                    </label>
+                                    {heroForm.imageData && (
+                                        <div className="mt-2 relative rounded-2xl overflow-hidden border border-slate-200">
+                                            <img src={heroForm.imageData} alt="preview" className="w-full h-32 object-cover" />
+                                            <button type="button" onClick={() => setHeroForm((p) => ({ ...p, imageData: "" }))} className="absolute top-2 right-2 bg-white/90 rounded-full p-1 text-red-600 hover:bg-white transition shadow">
+                                                <X className="h-3.5 w-3.5" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Video URL */}
+                            {heroForm.type === "video" && (
+                                <label className="flex flex-col gap-1.5 text-sm font-semibold text-slate-700">
+                                    Video URL *
+                                    <input
+                                        type="url"
+                                        required
+                                        value={heroForm.url}
+                                        onChange={(e) => setHeroForm((p) => ({ ...p, url: e.target.value }))}
+                                        placeholder="https://... (direct MP4 link or CDN URL)"
+                                        className="rounded-2xl border border-slate-200 px-4 py-2.5 font-normal outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                    />
+                                    <p className="text-[11px] text-slate-400 font-normal">Enter a publicly accessible MP4 video URL. The browser will stream it directly.</p>
+                                </label>
+                            )}
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setShowHeroForm(false)} className="rounded-2xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+                                <button
+                                    type="submit"
+                                    disabled={isSavingHero || (heroForm.type === "image" && !heroForm.imageData) || (heroForm.type === "video" && !heroForm.url)}
+                                    className="rounded-2xl bg-blue-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
+                                >
+                                    {isSavingHero ? "Uploading…" : "Upload Media"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Hero Media Delete Confirm ─────────────────────────────── */}
+            {pendingDeleteHero && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm">
+                    <div className="w-full max-w-sm rounded-[28px] border border-red-100 bg-white p-6 shadow-2xl text-center">
+                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Trash2 className="h-6 w-6 text-red-500" />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 mb-1">Delete Hero Media?</h3>
+                        <p className="text-sm text-slate-500 mb-6">
+                            "{pendingDeleteHero.label || pendingDeleteHero.type}" will be permanently removed. This cannot be undone.
+                        </p>
+                        <div className="flex gap-3">
+                            <button type="button" onClick={() => setPendingDeleteHero(null)} className="flex-1 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                                Cancel
+                            </button>
+                            <button type="button" onClick={handleDeleteHeroMedia} className="flex-1 rounded-2xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700">
+                                Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

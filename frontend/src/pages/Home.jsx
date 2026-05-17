@@ -13,6 +13,7 @@ const DoctorsPreview  = lazy(() => import('../components/home/DoctorsPreview'));
 const Facilities      = lazy(() => import('../components/home/Facilities'));
 const HealthPackages  = lazy(() => import('../components/home/HealthPackages'));
 const InsurancePartners = lazy(() => import('../components/home/InsurancePartners'));
+const GovernmentSchemes = lazy(() => import('../components/home/GovernmentSchemes'));
 const CallToAction    = lazy(() => import('../components/home/CallToAction'));
 const Testimonials    = lazy(() => import('../components/home/Testimonials'));
 
@@ -73,7 +74,12 @@ const Home = () => {
                     <InsurancePartners />
                 </Suspense>
 
-                {/* 10. Emergency Call to Action */}
+                {/* 10. Government Health Schemes */}
+                <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
+                    <GovernmentSchemes />
+                </Suspense>
+
+                {/* 11. Emergency Call to Action */}
                 <Suspense fallback={<Skeleton h="min-h-[300px]" />}>
                     <CallToAction />
                 </Suspense>

@@ -84,6 +84,35 @@ const getTodayStr = () => {
 const normalizePhone = (v) => String(v || "").replace(/[\s-]/g, "").trim();
 const isValidPhone   = (v) => /^(?:\+91|0)?[6-9]\d{9}$/.test(v);
 
+/* Parse "10:00 AM – 5:00 PM" (and "12:00 Noon") → 30-min slot objects within that window */
+const parseTimingSlots = (timing) => {
+    if (!timing || timing.trim().toUpperCase() === "ON CALL") return [];
+    const normalised = timing.replace(/noon/i, "PM");
+    const m = normalised.match(/(\d+):(\d+)\s*(AM|PM)\s*[–—-]+\s*(\d+):(\d+)\s*(AM|PM)/i);
+    if (!m) return [];
+    const to24 = (h, min, p) => {
+        let hr = parseInt(h, 10);
+        const mn = parseInt(min, 10);
+        if (p.toUpperCase() === "PM" && hr !== 12) hr += 12;
+        if (p.toUpperCase() === "AM" && hr === 12) hr = 0;
+        return hr * 60 + mn;
+    };
+    const start = to24(m[1], m[2], m[3]);
+    const end   = to24(m[4], m[5], m[6]);
+    const slots = [];
+    for (let t = start; t < end; t += 30) {
+        const h    = Math.floor(t / 60);
+        const min  = t % 60;
+        const ampm = h < 12 ? "AM" : "PM";
+        const h12  = h === 0 ? 12 : h > 12 ? h - 12 : h;
+        slots.push({
+            value: `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`,
+            label: `${h12}:${String(min).padStart(2, "0")} ${ampm}`,
+        });
+    }
+    return slots;
+};
+
 /* ─── dept palette (cycles by index) ─────────────────────────────────── */
 const PALETTES = [
     { grad: "from-sky-500 to-blue-600",       icon: Stethoscope, ring: "ring-sky-200"    },
@@ -340,6 +369,9 @@ const Step2 = ({ dept, onSelect, selected, onBack }) => {
    STEP 3 — Your Details
 ═══════════════════════════════════════════════════════════════════════ */
 const Step3 = ({ doctor, dept, onBack, onSubmit, loading }) => {
+    const isOnCall  = !doctor?.timing || doctor.timing.trim().toUpperCase() === "ON CALL";
+    const timeSlots = isOnCall ? [] : parseTimingSlots(doctor.timing);
+
     const [form, setForm] = useState({
         name: "", phone: "", email: "", date: "", time: "", message: "",
         doctor: doctor?.nameTitled ?? "",
@@ -409,10 +441,33 @@ const Step3 = ({ doctor, dept, onBack, onSubmit, loading }) => {
                     </motion.div>
                     <motion.div variants={fieldAnim}>
                         <label className="block text-xs font-black text-slate-600 mb-1.5 ml-1">Preferred Time *</label>
-                        <div className="relative">
-                            <Clock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#003366]/40 pointer-events-none" />
-                            <input name="time" value={form.time} onChange={handle} required type="time" className={inp} />
-                        </div>
+                        {isOnCall ? (
+                            <div className="w-full rounded-xl border-2 border-amber-200 bg-amber-50 px-4 py-3.5 text-sm text-amber-700 font-semibold flex items-center gap-2">
+                                <Phone size={14} className="text-amber-500 shrink-0" />
+                                Available on-call — contact us to schedule a time.
+                            </div>
+                        ) : (
+                            <div className="relative">
+                                <Clock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#003366]/40 pointer-events-none z-10" />
+                                <select
+                                    name="time"
+                                    value={form.time}
+                                    onChange={handle}
+                                    required
+                                    className={`${inp} appearance-none cursor-pointer pr-10`}
+                                >
+                                    <option value="" disabled>
+                                        Select slot — {doctor?.timing}
+                                    </option>
+                                    {timeSlots.map((slot) => (
+                                        <option key={slot.value} value={slot.value}>
+                                            {slot.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronRight size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 rotate-90 text-slate-400 pointer-events-none" />
+                            </div>
+                        )}
                     </motion.div>
                 </div>
 
@@ -471,8 +526,8 @@ const InfoPanel = () => (
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Why Trinay Hospital</p>
             <div className="grid grid-cols-2 gap-3">
                 {[
-                    { v: "50+",  l: "Specialists",   color: "text-blue-600",   bg: "bg-blue-50"   },
-                    { v: "16",   l: "Departments",   color: "text-violet-600", bg: "bg-violet-50" },
+                    { v: "30+",  l: "Specialists",   color: "text-blue-600",   bg: "bg-blue-50"   },
+                    { v: "17",   l: "Departments",   color: "text-violet-600", bg: "bg-violet-50" },
                     { v: "24/7", l: "Emergency",     color: "text-rose-500",   bg: "bg-rose-50"   },
                     { v: "15yr", l: "Experience",    color: "text-emerald-600",bg: "bg-emerald-50" },
                 ].map(({ v, l, color, bg }) => (

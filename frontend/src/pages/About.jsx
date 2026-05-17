@@ -27,7 +27,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
-import hospitalLogo from "../assets/images/reallogo1.png";
+import hospitalLogo from "../components/common/trinayhospital_logo.jpg";
 import hospitalBg   from "../assets/images/heroImage1.jpg";
 
 // --- TRINAY HOSPITAL DATA (SEO OPTIMIZED) ---

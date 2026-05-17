@@ -1,266 +1,271 @@
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, GraduationCap, Clock, Star, BadgeCheck, Users, Stethoscope } from "lucide-react";
+import {
+    ArrowRight, ChevronLeft, ChevronRight,
+    GraduationCap, Clock, Star, BadgeCheck,
+    Users, Stethoscope,
+} from "lucide-react";
 import LoadingLink from "../common/LoadingLink";
+import { DOCTORS } from "../../data/doctorsData";
 
-const DOCTORS = [
-    {
-        name:        "Dr. Dhruva Sharma",
-        designation: "Sr. Consultant",
-        dept:        "Cardiology",
-        qual:        "MBBS, MD, DM",
-        timing:      "Mon–Sat  10 AM – 5 PM",
-        exp:         "15+",
-        patients:    "4,200+",
-        img:         "/DOCTOR IAMGES/Dr. Dhruva Sharma.png",
-        grad:        "from-rose-500 via-rose-600 to-red-700",
-        ctaGrad:     "from-rose-500 to-red-600",
-        ringColor:   "ring-rose-400/60",
-        accentText:  "text-rose-600",
-        accentBg:    "bg-rose-50",
-        badgeBg:     "bg-rose-500",
-    },
-    {
-        name:        "Dr. Sumeet Godhwani",
-        designation: "Sr. Consultant",
-        dept:        "General Medicine",
-        qual:        "MBBS, MD",
-        timing:      "Mon–Sat  10 AM – 5 PM",
-        exp:         "12+",
-        patients:    "6,800+",
-        img:         "/DOCTOR IAMGES/Dr Sumeet godhwani.png",
-        grad:        "from-blue-500 via-blue-600 to-indigo-700",
-        ctaGrad:     "from-blue-500 to-indigo-600",
-        ringColor:   "ring-blue-400/60",
-        accentText:  "text-blue-600",
-        accentBg:    "bg-blue-50",
-        badgeBg:     "bg-blue-500",
-    },
-    {
-        name:        "Dr. Pushpa Mathuria",
-        designation: "Sr. Consultant",
-        dept:        "Obs. & Gynaecology",
-        qual:        "MBBS, MS",
-        timing:      "Mon–Sat  10 AM – 4 PM",
-        exp:         "18+",
-        patients:    "9,500+",
-        img:         "/DOCTOR IAMGES/Dr Pushpa Mathuriya.png",
-        grad:        "from-pink-500 via-pink-600 to-rose-700",
-        ctaGrad:     "from-pink-500 to-rose-600",
-        ringColor:   "ring-pink-400/60",
-        accentText:  "text-pink-600",
-        accentBg:    "bg-pink-50",
-        badgeBg:     "bg-pink-500",
-    },
-    {
-        name:        "Dr. Amit Sharma",
-        designation: "Consultant",
-        dept:        "Orthopaedics",
-        qual:        "MBBS, MS",
-        timing:      "Mon–Sat  10 AM – 5 PM",
-        exp:         "10+",
-        patients:    "3,600+",
-        img:         "/DOCTOR IAMGES/dr amit k. sharma.png",
-        grad:        "from-teal-500 via-teal-600 to-emerald-700",
-        ctaGrad:     "from-teal-500 to-emerald-600",
-        ringColor:   "ring-teal-400/60",
-        accentText:  "text-teal-600",
-        accentBg:    "bg-teal-50",
-        badgeBg:     "bg-teal-500",
-    },
-];
-
-const containerVariants = {
-    hidden:  {},
-    visible: { transition: { staggerChildren: 0.1 } },
-};
-const cardVariants = {
-    hidden:  { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-};
+/* ── Doctor card — all Trinay brand colours ── */
+const TRINAY_GRADIENT = "from-[#003366] via-[#004d80] to-[#006fa3]";
 
 const DoctorCard = ({ doc }) => (
-    <motion.div
-        variants={cardVariants}
-        whileHover={{ y: -12, scale: 1.015 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className="group relative flex flex-col rounded-[28px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.07)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)] overflow-hidden transition-all duration-400 border border-slate-100/80"
-    >
-        {/* ── Gradient Header ── */}
-        <div className={`relative h-40 bg-linear-to-br ${doc.grad} flex-shrink-0 overflow-hidden`}>
+    <div className="group relative flex flex-col rounded-[26px] bg-white shadow-[0_4px_20px_rgba(0,0,0,0.07)] hover:shadow-[0_18px_50px_rgba(0,0,0,0.14)] overflow-hidden transition-all duration-400 border border-slate-100/80 h-full">
 
-            {/* Dot texture */}
+        {/* Gradient header */}
+        <div className={`relative h-36 bg-linear-to-br ${TRINAY_GRADIENT} flex-shrink-0 overflow-hidden`}>
             <div className="absolute inset-0 opacity-[0.12]"
                 style={{ backgroundImage: "radial-gradient(white 1.2px,transparent 1.2px)", backgroundSize: "18px 18px" }} />
-
-            {/* Large faded icon in background */}
-            <Stethoscope
-                size={110}
-                className="absolute -right-4 -bottom-4 text-white/10 rotate-[-20deg]"
-                strokeWidth={1}
-            />
-
-            {/* Dept badge top-left */}
-            <span className="absolute top-4 left-4 text-[9px] font-black uppercase tracking-[0.18em]
-                             bg-white/20 backdrop-blur-md text-white border border-white/30
-                             px-3 py-1.5 rounded-full shadow-sm">
-                {doc.dept}
+            <Stethoscope size={90} className="absolute -right-3 -bottom-3 text-white/10 rotate-[-20deg]" strokeWidth={1} />
+            <span className="absolute top-3 left-3 text-[9px] font-black uppercase tracking-[0.16em] bg-white/20 backdrop-blur-md text-white border border-white/30 px-2.5 py-1 rounded-full">
+                {doc.deptDisplay}
             </span>
-
-            {/* Experience badge top-right */}
-            <div className="absolute top-4 right-4 flex flex-col items-center bg-white/15 backdrop-blur-md
-                            border border-white/30 rounded-2xl px-3 py-1.5 shadow-sm">
-                <span className="text-white font-black text-sm leading-none">{doc.exp}</span>
-                <span className="text-white/75 text-[9px] font-semibold">yrs exp</span>
+            <div className="absolute top-3 right-3 flex flex-col items-center bg-white/15 backdrop-blur-md border border-white/30 rounded-xl px-2.5 py-1">
+                <span className="text-white font-black text-sm leading-none">{doc.experience}+</span>
+                <span className="text-white/75 text-[9px] font-semibold">yrs</span>
             </div>
-
-            {/* Bottom fade to merge with photo */}
-            <div className="absolute bottom-0 left-0 right-0 h-12 bg-linear-to-t from-white/20 to-transparent" />
         </div>
 
-        {/* ── Circular Photo — overlaps header ── */}
-        <div className="flex justify-center -mt-[52px] relative z-10 px-6">
-            <div className={`relative w-[104px] h-[104px] rounded-full ring-4 ring-white ring-offset-0
-                            shadow-[0_8px_32px_rgba(0,0,0,0.18)] overflow-hidden
-                            bg-linear-to-br ${doc.grad} flex-shrink-0`}>
+        {/* Circular photo */}
+        <div className="flex justify-center -mt-11 relative z-10 px-4">
+            <div className={`relative w-[88px] h-[88px] rounded-full ring-4 ring-white shadow-[0_6px_28px_rgba(0,0,0,0.18)] overflow-hidden bg-linear-to-br ${TRINAY_GRADIENT} flex-shrink-0`}>
                 <img
-                    src={doc.img}
-                    alt={doc.name}
-                    className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.06]"
+                    src={doc.avatar}
+                    alt={doc.nameTitled}
                     loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.06]"
                 />
-                {/* Verified badge on photo */}
-                <div className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-md">
-                    <BadgeCheck size={14} className={doc.accentText} fill="currentColor" />
+                <div className="absolute bottom-0.5 right-0.5 w-5 h-5 rounded-full bg-white flex items-center justify-center shadow">
+                    <BadgeCheck size={12} className="text-[#006fa3]" fill="currentColor" />
                 </div>
             </div>
         </div>
 
-        {/* ── Card Body ── */}
-        <div className="px-5 pt-3 pb-5 flex flex-col flex-1 text-center">
+        {/* Body */}
+        <div className="px-4 pt-2.5 pb-5 flex flex-col flex-1 text-center">
+            <h3 className="text-[15px] font-black text-[#003366] leading-snug tracking-tight">{doc.nameTitled}</h3>
+            <p className="text-[11px] font-bold mt-0.5 text-[#006fa3]">{doc.designation}</p>
 
-            {/* Name + designation */}
-            <h3 className="text-[17px] font-black text-[#003366] leading-snug tracking-tight">
-                {doc.name}
-            </h3>
-            <p className={`text-xs font-bold mt-1 ${doc.accentText}`}>{doc.designation}</p>
-
-            {/* Star rating */}
-            <div className="flex items-center justify-center gap-0.5 mt-2.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={12} fill="#FBBF24" className="text-amber-400" />
-                ))}
-                <span className="text-[11px] text-slate-400 ml-1.5 font-bold">4.9</span>
+            <div className="flex items-center justify-center gap-0.5 mt-2">
+                {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={11} fill="#FBBF24" className="text-amber-400" />)}
+                <span className="text-[10px] text-slate-400 ml-1 font-bold">4.9</span>
             </div>
 
-            {/* Divider */}
-            <div className="mt-4 border-t border-dashed border-slate-100" />
+            <div className="mt-3 border-t border-dashed border-slate-100" />
 
-            {/* Info rows */}
-            <div className="mt-3.5 space-y-2">
-                <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
-                    <GraduationCap size={13} className="text-slate-400 shrink-0" />
-                    <span className="font-semibold">{doc.qual}</span>
+            <div className="mt-2.5 space-y-1.5">
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500">
+                    <GraduationCap size={11} className="text-slate-400 shrink-0" />
+                    <span className="font-semibold truncate">{doc.qualification}</span>
                 </div>
-                <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
-                    <Clock size={13} className="shrink-0" />
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+                    <Clock size={11} className="shrink-0" />
                     <span>{doc.timing}</span>
                 </div>
             </div>
 
-            {/* Patients served badge */}
-            <div className={`mt-4 flex items-center justify-center gap-1.5 ${doc.accentBg} ${doc.accentText}
-                             rounded-full px-3 py-1.5 text-[11px] font-black self-center`}>
-                <Users size={11} />
-                {doc.patients} patients treated
+            <div className="mt-3 flex items-center justify-center gap-1.5 bg-blue-50 text-[#003366] rounded-full px-3 py-1 text-[10px] font-black self-center">
+                <Users size={10} /> {doc.patients} patients
             </div>
 
-            {/* CTA */}
             <LoadingLink
-                to={`/appointment?dept=${encodeURIComponent(doc.dept)}`}
-                className={`mt-4 w-full flex items-center justify-center gap-2
-                            bg-linear-to-r ${doc.ctaGrad} text-white text-sm font-black
-                            py-3.5 rounded-2xl transition-all duration-300
-                            hover:scale-[1.03] hover:shadow-xl active:scale-95
-                            shadow-md tracking-wide`}
+                to={`/appointment?doctor=${encodeURIComponent(doc.nameTitled)}&dept=${encodeURIComponent(doc.dept)}`}
+                className={`mt-3 w-full flex items-center justify-center gap-1.5 bg-linear-to-r ${TRINAY_GRADIENT} text-white text-[11px] font-black py-3 rounded-xl transition-all duration-300 hover:scale-[1.03] hover:shadow-lg active:scale-95 shadow-sm tracking-wide`}
             >
-                Book Appointment <ArrowRight size={14} />
+                Book Appointment <ArrowRight size={12} />
             </LoadingLink>
         </div>
-    </motion.div>
+    </div>
 );
 
-const DoctorsPreview = () => (
-    <section className="relative py-20 md:py-28 overflow-hidden">
+/* ── Responsive perView helper ── */
+const getPerView = () => {
+    if (typeof window === "undefined") return 4;
+    if (window.innerWidth >= 1280) return 4;
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 640)  return 2;
+    return 1;
+};
 
-        {/* Background */}
-        <div className="absolute inset-0 bg-linear-to-b from-[#eef4ff] via-white to-white" />
+/* ── Main slider ── */
+const DoctorsPreview = () => {
+    const [cur,     setCur]     = useState(0);
+    const [perView, setPerView] = useState(getPerView);
+    const timer   = useRef(null);
+    const touchX  = useRef(null);
+    const total   = DOCTORS.length;
+    const maxIdx  = Math.max(0, total - perView);
 
-        {/* Decorative blobs */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[140px] opacity-20 pointer-events-none"
-            style={{ background: "radial-gradient(circle,#6366f1 0%,transparent 70%)" }} />
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-[110px] opacity-15 pointer-events-none"
-            style={{ background: "radial-gradient(circle,#0ea5e9 0%,transparent 70%)" }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] rounded-full blur-[100px] opacity-[0.07] pointer-events-none bg-blue-400" />
+    /* auto-advance */
+    const startTimer = useCallback(() => {
+        clearInterval(timer.current);
+        timer.current = setInterval(() =>
+            setCur((p) => (p >= maxIdx ? 0 : p + 1)), 4500);
+    }, [maxIdx]);
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+    useEffect(() => { startTimer(); return () => clearInterval(timer.current); }, [startTimer]);
 
-            {/* Heading */}
-            <motion.div
-                className="text-center max-w-3xl mx-auto mb-14"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                viewport={{ once: true }}
-            >
-                <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-blue-500 mb-4
-                                 bg-blue-50 border border-blue-100 px-4 py-2 rounded-full">
-                    <BadgeCheck size={13} />
-                    Meet Our Specialists
-                </span>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#003366] leading-tight mt-2">
-                    Doctors You Can{" "}
-                    <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                        Trust With Your Life
-                    </span>
-                </h2>
-                <p className="text-slate-500 mt-4 text-base sm:text-lg leading-relaxed">
-                    50+ specialists across every major discipline — dedicated to your best possible health outcome.
-                </p>
-            </motion.div>
+    /* responsive */
+    useEffect(() => {
+        const onResize = () => setPerView(getPerView());
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
 
-            {/* Doctor cards */}
-            <motion.div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.08 }}
-            >
-                {DOCTORS.map((doc) => (
-                    <DoctorCard key={doc.name} doc={doc} />
-                ))}
-            </motion.div>
+    /* clamp cur when perView changes */
+    useEffect(() => { setCur((p) => Math.min(p, Math.max(0, total - perView))); }, [perView, total]);
 
-            {/* CTA */}
-            <motion.div
-                className="flex justify-center mt-12"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                viewport={{ once: true }}
-            >
-                <LoadingLink
-                    to="/doctors"
-                    className="inline-flex items-center gap-2.5 border-2 border-[#003366] text-[#003366]
-                               hover:bg-[#003366] hover:text-white px-8 py-4 rounded-full font-black
-                               text-base transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm
-                               hover:shadow-xl hover:shadow-blue-200/50"
+    const go = (i) => { setCur(Math.max(0, Math.min(i, maxIdx))); startTimer(); };
+
+    /* touch swipe */
+    const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
+    const onTouchEnd   = (e) => {
+        if (touchX.current === null) return;
+        const diff = touchX.current - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 48) go(diff > 0 ? cur + 1 : cur - 1);
+        touchX.current = null;
+    };
+
+    /* dot groups for small screens (1 dot per card), larger screens (1 per page) */
+    const dots = Array.from({ length: maxIdx + 1 });
+
+    return (
+        <section className="relative py-20 md:py-28 overflow-hidden">
+
+            {/* Backgrounds */}
+            <div className="absolute inset-0 bg-linear-to-b from-[#eef4ff] via-white to-white" />
+            <div className="absolute top-0 right-0 w-[480px] h-[480px] rounded-full blur-[140px] opacity-20 pointer-events-none"
+                style={{ background: "radial-gradient(circle,#6366f1 0%,transparent 70%)" }} />
+            <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full blur-[110px] opacity-15 pointer-events-none"
+                style={{ background: "radial-gradient(circle,#0ea5e9 0%,transparent 70%)" }} />
+
+            <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
+
+                {/* Heading + nav row */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12">
+                    <motion.div
+                        className="text-center sm:text-left max-w-2xl"
+                        initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }} viewport={{ once: true }}
+                    >
+                        <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.22em] text-blue-500 mb-3 bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full">
+                            <BadgeCheck size={12} /> Meet Our Specialists
+                        </span>
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#003366] leading-tight mt-1">
+                            Doctors You Can{" "}
+                            <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                                Trust With Your Life
+                            </span>
+                        </h2>
+                        <p className="text-slate-500 mt-3 text-base sm:text-lg leading-relaxed">
+                            30+ specialists across 17 departments — dedicated to your best health outcome.
+                        </p>
+                    </motion.div>
+
+                    {/* Arrow controls — visible on sm+ */}
+                    <div className="hidden sm:flex items-center gap-3 shrink-0">
+                        <button
+                            onClick={() => go(cur - 1)}
+                            disabled={cur === 0}
+                            aria-label="Previous"
+                            className="w-12 h-12 rounded-full border-2 border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:border-[#003366] hover:text-[#003366] hover:shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                        <button
+                            onClick={() => go(cur + 1)}
+                            disabled={cur === maxIdx}
+                            aria-label="Next"
+                            className="w-12 h-12 rounded-full border-2 border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:border-[#003366] hover:text-[#003366] hover:shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+                        >
+                            <ChevronRight size={20} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Slider track */}
+                <div
+                    className="overflow-hidden select-none"
+                    onTouchStart={onTouchStart}
+                    onTouchEnd={onTouchEnd}
                 >
-                    View All Doctors <ArrowRight size={18} />
-                </LoadingLink>
-            </motion.div>
-        </div>
-    </section>
-);
+                    <div
+                        className="flex transition-transform duration-500"
+                        style={{
+                            transform: `translateX(-${cur * (100 / perView)}%)`,
+                            transitionTimingFunction: "cubic-bezier(0.25,1,0.5,1)",
+                        }}
+                    >
+                        {DOCTORS.map((doc) => (
+                            <div
+                                key={doc.id}
+                                style={{ width: `${100 / perView}%`, minWidth: `${100 / perView}%` }}
+                                className="px-2 md:px-3 flex-shrink-0"
+                            >
+                                <DoctorCard doc={doc} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Dots + mobile arrows */}
+                <div className="flex items-center justify-center gap-4 mt-8">
+                    {/* Mobile prev */}
+                    <button
+                        onClick={() => go(cur - 1)}
+                        disabled={cur === 0}
+                        aria-label="Previous"
+                        className="sm:hidden w-9 h-9 rounded-full border-2 border-slate-200 bg-white flex items-center justify-center text-slate-500 disabled:opacity-30 transition-all"
+                    >
+                        <ChevronLeft size={16} />
+                    </button>
+
+                    {/* Dots */}
+                    <div className="flex items-center gap-2">
+                        {dots.map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => go(i)}
+                                aria-label={`Go to slide ${i + 1}`}
+                                className={`rounded-full transition-all duration-300 ${
+                                    i === cur
+                                        ? "bg-[#003366] w-6 h-2.5"
+                                        : "bg-slate-300 hover:bg-slate-400 w-2.5 h-2.5"
+                                }`}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Mobile next */}
+                    <button
+                        onClick={() => go(cur + 1)}
+                        disabled={cur === maxIdx}
+                        aria-label="Next"
+                        className="sm:hidden w-9 h-9 rounded-full border-2 border-slate-200 bg-white flex items-center justify-center text-slate-500 disabled:opacity-30 transition-all"
+                    >
+                        <ChevronRight size={16} />
+                    </button>
+                </div>
+
+                {/* View all CTA */}
+                <motion.div
+                    className="flex justify-center mt-10"
+                    initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }} viewport={{ once: true }}
+                >
+                    <LoadingLink
+                        to="/doctors"
+                        className="inline-flex items-center gap-2.5 border-2 border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white px-8 py-4 rounded-full font-black text-base transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm hover:shadow-xl hover:shadow-blue-200/50"
+                    >
+                        View All {total} Doctors <ArrowRight size={18} />
+                    </LoadingLink>
+                </motion.div>
+            </div>
+        </section>
+    );
+};
 
 export default DoctorsPreview;

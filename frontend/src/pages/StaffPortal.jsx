@@ -8,6 +8,33 @@ import {
 } from "lucide-react";
 import { buildApiUrl } from "../utils/api";
 
+/* ── Geofencing ──────────────────────────────────────────────────────── */
+const HOSPITAL_LAT = 26.2389;
+const HOSPITAL_LNG = 73.0243;
+const MAX_DISTANCE_M = 1000; // 1 km
+
+const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371000;
+    const toRad = x => x * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
+const getLocationDistance = () =>
+    new Promise((resolve, reject) => {
+        if (!navigator.geolocation) { reject(new Error("GPS not supported on this device.")); return; }
+        navigator.geolocation.getCurrentPosition(
+            (pos) => resolve(haversineDistance(pos.coords.latitude, pos.coords.longitude, HOSPITAL_LAT, HOSPITAL_LNG)),
+            (err) => {
+                if (err.code === 1) reject(new Error("Location access denied. Please allow GPS and try again."));
+                else reject(new Error("Unable to get your location. Please try again."));
+            },
+            { timeout: 10000, maximumAge: 0, enableHighAccuracy: true }
+        );
+    });
+
 /* ── helpers ─────────────────────────────────────────────────────────── */
 const fmtTime = (d) => d ? new Date(d).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true }) : null;
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString("en-IN", { weekday: "short", day: "2-digit", month: "short" }) : "—";
@@ -216,13 +243,13 @@ const Dashboard = ({ staff, onLogout }) => {
             if (todayRes.status === 401 || historyRes.status === 401) { sessionExpired(); return; }
             const [td, hs] = await Promise.all([todayRes.json(), historyRes.json()]);
             if (isAuthError(0, td.message)) { sessionExpired(); return; }
-            if (td.success && td.record) {
-                setTodayRecord(td.record);
+            if (td.success && td.attendance) {
+                setTodayRecord(td.attendance);
                 /* Sync explicit state from server record */
-                if (td.record.checkIn)  setCheckedIn(true);
-                if (td.record.checkOut) setCheckedOut(true);
+                if (td.attendance.checkIn)  setCheckedIn(true);
+                if (td.attendance.checkOut) setCheckedOut(true);
             }
-            if (hs.success) setHistory(hs.records.slice(0, 30));
+            if (hs.success) setHistory(hs.attendance.slice(0, 30));
         } catch { /* silent network error */ }
     };
 
@@ -231,6 +258,15 @@ const Dashboard = ({ staff, onLogout }) => {
     const checkin = async () => {
         setLoading(true); setMsg(null);
         try {
+            setMsg({ type: "info", text: "Verifying your location…" });
+            const distanceM = await getLocationDistance();
+            if (distanceM > MAX_DISTANCE_M) {
+                const km = (distanceM / 1000).toFixed(1);
+                setMsg({ type: "error", text: `You are ${km} km from the hospital. Check-in is only allowed within 1 km of Trinay Hospital.` });
+                setLoading(false);
+                return;
+            }
+            setMsg(null);
             const res = await fetch(buildApiUrl("/api/staff/checkin"), { method: "POST", headers });
             const data = await res.json();
             if (res.status === 401 || isAuthError(0, data.message)) { sessionExpired(); return; }
@@ -377,8 +413,10 @@ const Dashboard = ({ staff, onLogout }) => {
                                 className="mx-5 mb-4 flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold border"
                                 style={msg.type === "success"
                                     ? { background: "rgba(16,185,129,0.1)", borderColor: "rgba(16,185,129,0.3)", color: "#6ee7b7" }
-                                    : { background: "rgba(244,63,94,0.1)", borderColor: "rgba(244,63,94,0.3)", color: "#fda4af" }}>
-                                {msg.type === "success" ? <CheckCircle2 size={15} /> : <XCircle size={15} />}
+                                    : msg.type === "info"
+                                        ? { background: "rgba(14,165,233,0.1)", borderColor: "rgba(14,165,233,0.3)", color: "#7dd3fc" }
+                                        : { background: "rgba(244,63,94,0.1)", borderColor: "rgba(244,63,94,0.3)", color: "#fda4af" }}>
+                                {msg.type === "success" ? <CheckCircle2 size={15} /> : msg.type === "info" ? <Loader2 size={15} className="animate-spin" /> : <XCircle size={15} />}
                                 {msg.text}
                             </motion.div>
                         )}

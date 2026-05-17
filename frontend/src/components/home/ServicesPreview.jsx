@@ -48,7 +48,7 @@ const FEATURES = [
     },
     {
         Icon: Stethoscope,
-        title: "15+ Specialties",
+        title: "17 Specialties",
         desc: "Comprehensive medical departments under one roof — from cardiology to neurology, gynaecology to orthopaedics.",
         gradient: "from-cyan-500 to-blue-600",
         bg: "bg-cyan-50",

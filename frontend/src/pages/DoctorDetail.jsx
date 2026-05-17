@@ -17,6 +17,8 @@ const fadeIn   = (delay = 0) => ({ hidden: { opacity: 0 },        visible: { opa
 const slideLeft= (delay = 0) => ({ hidden: { opacity: 0, x: -24 },visible: { opacity: 1, x: 0,transition: { duration: 0.6,  delay, ease: [0.22, 1, 0.36, 1] } } });
 
 /* ── tiny star row ── */
+const TRINAY_G = "from-[#003366] via-[#004d80] to-[#006fa3]";
+
 const Stars = ({ n = 5 }) => (
     <div className="flex gap-0.5">
         {Array.from({ length: n }).map((_, i) => (
@@ -35,7 +37,7 @@ const Section = ({ title, children, delay = 0 }) => (
         className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 md:p-8"
     >
         <h3 className="text-xl font-black text-[#003366] mb-5 flex items-center gap-2">
-            <span className="w-1 h-6 rounded-full bg-linear-to-b from-blue-500 to-cyan-400 inline-block" />
+            <span className="w-1 h-6 rounded-full bg-linear-to-b from-[#003366] to-[#006fa3] inline-block" />
             {title}
         </h3>
         {children}
@@ -123,7 +125,7 @@ const DoctorDetail = () => {
             <Navbar />
 
             {/* ── HERO ──────────────────────────────────────────────── */}
-            <section className={`relative pt-24 pb-0 overflow-hidden bg-linear-to-br ${doc.gradient} min-h-[60vh] flex items-end`}>
+            <section className="relative pt-24 pb-0 overflow-hidden bg-linear-to-br from-[#003366] via-[#004d80] to-[#006fa3] min-h-[60vh] flex items-end">
                 {/* Dot-grid texture */}
                 <div className="absolute inset-0 opacity-[0.07] bg-[radial-gradient(white_1px,transparent_1px)] [background-size:26px_26px]" />
                 {/* Glow blobs */}
@@ -288,7 +290,7 @@ const DoctorDetail = () => {
                                         viewport={{ once: true }}
                                         className="pl-6 relative"
                                     >
-                                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-linear-to-br ${doc.gradient} ring-2 ring-white shadow`} />
+                                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-linear-to-br ${TRINAY_G} ring-2 ring-white shadow`} />
                                         <p className="text-xs font-bold text-blue-500 uppercase tracking-widest">{edu.year}</p>
                                         <p className="text-base font-black text-[#003366] mt-0.5">{edu.degree}</p>
                                         <p className="text-sm text-slate-500 mt-0.5">{edu.college}</p>
@@ -360,7 +362,7 @@ const DoctorDetail = () => {
                             variants={fadeUp(0.2)}
                             initial="hidden"
                             animate="visible"
-                            className={`rounded-3xl bg-linear-to-br ${doc.gradient} p-6 shadow-2xl text-white overflow-hidden relative`}
+                            className={`rounded-3xl bg-linear-to-br ${TRINAY_G} p-6 shadow-2xl text-white overflow-hidden relative`}
                         >
                             <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/10 blur-3xl" />
                             <div className="relative">
@@ -470,7 +472,7 @@ const DoctorDetail = () => {
                 </a>
                 <Link
                     to={`/appointment?doctor=${encodeURIComponent(doc.nameTitled)}&dept=${encodeURIComponent(doc.dept)}`}
-                    className={`flex-[2] flex items-center justify-center gap-2 bg-linear-to-r ${doc.gradient} text-white font-black py-3.5 rounded-2xl text-sm`}
+                    className={`flex-[2] flex items-center justify-center gap-2 bg-linear-to-r ${TRINAY_G} text-white font-black py-3.5 rounded-2xl text-sm`}
                 >
                     <Calendar size={16} /> Book Appointment
                 </Link>
