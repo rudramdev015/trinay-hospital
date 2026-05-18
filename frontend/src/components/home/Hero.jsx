@@ -29,8 +29,9 @@ const BackgroundMedia = ({ media, mediaData, isMobile }) => {
     if (!media) {
         return (
             <video
-                autoPlay loop muted playsInline preload="auto"
+                autoPlay loop muted playsInline preload="metadata"
                 className="absolute inset-0 w-full h-full object-cover"
+                style={{ willChange: "transform" }}
             >
                 <source src={isMobile ? LOCAL_MOBILE : LOCAL_DESKTOP} type="video/mp4" />
             </video>

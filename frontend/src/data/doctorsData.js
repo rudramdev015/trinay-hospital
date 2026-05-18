@@ -3,6 +3,9 @@
    Used by: Doctors.jsx, DoctorDetail.jsx, Appointment.jsx
 ───────────────────────────────────────────────────────────────────────────── */
 
+import dummyMaleAvatar   from "../assets/images/dummyMaleDoctor.png";
+import dummyFemaleAvatar from "../assets/images/dummyFemaleDoctor.png";
+
 const FEMALE_NAMES = ["RASHMI", "PRIYANKA", "PUSHPA", "POOJA", "KULDEEP", "JAISHREE", "RITU", "CHITRA", "VIDHI", "METALI", "SHALINI"];
 const isFemale = (name) => FEMALE_NAMES.some((n) => name.toUpperCase().includes(n));
 
@@ -509,7 +512,7 @@ export const DOCTORS = RAW.map((doc) => {
         slug,
         isFemale: female,
         isSenior,
-        avatar: PHOTO_MAP[doc.id] ?? null,
+        avatar: PHOTO_MAP[doc.id] ?? (female ? dummyFemaleAvatar : dummyMaleAvatar),
         days: doc.days ?? "Mon – Sat",
         languages: doc.languages ?? ["Hindi", "English", "Rajasthani"],
         color: deptStyle.color,
