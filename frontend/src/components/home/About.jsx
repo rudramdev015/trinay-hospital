@@ -19,11 +19,11 @@ const cardVariants = {
     visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
 };
 
-const milestones = [
-    { year: "2018", label: "Hospital Founded" },
-    { year: "2020", label: "NABH Accreditation" },
-    { year: "2022", label: "ICU & Critical Care Wing" },
-    { year: "2024", label: "100+ Bed Capacity" },
+const BADGES = [
+    { label: "24/7 Emergency Care" },
+    { label: "Advanced ICU" },
+    { label: "Multispeciality Hospital" },
+    { label: "NABH Accredited" },
 ];
 
 const About = () => (
@@ -47,25 +47,28 @@ const About = () => (
                     </h2>
 
                     <p className="text-slate-600 mt-5 leading-relaxed text-justify">
-                        Trinay Hospital has been at the forefront of healthcare excellence in Jodhpur for
-                        over 15 years. Founded with a vision to provide accessible, affordable, and
-                        advanced medical care, we have grown to become one of the most trusted
-                        healthcare institutions in Rajasthan.
+                        Founded in 2024, Trinay Hospital is Jodhpur's premier multispeciality healthcare
+                        destination. Built with a vision to provide accessible, affordable, and advanced
+                        medical care, we are rapidly growing into one of the most trusted healthcare
+                        institutions in Rajasthan.
                     </p>
                     <p className="text-slate-600 mt-4 leading-relaxed text-justify">
                         Our state-of-the-art 100-bedded facility combines modern infrastructure with
                         compassionate care. Led by a team of 50+ specialist doctors, we serve thousands
-                        of patients annually across 15+ medical specialties — from routine checkups to
+                        of patients across 15+ medical specialties — from routine checkups to
                         complex surgeries, emergency care to preventive health programs.
                     </p>
 
-                    {/* Timeline */}
-                    <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        {milestones.map((m) => (
-                            <div key={m.year} className="rounded-2xl bg-blue-50 border border-blue-100 px-3 py-4 text-center">
-                                <p className="text-xl font-black text-blue-700">{m.year}</p>
-                                <p className="text-xs font-semibold text-slate-500 mt-1">{m.label}</p>
-                            </div>
+                    {/* Feature badges */}
+                    <div className="mt-8 flex flex-wrap gap-2.5">
+                        {BADGES.map((b) => (
+                            <span
+                                key={b.label}
+                                className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold px-4 py-2 rounded-full"
+                            >
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                                {b.label}
+                            </span>
                         ))}
                     </div>
 
