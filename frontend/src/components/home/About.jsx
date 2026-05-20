@@ -20,10 +20,10 @@ const cardVariants = {
 };
 
 const milestones = [
-    { year: "2008", label: "Hospital Founded" },
-    { year: "2015", label: "NABH Accreditation" },
-    { year: "2020", label: "ICU Expansion" },
-    { year: "2024", label: "100-Bed Capacity" },
+    { year: "2018", label: "Hospital Founded" },
+    { year: "2020", label: "NABH Accreditation" },
+    { year: "2022", label: "ICU & Critical Care Wing" },
+    { year: "2024", label: "100+ Bed Capacity" },
 ];
 
 const About = () => (

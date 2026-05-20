@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import SimplePage from "./components/common/SimplePage";
 import ScrollToTop from "./components/common/ScrollToTop";
-import TrinayChatbot from "./components/common/TrinayChatbot"; 
+
+// Lazy-load chatbot so it doesn't block initial page render (584 lines)
+const TrinayChatbot = lazy(() => import("./components/common/TrinayChatbot"));
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -29,7 +31,9 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <TrinayChatbot />
+      <Suspense fallback={null}>
+        <TrinayChatbot />
+      </Suspense>
       <Suspense fallback={<SimplePage />}>
         <Routes>
           <Route path="/" element={<Home />} />

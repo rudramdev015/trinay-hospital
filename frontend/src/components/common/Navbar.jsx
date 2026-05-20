@@ -99,6 +99,8 @@ const Navbar = () => {
                                 <img
                                     src={hospitalLogo}
                                     alt="Trinay Hospital"
+                                    fetchpriority="high"
+                                    decoding="sync"
                                     className={`transition-all duration-500 object-contain ${
                                         scrolled ? "h-16 lg:h-20" : "h-20 lg:h-32"
                                     }`}

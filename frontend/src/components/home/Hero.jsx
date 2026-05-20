@@ -68,33 +68,36 @@ const Hero = () => {
 
     useEffect(() => {
         let cancelled = false;
-        fetch(buildApiUrl("/api/hero-media"))
-            .then((r) => r.json())
-            .then((d) => {
-                if (cancelled) return;
-                const items = d.heroMedia || [];
-                setHeroItems(items);
+        // Defer 80 ms so React completes first paint before opening network connections
+        const timer = setTimeout(() => {
+            fetch(buildApiUrl("/api/hero-media"))
+                .then((r) => r.json())
+                .then((d) => {
+                    if (cancelled) return;
+                    const items = d.heroMedia || [];
+                    setHeroItems(items);
 
-                const desktop = pickMedia(items, false);
-                const mobile  = pickMedia(items, true);
+                    const desktop = pickMedia(items, false);
+                    const mobile  = pickMedia(items, true);
 
-                if (desktop?.type === "image" && desktop?._id) {
-                    fetch(buildApiUrl(`/api/hero-media/${desktop._id}/data`))
-                        .then((r) => r.json())
-                        .then((d2) => { if (!cancelled) setDesktopData(d2); })
-                        .catch(() => {});
-                }
-                if (mobile && mobile._id !== desktop?._id && mobile.type === "image") {
-                    fetch(buildApiUrl(`/api/hero-media/${mobile._id}/data`))
-                        .then((r) => r.json())
-                        .then((d2) => { if (!cancelled) setMobileData(d2); })
-                        .catch(() => {});
-                } else if (mobile && mobile._id === desktop?._id) {
-                    setMobileData(desktopData);
-                }
-            })
-            .catch(() => {});
-        return () => { cancelled = true; };
+                    if (desktop?.type === "image" && desktop?._id) {
+                        fetch(buildApiUrl(`/api/hero-media/${desktop._id}/data`))
+                            .then((r) => r.json())
+                            .then((d2) => { if (!cancelled) setDesktopData(d2); })
+                            .catch(() => {});
+                    }
+                    if (mobile && mobile._id !== desktop?._id && mobile.type === "image") {
+                        fetch(buildApiUrl(`/api/hero-media/${mobile._id}/data`))
+                            .then((r) => r.json())
+                            .then((d2) => { if (!cancelled) setMobileData(d2); })
+                            .catch(() => {});
+                    } else if (mobile && mobile._id === desktop?._id) {
+                        setMobileData(desktopData);
+                    }
+                })
+                .catch(() => {});
+        }, 80);
+        return () => { cancelled = true; clearTimeout(timer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
