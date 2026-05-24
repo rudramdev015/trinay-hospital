@@ -16,7 +16,7 @@ const FEATURES = [
     },
     {
         Icon: Users,
-        title: "50+ Expert Specialists",
+        title: "30+ Expert Specialists",
         desc: "Highly qualified doctors, nurses, and medical staff united in delivering exceptional patient outcomes.",
         gradient: "from-teal-500 to-teal-700",
         bg: "bg-teal-50",

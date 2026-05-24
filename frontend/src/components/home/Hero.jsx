@@ -13,8 +13,8 @@ const ACCREDITATIONS = [
 const STATS = [
     { value: "30+",  label: "Specialists" },
     { value: "24/7", label: "Emergency" },
-    { value: "25K+", label: "Patients" },
-    { value: "20+",  label: "Years of Trust" },
+    { value: "17",   label: "Departments" },
+    { value: "100+", label: "Bed Capacity" },
 ];
 
 const LOCAL_DESKTOP = "/trinay%20hospital.mp4";
@@ -167,7 +167,7 @@ const Hero = () => {
                         className="mt-5 text-white/72 text-sm sm:text-base lg:text-lg font-medium leading-relaxed max-w-xl"
                     >
                         30+ Senior Specialists · 24/7 Emergency &amp; ICU · NABH Accredited —
-                        delivering world-class healthcare in the heart of Jodhpur since 2005.
+                        delivering world-class healthcare in the heart of Jodhpur.
                     </motion.p>
 
                     {/* CTA buttons */}

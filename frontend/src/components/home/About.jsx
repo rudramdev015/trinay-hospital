@@ -54,9 +54,9 @@ const About = () => (
                     </p>
                     <p className="text-slate-600 mt-4 leading-relaxed text-justify">
                         Our state-of-the-art 100-bedded facility combines modern infrastructure with
-                        compassionate care. Led by a team of 50+ specialist doctors, we serve thousands
-                        of patients across 15+ medical specialties — from routine checkups to
-                        complex surgeries, emergency care to preventive health programs.
+                        compassionate care. Led by a team of 30+ specialist doctors across 17 medical
+                        specialties — from routine checkups to complex surgeries, emergency care
+                        to preventive health programs.
                     </p>
 
                     {/* Feature badges */}

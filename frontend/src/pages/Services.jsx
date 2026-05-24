@@ -146,9 +146,9 @@ const Services = () => {
             <section className="relative -mt-10 md:-mt-12 z-20 px-4 md:px-6">
                 <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 bg-white rounded-3xl md:rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden divide-x divide-y md:divide-y-0 divide-slate-100">
                     {[
-                        { l: "Patients Served",    v: "25k+", i: Activity    },
                         { l: "Expert Doctors",     v: "30+",  i: Stethoscope },
                         { l: "Specialties",        v: "17",   i: Microscope  },
+                        { l: "Bed Capacity",       v: "100+", i: Activity    },
                         { l: "Emergency Response", v: "24/7", i: Clock       },
                     ].map(({ l, v, i }, idx) => {
                         const S = i;

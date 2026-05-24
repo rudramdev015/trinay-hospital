@@ -124,7 +124,7 @@ const Testimonials = () => {
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="text-3xl font-black text-slate-900 leading-none">4.8</span>
                                 <StarRating rating={5} size={15} />
-                                <span className="text-slate-400 text-sm font-medium">(150+)</span>
+                                <span className="text-slate-400 text-sm font-medium">Google</span>
                             </div>
                         </div>
                     </div>
@@ -177,7 +177,7 @@ const Testimonials = () => {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-[#003366] font-bold border border-slate-200 hover:border-blue-200 px-7 py-3 rounded-full text-sm transition-all duration-300 hover:shadow-md shadow-sm"
                     >
-                        View all 150+ reviews on Google
+                        View all reviews on Google
                         <ExternalLink size={13} />
                     </a>
                 </motion.div>

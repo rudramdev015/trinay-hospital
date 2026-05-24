@@ -71,7 +71,7 @@ const AdminLogin = () => {
                             <span style={{ color: "#93C5FD" }}>Hospital</span>
                         </h1>
                         <p className="mt-3 text-blue-200 text-base font-medium leading-relaxed max-w-xs">
-                            Jodhpur's Most Trusted Multi-speciality Hospital — delivering world-class healthcare since 2005.
+                            Jodhpur's Premier NABH-Accredited Multi-speciality Hospital — delivering world-class healthcare.
                         </p>
                     </div>
 

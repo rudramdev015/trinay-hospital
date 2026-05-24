@@ -152,9 +152,9 @@ const Careers = () => (
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.44, duration: 0.6 }}
                     className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-0">
                     {[
-                        { value: "8+", label: "Open Positions" },
-                        { value: "150+", label: "Team Members" },
-                        { value: "15+", label: "Specialties" },
+                        { value: "8+",   label: "Open Positions" },
+                        { value: "30+",  label: "Specialists" },
+                        { value: "17",   label: "Specialties" },
                         { value: "NABH", label: "Accredited" },
                     ].map(({ value, label }) => (
                         <div key={label} className="bg-white/10 border border-white/20 rounded-t-2xl px-4 py-5 backdrop-blur-sm text-center">

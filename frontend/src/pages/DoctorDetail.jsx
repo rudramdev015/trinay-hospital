@@ -185,10 +185,9 @@ const DoctorDetail = () => {
                             <motion.div variants={fadeUp(0.3)} initial="hidden" animate="visible"
                                 className="mt-7 flex flex-wrap gap-3 sm:gap-4">
                                 {[
-                                    { label: "Experience",      value: `${doc.experience}+ Years` },
-                                    { label: "Patients Served", value: doc.patients },
-                                    { label: "OPD Days",        value: doc.days },
-                                ].map(({ label, value }) => (
+                                    { label: "Experience", value: `${doc.experience}+ Years` },
+                                    { label: "OPD Days",   value: doc.days },
+                                ].filter(({ value }) => value).map(({ label, value }) => (
                                     <div key={label} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 sm:px-5 py-3.5">
                                         <p className="text-white/55 text-[10px] font-semibold uppercase tracking-wider">{label}</p>
                                         <p className="text-white text-base sm:text-lg font-black mt-0.5">{value}</p>

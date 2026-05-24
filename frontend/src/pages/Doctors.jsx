@@ -311,10 +311,10 @@ const DoctorsPage = () => {
                         className="mt-8 flex flex-wrap justify-center gap-3 sm:gap-4"
                     >
                         {[
-                            { icon: <Users size={15} />,     value: `${totalCount}+`,  label: "Specialists"    },
-                            { icon: <Activity size={15} />,  value: "17",              label: "Departments"    },
-                            { icon: <Heart size={15} />,     value: "25k+",            label: "Patients Served" },
-                            { icon: <BadgeCheck size={15} />, value: "24/7",           label: "Emergency"      },
+                            { icon: <Users size={15} />,      value: `${totalCount}+`, label: "Specialists"  },
+                            { icon: <Activity size={15} />,   value: "17",             label: "Departments"  },
+                            { icon: <BadgeCheck size={15} />, value: "100+",           label: "Bed Capacity" },
+                            { icon: <Heart size={15} />,      value: "24/7",           label: "Emergency"    },
                         ].map(({ icon, value, label }) => (
                             <div key={label} className="flex items-center gap-2.5 bg-white/10 border border-white/15 backdrop-blur-sm rounded-2xl px-4 py-2.5">
                                 <span className="text-cyan-400">{icon}</span>

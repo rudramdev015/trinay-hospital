@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
-import { HeartPulse, Users, LayoutGrid, Smile } from "lucide-react";
+import { HeartPulse, Users, LayoutGrid, BedDouble } from "lucide-react";
 
 const STATS = [
-    { value: 24, suffix: "/7",  label: "Emergency Care",   Icon: HeartPulse, color: "text-rose-500",  bg: "bg-rose-50",  ring: "ring-rose-100"  },
-    { value: 30, suffix: "+",   label: "Expert Doctors",   Icon: Users,      color: "text-blue-600", bg: "bg-blue-50",  ring: "ring-blue-100"  },
-    { value: 17, suffix: "",    label: "Departments",      Icon: LayoutGrid, color: "text-teal-600", bg: "bg-teal-50",  ring: "ring-teal-100"  },
-    { value: 25, suffix: "k+",  label: "Patients Served",  Icon: Smile,      color: "text-amber-500",bg: "bg-amber-50", ring: "ring-amber-100" },
+    { value: 24,  suffix: "/7", label: "Emergency Care",  Icon: HeartPulse, color: "text-rose-500",  bg: "bg-rose-50",  ring: "ring-rose-100"  },
+    { value: 30,  suffix: "+",  label: "Expert Doctors",  Icon: Users,      color: "text-blue-600", bg: "bg-blue-50",  ring: "ring-blue-100"  },
+    { value: 17,  suffix: "",   label: "Departments",     Icon: LayoutGrid, color: "text-teal-600", bg: "bg-teal-50",  ring: "ring-teal-100"  },
+    { value: 100, suffix: "+",  label: "Bed Capacity",    Icon: BedDouble,  color: "text-amber-500",bg: "bg-amber-50", ring: "ring-amber-100" },
 ];
 
 const StatCard = ({ value, suffix, label, Icon, color, bg, ring, duration = 1300 }) => {
