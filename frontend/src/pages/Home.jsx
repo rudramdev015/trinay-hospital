@@ -7,15 +7,16 @@ import Footer from '../components/common/Footer';
 // Lazy loading components for better performance
 const About              = lazy(() => import('../components/home/About'));
 const Accreditations     = lazy(() => import('../components/home/Accreditations'));
-const ServicesPreview = lazy(() => import('../components/home/ServicesPreview'));
-const KeyServices     = lazy(() => import('../components/home/KeyServices'));
-const DoctorsPreview  = lazy(() => import('../components/home/DoctorsPreview'));
-const Facilities      = lazy(() => import('../components/home/Facilities'));
-const HealthPackages  = lazy(() => import('../components/home/HealthPackages'));
-const InsurancePartners = lazy(() => import('../components/home/InsurancePartners'));
-const GovernmentSchemes = lazy(() => import('../components/home/GovernmentSchemes'));
-const CallToAction    = lazy(() => import('../components/home/CallToAction'));
-const Testimonials    = lazy(() => import('../components/home/Testimonials'));
+const ServicesPreview    = lazy(() => import('../components/home/ServicesPreview'));
+const KeyServices        = lazy(() => import('../components/home/KeyServices'));
+const DoctorsPreview     = lazy(() => import('../components/home/DoctorsPreview'));
+const Facilities         = lazy(() => import('../components/home/Facilities'));
+const MediaHighlights    = lazy(() => import('../components/home/MediaHighlights'));
+const HealthPackages     = lazy(() => import('../components/home/HealthPackages'));
+const InsurancePartners  = lazy(() => import('../components/home/InsurancePartners'));
+const GovernmentSchemes  = lazy(() => import('../components/home/GovernmentSchemes'));
+const CallToAction       = lazy(() => import('../components/home/CallToAction'));
+const Testimonials       = lazy(() => import('../components/home/Testimonials'));
 
 const Skeleton = ({ h = 'min-h-[320px]' }) => (
     <div className={`${h} bg-slate-50 animate-pulse mx-auto w-full`} />
@@ -64,7 +65,12 @@ const Home = () => {
                     <Facilities />
                 </Suspense>
 
-                {/* 8. Health Packages */}
+                {/* 8. Photo Gallery Highlights */}
+                <Suspense fallback={<Skeleton h="min-h-[400px]" />}>
+                    <MediaHighlights />
+                </Suspense>
+
+                {/* 9. Health Packages */}
                 <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
                     <HealthPackages />
                 </Suspense>

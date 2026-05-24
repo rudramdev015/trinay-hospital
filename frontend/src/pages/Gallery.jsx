@@ -1,13 +1,48 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react"; // useRef kept for lightbox thumbnails
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, ChevronLeft, ChevronRight, Film, X, ZoomIn } from "lucide-react";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
 
-import panelOfDoctorsVideo from "../assets/videos/panel of doctors.mp4";
+
+const YT_VIDEOS = [
+    { id: "WBK-58EcKt8", title: "Inside Jodhpur's Best Multispeciality Hospital | Trinay Hospital Tour" },
+    { id: "5P8CkR0mWPE", title: "Inside Jodhpur's Most Advanced Hospital | Trinay Hospital Teaser" },
+    { id: "pV5SlJPgKSY", title: "Honest Patient Review of Trinay Hospital" },
+    { id: "mbn1vMJGx5Y", title: "Jodhpur's Trusted Hospital With Modern Facilities & Expert Doctors" },
+    { id: "3SljWY3-sWA", title: "Neurosurgery: Head Injuries, Paralysis & Spine Health" },
+];
+
+const YT_CHANNEL = "https://www.youtube.com/@TrinayHospitaljdp";
+const IG_REELS   = "https://www.instagram.com/trinayhospital/reels/";
+
+import ab1  from "../assets/images/Artboard 1.jpg";
+import ab2  from "../assets/images/Artboard 2.jpg";
+import ab3  from "../assets/images/Artboard 3.jpg";
+import ab4  from "../assets/images/Artboard 4.jpg";
+import ab5  from "../assets/images/Artboard 5.jpg";
+import ab7  from "../assets/images/Artboard 7.jpg";
+import ab8  from "../assets/images/Artboard 8.jpg";
+import ab9  from "../assets/images/Artboard 9.jpg";
+import ab10 from "../assets/images/Artboard 10.jpg";
+import ab11 from "../assets/images/Artboard 11.jpg";
+import ab12 from "../assets/images/Artboard 12.jpg";
+import ab13 from "../assets/images/Artboard 13.jpg";
+import ab14 from "../assets/images/Artboard 14.jpg";
+import ab15 from "../assets/images/Artboard 15.jpg";
+import ab16 from "../assets/images/Artboard 16.jpg";
+import ab17 from "../assets/images/Artboard 17.jpg";
+import ab18 from "../assets/images/Artboard 18.jpg";
+import ab19 from "../assets/images/Artboard 19.jpg";
+import ab20 from "../assets/images/Artboard 20.jpg";
+import ab21 from "../assets/images/Artboard 21.jpg";
+import ab22 from "../assets/images/Artboard 22.jpg";
+import imgBed      from "../assets/images/Bed Facilities.jpeg";
+import imgCritical from "../assets/images/critical care.jpg";
 
 /* ── data ───────────────────────────────────────────────────────────────── */
 const PHOTOS = [
+    /* — existing hospital shots — */
     { id: 1,  title: "Trinay Hospital Facilities",          tag: "Facilities",  src: "/IMAGES/1.jpeg" },
     { id: 2,  title: "Advanced Medical Infrastructure",     tag: "Facilities",  src: "/IMAGES/2.jpeg" },
     { id: 3,  title: "Patient Care Services",               tag: "Services",    src: "/IMAGES/3.jpeg" },
@@ -29,18 +64,34 @@ const PHOTOS = [
     { id: 19, title: "Medical Professionals at Work",       tag: "Team",        src: "/IMAGES/_DSC82432x.jpg.jpeg" },
     { id: 20, title: "Trinay Hospital Infrastructure",      tag: "Building",    src: "/IMAGES/_DSC82612x.jpg.jpeg" },
     { id: 21, title: "Healing Environment",                 tag: "Facilities",  src: "/IMAGES/_DSC82642x.jpg.jpeg" },
+    /* — new Artboard images — */
+    { id: 22, title: "Trinay Hospital Tour",                tag: "Tour",        src: ab1  },
+    { id: 23, title: "Hospital Tour",                       tag: "Tour",        src: ab2  },
+    { id: 24, title: "Our Facility",                        tag: "Facilities",  src: ab3  },
+    { id: 25, title: "Medical Services",                    tag: "Services",    src: ab4  },
+    { id: 26, title: "Healthcare Excellence",               tag: "Services",    src: ab5  },
+    { id: 27, title: "Advanced Care",                       tag: "Tour",        src: ab7  },
+    { id: 28, title: "Expert Team",                         tag: "Team",        src: ab8  },
+    { id: 29, title: "Patient Care",                        tag: "Services",    src: ab9  },
+    { id: 30, title: "Hospital Wing",                       tag: "Facilities",  src: ab10 },
+    { id: 31, title: "Modern Infrastructure",               tag: "Building",    src: ab11 },
+    { id: 32, title: "Specialist Care",                     tag: "Services",    src: ab12 },
+    { id: 33, title: "Medical Team",                        tag: "Team",        src: ab13 },
+    { id: 34, title: "Treatment Facility",                  tag: "Facilities",  src: ab14 },
+    { id: 35, title: "Diagnostic Services",                 tag: "Services",    src: ab15 },
+    { id: 36, title: "Recovery Ward",                       tag: "Facilities",  src: ab16 },
+    { id: 37, title: "Emergency Care Unit",                 tag: "Emergency",   src: ab17 },
+    { id: 38, title: "Consultation Room",                   tag: "Services",    src: ab18 },
+    { id: 39, title: "Hospital Corridor",                   tag: "Building",    src: ab19 },
+    { id: 40, title: "Medical Equipment",                   tag: "Facilities",  src: ab20 },
+    { id: 41, title: "Healthcare Hub",                      tag: "Tour",        src: ab21 },
+    { id: 42, title: "Trinay Campus",                       tag: "Building",    src: ab22 },
+    { id: 43, title: "Bed & Room Facilities",               tag: "Facilities",  src: imgBed      },
+    { id: 44, title: "Critical Care ICU",                   tag: "Emergency",   src: imgCritical },
 ];
 
-const VIDEOS = [
-    { id: "v1", title: "Advanced Healthcare Facilities",   src: panelOfDoctorsVideo },
-    { id: "v2", title: "Expert Panel of Doctors",          src: panelOfDoctorsVideo },
-    { id: "v3", title: "Emergency & Critical Care",        src: panelOfDoctorsVideo },
-    { id: "v4", title: "Patient Care Journey",             src: panelOfDoctorsVideo },
-    { id: "v5", title: "Diagnostic Infrastructure",        src: panelOfDoctorsVideo },
-    { id: "v6", title: "Community Health Programmes",      src: panelOfDoctorsVideo },
-];
 
-const TAGS = ["All", ...Array.from(new Set(PHOTOS.map(p => p.tag)))];
+const TAGS = ["All", ...Array.from(new Set(PHOTOS.map(p => p.tag))).sort()];
 
 /* ── animation ─────────────────────────────────────────────────────────── */
 const cardAnim = {
@@ -86,9 +137,9 @@ const PhotoCard = ({ photo, index, onClick }) => (
     </motion.button>
 );
 
-/* ── Video card ─────────────────────────────────────────────────────────── */
-const VideoCard = ({ video, index }) => {
-    const ref = useRef(null);
+/* ── YouTube click-to-play card ─────────────────────────────────────────── */
+const YtCard = ({ video, index }) => {
+    const [playing, setPlaying] = useState(false);
     return (
         <motion.div
             custom={index}
@@ -96,28 +147,55 @@ const VideoCard = ({ video, index }) => {
             whileInView="visible"
             viewport={{ once: true }}
             variants={cardAnim}
-            className="group rounded-2xl overflow-hidden bg-slate-900 border border-white/5"
-            onMouseEnter={() => ref.current?.play()}
-            onMouseLeave={() => { if (ref.current) { ref.current.pause(); ref.current.currentTime = 0; } }}
+            className="rounded-2xl overflow-hidden bg-slate-800 border border-white/5 group"
         >
-            <div className="aspect-video relative">
-                <video
-                    ref={ref}
-                    src={video.src}
-                    muted
-                    loop
-                    preload="metadata"
-                    controls
-                    className="w-full h-full object-cover"
-                />
+            <div className="aspect-video relative bg-slate-900">
+                {playing ? (
+                    <iframe
+                        className="w-full h-full"
+                        src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`}
+                        title={video.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    />
+                ) : (
+                    <button
+                        onClick={() => setPlaying(true)}
+                        className="w-full h-full flex items-center justify-center relative"
+                        aria-label={`Play ${video.title}`}
+                    >
+                        <img
+                            src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
+                            alt={video.title}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/25 group-hover:bg-black/10 transition-colors duration-300" />
+                        <div className="relative z-10 w-16 h-16 rounded-full bg-red-600 group-hover:bg-red-500 flex items-center justify-center shadow-2xl transition-all duration-300 group-hover:scale-110">
+                            <svg viewBox="0 0 24 24" fill="white" className="w-7 h-7 ml-1"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </button>
+                )}
             </div>
-            <div className="p-4">
-                <p className="text-white font-bold text-sm leading-snug">{video.title}</p>
-                <p className="text-slate-400 text-xs mt-1 font-medium">Trinay Hospital — Jodhpur</p>
+            <div className="p-4 flex items-start justify-between gap-2">
+                <div>
+                    <p className="text-white font-bold text-sm leading-snug line-clamp-2">{video.title}</p>
+                    <p className="text-slate-400 text-xs mt-1">Trinay Hospital · Jodhpur</p>
+                </div>
+                <a
+                    href={`https://www.youtube.com/watch?v=${video.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="shrink-0 mt-0.5 text-red-500 hover:text-red-400 transition-colors"
+                    aria-label="Open on YouTube"
+                >
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
             </div>
         </motion.div>
     );
 };
+
 
 /* ── Lightbox ───────────────────────────────────────────────────────────── */
 const Lightbox = ({ photos, index, onClose, direction, setIndex, setDirection }) => {
@@ -278,7 +356,7 @@ const Gallery = () => {
                         className="flex flex-wrap justify-center gap-4">
                         {[
                             { icon: <Camera size={16} />, label: `${PHOTOS.length} Photos` },
-                            { icon: <Film size={16} />,   label: `${VIDEOS.length} Videos` },
+                            { icon: <Film size={16} />,   label: "Videos & Reels" },
                         ].map(({ icon, label }) => (
                             <div key={label} className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-full text-white text-sm font-bold">
                                 {icon} {label}
@@ -352,13 +430,61 @@ const Gallery = () => {
             {/* ── VIDEOS ── */}
             {tab === "videos" && (
                 <section className="py-12">
-                    <div className="max-w-7xl mx-auto px-6">
-                        <p className="text-slate-400 text-sm font-semibold mb-6">{VIDEOS.length} videos</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                            {VIDEOS.map((video, i) => (
-                                <VideoCard key={video.id} video={video} index={i} />
-                            ))}
+                    <div className="max-w-7xl mx-auto px-6 space-y-14">
+
+                            {/* YouTube Videos */}
+                        <div>
+                            <div className="flex items-center justify-between mb-5">
+                                <h3 className="text-white font-black text-lg flex items-center gap-2">
+                                    <svg viewBox="0 0 24 24" fill="#ef4444" className="w-5 h-5"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                    YouTube Videos
+                                </h3>
+                                <a href={YT_CHANNEL} target="_blank" rel="noreferrer"
+                                    className="text-xs font-bold text-red-400 hover:text-red-300 border border-red-500/30 px-3 py-1.5 rounded-full transition-colors">
+                                    Subscribe →
+                                </a>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                                {YT_VIDEOS.map((v, i) => <YtCard key={v.id + i} video={v} index={i} />)}
+                            </div>
                         </div>
+
+                        {/* Instagram Reels */}
+                        <div>
+                            <h3 className="text-white font-black text-lg mb-5 flex items-center gap-2">
+                                <svg viewBox="0 0 24 24" className="w-5 h-5" fill="url(#ig-grad)">
+                                    <defs>
+                                        <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+                                            <stop offset="0%" stopColor="#f09433"/>
+                                            <stop offset="25%" stopColor="#e6683c"/>
+                                            <stop offset="50%" stopColor="#dc2743"/>
+                                            <stop offset="75%" stopColor="#cc2366"/>
+                                            <stop offset="100%" stopColor="#bc1888"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                                Instagram Reels
+                            </h3>
+                            <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#833ab4]/20 via-[#fd1d1d]/15 to-[#fcb045]/15 p-8 flex flex-col sm:flex-row items-center gap-6">
+                                <div className="flex-1 text-center sm:text-left">
+                                    <p className="text-white font-black text-xl mb-2">@trinayhospital</p>
+                                    <p className="text-slate-300 text-sm leading-relaxed">
+                                        Watch our latest health tips, doctor introductions, patient success stories, and hospital updates on Instagram Reels.
+                                    </p>
+                                </div>
+                                <a
+                                    href={IG_REELS}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="shrink-0 inline-flex items-center gap-2 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-black px-6 py-3 rounded-full text-sm hover:opacity-90 transition-opacity shadow-xl"
+                                >
+                                    Watch Reels
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-4 h-4"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                 </section>
             )}
