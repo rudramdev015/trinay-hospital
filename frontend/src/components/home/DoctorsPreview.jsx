@@ -161,7 +161,7 @@ const DoctorsPreview = () => {
                             </span>
                         </h2>
                         <p className="text-slate-500 mt-3 text-base sm:text-lg leading-relaxed">
-                            30+ specialists across 17 departments — dedicated to your best health outcome.
+                            24+ specialists across 17 departments — dedicated to your best health outcome.
                         </p>
                     </motion.div>
 

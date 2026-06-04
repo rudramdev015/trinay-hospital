@@ -3,12 +3,12 @@ import LoadingLink from "../common/LoadingLink";
 import LoadingImage from "../common/LoadingImage";
 
 const ABOUT_IMAGES = [
-    { src: "/IMAGES/5.jpeg",                alt: "Expert Medical Team" },
-    { src: "/IMAGES/3.jpeg",                alt: "Patient Care Services" },
-    { src: "/IMAGES/8.jpeg",                alt: "Advanced ICU" },
-    { src: "/IMAGES/10.jpeg",               alt: "Specialist Consultation" },
+    { src: "/DOCTOR IAMGES/Dr. Dhruva Sharma.png",      alt: "Dr. Dhruva Sharma" },
+    { src: "/DOCTOR IAMGES/Dr. Ritu Choudhary.png",     alt: "Dr. Ritu Choudhary" },
+    { src: "/DOCTOR IAMGES/Dr. Rakesh Choudhary.png",   alt: "Dr. Rakesh Choudhary" },
+    { src: "/DOCTOR IAMGES/dr. tejpal faroda.png",      alt: "Dr. Tejpal Faroda" },
 ];
-const ABOUT_WIDE = { src: "/IMAGES/_DSC82642x.jpg.jpeg", alt: "Trinay Hospital Facility" };
+const ABOUT_WIDE = { src: "/DOCTOR IAMGES/11 (7).jpg", alt: "Trinay Hospital Doctors Team" };
 
 const gridVariants = {
     hidden: {},
@@ -54,7 +54,7 @@ const About = () => (
                     </p>
                     <p className="text-slate-600 mt-4 leading-relaxed text-justify">
                         Our state-of-the-art 100-bedded facility combines modern infrastructure with
-                        compassionate care. Led by a team of 30+ specialist doctors across 17 medical
+                        compassionate care. Led by a team of 24+ specialist doctors across 17 medical
                         specialties — from routine checkups to complex surgeries, emergency care
                         to preventive health programs.
                     </p>
@@ -98,8 +98,8 @@ const About = () => (
                             <LoadingImage
                                 src={src}
                                 alt={alt}
-                                className="h-28 md:h-32 lg:h-36 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 group overflow-hidden"
-                                imgClassName="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+                                className="h-28 md:h-32 lg:h-36 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 group overflow-hidden bg-linear-to-b from-blue-50 to-slate-100"
+                                imgClassName="w-full h-full object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.06]"
                             />
                         </motion.div>
                     ))}

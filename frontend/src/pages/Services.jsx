@@ -146,7 +146,7 @@ const Services = () => {
             <section className="relative -mt-10 md:-mt-12 z-20 px-4 md:px-6">
                 <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 bg-white rounded-3xl md:rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden divide-x divide-y md:divide-y-0 divide-slate-100">
                     {[
-                        { l: "Expert Doctors",     v: "30+",  i: Stethoscope },
+                        { l: "Expert Doctors",     v: "24+",  i: Stethoscope },
                         { l: "Specialties",        v: "17",   i: Microscope  },
                         { l: "Bed Capacity",       v: "100+", i: Activity    },
                         { l: "Emergency Response", v: "24/7", i: Clock       },
@@ -232,7 +232,7 @@ const Services = () => {
                             <div className="space-y-4 translate-y-6">
                                 <div className="h-48 md:h-64 bg-white rounded-3xl shadow-xl p-6 md:p-8 flex flex-col justify-end">
                                     <Stethoscope className="w-8 h-8 md:w-10 md:h-10 text-[#003366] mb-3" />
-                                    <div className="font-bold text-[#003366] text-sm md:text-base">30+ Specialists</div>
+                                    <div className="font-bold text-[#003366] text-sm md:text-base">24+ Specialists</div>
                                     <div className="text-xs text-slate-400">Expert Medical Team</div>
                                 </div>
                                 <div className="h-60 md:h-80 bg-[#003366] rounded-3xl shadow-2xl p-6 md:p-8 text-white flex flex-col justify-end">

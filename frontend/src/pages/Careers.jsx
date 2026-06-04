@@ -153,7 +153,7 @@ const Careers = () => (
                     className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-0">
                     {[
                         { value: "8+",   label: "Open Positions" },
-                        { value: "30+",  label: "Specialists" },
+                        { value: "24+",  label: "Specialists" },
                         { value: "17",   label: "Specialties" },
                         { value: "NABH", label: "Accredited" },
                     ].map(({ value, label }) => (

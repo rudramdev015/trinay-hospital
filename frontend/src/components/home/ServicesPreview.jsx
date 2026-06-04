@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import {
-    BadgeCheck, Clock3, Cpu, HeartHandshake,
-    Stethoscope, Users, ShieldPlus, Ambulance,
-    FlaskConical, BedDouble, Microscope, Baby,
+    BadgeCheck, Cpu, HeartHandshake,
+    ShieldPlus, Ambulance,
+    FlaskConical, Microscope, Baby,
 } from "lucide-react";
 
 const FEATURES = [
@@ -13,22 +13,6 @@ const FEATURES = [
         gradient: "from-blue-500 to-blue-700",
         bg: "bg-blue-50",
         ring: "ring-blue-200",
-    },
-    {
-        Icon: Users,
-        title: "30+ Expert Specialists",
-        desc: "Highly qualified doctors, nurses, and medical staff united in delivering exceptional patient outcomes.",
-        gradient: "from-teal-500 to-teal-700",
-        bg: "bg-teal-50",
-        ring: "ring-teal-200",
-    },
-    {
-        Icon: Clock3,
-        title: "24/7 Availability",
-        desc: "Round-the-clock emergency services and ambulance facilities ensuring immediate attention when it matters most.",
-        gradient: "from-rose-500 to-rose-700",
-        bg: "bg-rose-50",
-        ring: "ring-rose-200",
     },
     {
         Icon: HeartHandshake,
@@ -45,14 +29,6 @@ const FEATURES = [
         gradient: "from-amber-500 to-orange-600",
         bg: "bg-amber-50",
         ring: "ring-amber-200",
-    },
-    {
-        Icon: Stethoscope,
-        title: "17 Specialties",
-        desc: "Comprehensive medical departments under one roof — from cardiology to neurology, gynaecology to orthopaedics.",
-        gradient: "from-cyan-500 to-blue-600",
-        bg: "bg-cyan-50",
-        ring: "ring-cyan-200",
     },
     {
         Icon: ShieldPlus,
@@ -77,14 +53,6 @@ const FEATURES = [
         gradient: "from-indigo-500 to-indigo-700",
         bg: "bg-indigo-50",
         ring: "ring-indigo-200",
-    },
-    {
-        Icon: BedDouble,
-        title: "100-Bed Facility",
-        desc: "Well-equipped general, semi-private, and private ward options for comfortable, dignified inpatient stays.",
-        gradient: "from-sky-500 to-sky-700",
-        bg: "bg-sky-50",
-        ring: "ring-sky-200",
     },
     {
         Icon: Microscope,

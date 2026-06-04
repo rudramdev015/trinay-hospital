@@ -11,7 +11,7 @@ const ACCREDITATIONS = [
 ];
 
 const STATS = [
-    { value: "30+",  label: "Specialists" },
+    { value: "24+",  label: "Specialists" },
     { value: "24/7", label: "Emergency" },
     { value: "17",   label: "Departments" },
     { value: "100+", label: "Bed Capacity" },
@@ -31,7 +31,7 @@ const BackgroundMedia = ({ media, mediaData, isMobile }) => {
             <video
                 autoPlay loop muted playsInline preload="metadata"
                 className="absolute inset-0 w-full h-full object-cover"
-                style={{ willChange: "transform" }}
+                style={{ willChange: "transform", filter: "brightness(1.25) saturate(1.1)" }}
             >
                 <source src={isMobile ? LOCAL_MOBILE : LOCAL_DESKTOP} type="video/mp4" />
             </video>
@@ -45,6 +45,7 @@ const BackgroundMedia = ({ media, mediaData, isMobile }) => {
                 src={src}
                 alt="Hero background"
                 className="absolute inset-0 w-full h-full object-cover"
+                style={{ filter: "brightness(1.25) saturate(1.1)" }}
             />
         );
     }
@@ -55,6 +56,7 @@ const BackgroundMedia = ({ media, mediaData, isMobile }) => {
         <video
             autoPlay loop muted playsInline preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: "brightness(1.25) saturate(1.1)" }}
         >
             <source src={videoSrc} type={media.mimeType || "video/mp4"} />
         </video>
@@ -126,8 +128,8 @@ const Hero = () => {
             </div>
 
             {/* Gradient overlays */}
-            <div className="absolute inset-0 bg-linear-to-b from-black/65 via-black/25 to-black/80 pointer-events-none" />
-            <div className="absolute inset-0 bg-linear-to-r from-black/55 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-b from-black/45 via-black/10 to-black/60 pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-r from-black/40 via-transparent to-transparent pointer-events-none" />
 
             {/* Content */}
             <div className="absolute inset-0 flex flex-col justify-between px-6 sm:px-10 lg:px-20 pt-28 sm:pt-32 pb-8 sm:pb-10">
@@ -166,7 +168,7 @@ const Hero = () => {
                         transition={{ duration: 0.7, delay: 0.5 }}
                         className="mt-5 text-white/72 text-sm sm:text-base lg:text-lg font-medium leading-relaxed max-w-xl"
                     >
-                        30+ Senior Specialists · 24/7 Emergency &amp; ICU · NABH Accredited —
+                        24+ Senior Specialists · 24/7 Emergency &amp; ICU · NABH Accredited —
                         delivering world-class healthcare in the heart of Jodhpur.
                     </motion.p>
 

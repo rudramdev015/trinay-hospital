@@ -9,7 +9,6 @@ import hospitalLogo from "./trinayhospital_logo.jpg";
 
 const CERT_LOGOS = [
     { src: "/DOCTOR IAMGES/NABH.png",       alt: "NABH Accredited" },
-    { src: "/DOCTOR IAMGES/ESIC.png",        alt: "ESIC Empanelled" },
     { src: "/DOCTOR IAMGES/MAA JOGANA .png", alt: "Maa Yojana Approved" },
 ];
 
@@ -94,32 +93,35 @@ const Navbar = () => {
                     <div className="flex justify-between items-center">
                         
                         {/* Logo + Accreditation badges */}
-                        <div className="flex items-center gap-3 shrink-0">
+                        <div className="flex items-center gap-4 sm:gap-5 shrink-0">
                             <Link to="/" className="group">
                                 <img
                                     src={hospitalLogo}
                                     alt="Trinay Hospital"
                                     fetchpriority="high"
                                     decoding="sync"
-                                    className={`transition-all duration-500 object-contain ${
-                                        scrolled ? "h-16 lg:h-20" : "h-20 lg:h-32"
+                                    className={`transition-all duration-500 object-contain group-hover:scale-105 ${
+                                        scrolled
+                                            ? "h-16 sm:h-18 lg:h-20"
+                                            : "h-20 sm:h-24 lg:h-36"
                                     }`}
                                 />
                             </Link>
 
-                            {/* Certification logos — desktop only, no background */}
-                            <div className="hidden lg:flex items-center gap-3 pl-4 ml-1 border-l border-slate-200">
+                            {/* Certification logos */}
+                            <div className="hidden md:flex items-center gap-4 pl-4 border-l-2 border-slate-200">
                                 {CERT_LOGOS.map(({ src, alt }) => (
-                                    <img
-                                        key={alt}
-                                        src={src}
-                                        alt={alt}
-                                        title={alt}
-                                        className={`w-auto object-contain transition-all duration-500 ${
-                                            scrolled ? "h-9" : "h-12"
-                                        }`}
-                                        onError={(e) => { e.currentTarget.style.display = "none"; }}
-                                    />
+                                    <div key={alt} className="flex flex-col items-center gap-1 group/cert">
+                                        <img
+                                            src={src}
+                                            alt={alt}
+                                            title={alt}
+                                            className={`w-auto object-contain transition-all duration-500 drop-shadow-sm group-hover/cert:scale-110 ${
+                                                scrolled ? "h-14 lg:h-16" : "h-18 lg:h-22"
+                                            }`}
+                                            onError={(e) => { e.currentTarget.parentElement.style.display = "none"; }}
+                                        />
+                                    </div>
                                 ))}
                             </div>
                         </div>

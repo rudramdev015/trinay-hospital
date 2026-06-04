@@ -526,7 +526,7 @@ const InfoPanel = () => (
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Why Trinay Hospital</p>
             <div className="grid grid-cols-2 gap-3">
                 {[
-                    { v: "30+",  l: "Specialists",   color: "text-blue-600",   bg: "bg-blue-50"   },
+                    { v: "24+",  l: "Specialists",   color: "text-blue-600",   bg: "bg-blue-50"   },
                     { v: "17",   l: "Departments",   color: "text-violet-600", bg: "bg-violet-50" },
                     { v: "24/7", l: "Emergency",     color: "text-rose-500",   bg: "bg-rose-50"   },
                     { v: "15yr", l: "Experience",    color: "text-emerald-600",bg: "bg-emerald-50" },

@@ -78,7 +78,7 @@ const AdminLogin = () => {
                     {/* Feature pills */}
                     <div className="space-y-3">
                         {[
-                            { icon: Stethoscope, label: "30+ Expert Specialists" },
+                            { icon: Stethoscope, label: "24+ Expert Specialists" },
                             { icon: Activity,    label: "24/7 Emergency & ICU" },
                             { icon: Shield,      label: "Secure Admin Portal" },
                         ].map(({ icon, label }) => (

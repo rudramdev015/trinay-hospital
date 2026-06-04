@@ -109,9 +109,6 @@ const KeyServices = () => (
                                     {svc.title}
                                 </h3>
                                 <p className="text-slate-400 text-sm mt-1 leading-snug">{svc.desc}</p>
-                                <div className="mt-3 flex items-center gap-1.5 text-cyan-400 text-sm font-semibold opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-                                    Book Appointment <ArrowRight size={14} />
-                                </div>
                             </div>
                         </LoadingLink>
                     </motion.div>
