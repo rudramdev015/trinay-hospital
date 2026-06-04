@@ -4,7 +4,7 @@ import { ArrowRight, Camera } from "lucide-react";
 
 import ab1  from "../../assets/images/Artboard 1.jpg";
 import ab3  from "../../assets/images/Artboard 3.jpg";
-import ab5  from "../../assets/images/Artboard 5.jpg";
+import ab5  from "../../assets/images/Artboard 7.jpg";
 import ab8  from "../../assets/images/Artboard 8.jpg";
 import ab12 from "../../assets/images/Artboard 12.jpg";
 import ab17 from "../../assets/images/Artboard 17.jpg";

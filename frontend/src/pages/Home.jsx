@@ -11,7 +11,6 @@ const Accreditations     = lazy(() => import('../components/home/Accreditations'
 const ServicesPreview    = lazy(() => import('../components/home/ServicesPreview'));
 const KeyServices        = lazy(() => import('../components/home/KeyServices'));
 const DoctorsPreview     = lazy(() => import('../components/home/DoctorsPreview'));
-const Facilities         = lazy(() => import('../components/home/Facilities'));
 const MediaHighlights    = lazy(() => import('../components/home/MediaHighlights'));
 const HealthPackages     = lazy(() => import('../components/home/HealthPackages'));
 const InsurancePartners  = lazy(() => import('../components/home/InsurancePartners'));
@@ -60,12 +59,7 @@ const Home = () => {
                     <DoctorsPreview />
                 </Suspense>
 
-                {/* 7. Facilities & Infrastructure */}
-                <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
-                    <Facilities />
-                </Suspense>
-
-                {/* 8. Photo Gallery Highlights */}
+{/* 8. Photo Gallery Highlights */}
                 <Suspense fallback={<Skeleton h="min-h-[400px]" />}>
                     <MediaHighlights />
                 </Suspense>

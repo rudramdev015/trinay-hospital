@@ -1,17 +1,17 @@
 import { motion } from "framer-motion";
 import LoadingLink from "../common/LoadingLink";
 
+import ab7  from "../../assets/images/Artboard 7.jpg";
 import ab8  from "../../assets/images/Artboard 8.jpg";
-import ab9  from "../../assets/images/Artboard 9.jpg";
 import ab10 from "../../assets/images/Artboard 10.jpg";
 import ab11 from "../../assets/images/Artboard 11.jpg";
 import ab17 from "../../assets/images/Artboard 17.jpg";
 
 const ABOUT_IMAGES = [
-    { src: ab8,  alt: "Trinay Hospital OT",       label: "Operation Theatre" },
-    { src: ab9,  alt: "Trinay Hospital ICU",       label: "Advanced ICU"      },
-    { src: ab10, alt: "Trinay Hospital Facility",  label: "Modern Facility"   },
-    { src: ab11, alt: "Trinay Hospital Care",      label: "Expert Care"       },
+    { src: ab7,  alt: "Trinay Hospital Facility",  label: "Modern Facility"   },
+    { src: ab8,  alt: "Trinay Hospital OT",        label: "Operation Theatre" },
+    { src: ab10, alt: "Trinay Hospital ICU",        label: "Advanced ICU"      },
+    { src: ab11, alt: "Trinay Hospital Care",       label: "Expert Care"       },
 ];
 const ABOUT_WIDE = { src: ab17, alt: "Trinay Hospital", label: "Trinay Hospital — Care With Compassion" };
 
