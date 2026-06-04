@@ -20,7 +20,7 @@ import imgUrology      from "../assets/images/urology.png";
 import imgGenMed       from "../assets/images/general medicin.png";
 import imgDietetics    from "../assets/images/diabetics.png";
 import imgDentistry    from "../assets/images/treatment-tech.jpg";
-import imgOncology     from "../assets/images/icu.png";
+import imgOncology     from "../assets/images/critical care.jpg";
 import imgEnt          from "../assets/images/ent.jpg";
 import imgPlastic      from "../assets/images/Plastic-surgery.jpg";
 import imgRespiratory  from "../assets/images/Pulmonology.jpg";
