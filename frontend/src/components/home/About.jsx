@@ -1,14 +1,13 @@
 import { motion } from "framer-motion";
 import LoadingLink from "../common/LoadingLink";
-import LoadingImage from "../common/LoadingImage";
 
 const ABOUT_IMAGES = [
-    { src: "/DOCTOR IAMGES/Dr. Dhruva Sharma.png",      alt: "Dr. Dhruva Sharma" },
-    { src: "/DOCTOR IAMGES/Dr. Ritu Choudhary.png",     alt: "Dr. Ritu Choudhary" },
-    { src: "/DOCTOR IAMGES/Dr. Rakesh Choudhary.png",   alt: "Dr. Rakesh Choudhary" },
-    { src: "/DOCTOR IAMGES/dr. tejpal faroda.png",      alt: "Dr. Tejpal Faroda" },
+    { src: "/IMAGES/_DSC82612x.jpg.jpeg",              alt: "Hospital Facility",    label: "Modern Facility"   },
+    { src: "/IMAGES/CCCC2x.jpg.jpeg",                  alt: "Patient Care",         label: "Patient Care"      },
+    { src: "/IMAGES/_DSC82432x.jpg.jpeg",              alt: "Advanced Equipment",   label: "Advanced ICU"      },
+    { src: "/IMAGES/_DSC8250 - Copy2x.jpg.jpeg",       alt: "Operation Theatre",    label: "Operation Theatre" },
 ];
-const ABOUT_WIDE = { src: "/DOCTOR IAMGES/11 (7).jpg", alt: "Trinay Hospital Doctors Team" };
+const ABOUT_WIDE = { src: "/DOCTOR IAMGES/11 (7).jpg", alt: "Trinay Hospital Doctors Team", label: "Our Expert Medical Team" };
 
 const gridVariants = {
     hidden: {},
@@ -82,40 +81,57 @@ const About = () => (
 
                 {/* RIGHT — IMAGE GRID */}
                 <motion.div
-                    className="grid grid-cols-2 gap-4"
+                    className="grid grid-cols-2 gap-3 lg:gap-4"
                     variants={gridVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
                 >
-                    {ABOUT_IMAGES.map(({ src, alt }) => (
+                    {ABOUT_IMAGES.map(({ src, alt, label }) => (
                         <motion.div
                             key={alt}
                             variants={cardVariants}
-                            whileHover={{ scale: 1.04, y: -6 }}
+                            whileHover={{ scale: 1.04, y: -5 }}
                             transition={{ type: "spring", stiffness: 260, damping: 18 }}
+                            className="relative group rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 h-36 md:h-40 lg:h-44"
                         >
-                            <LoadingImage
+                            <img
                                 src={src}
                                 alt={alt}
-                                className="h-28 md:h-32 lg:h-36 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 group overflow-hidden bg-linear-to-b from-blue-50 to-slate-100"
-                                imgClassName="w-full h-full object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.06]"
+                                loading="lazy"
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.08]"
                             />
+                            {/* Dark gradient overlay */}
+                            <div className="absolute inset-0 bg-linear-to-t from-[#003366]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            {/* Label on hover */}
+                            <span className="absolute bottom-3 left-3 text-white text-[11px] font-black uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                                {label}
+                            </span>
                         </motion.div>
                     ))}
 
+                    {/* Wide bottom image */}
                     <motion.div
                         variants={cardVariants}
-                        whileHover={{ scale: 1.03, y: -6 }}
+                        whileHover={{ scale: 1.02, y: -4 }}
                         transition={{ type: "spring", stiffness: 240, damping: 18 }}
-                        className="col-span-2"
+                        className="col-span-2 relative group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 h-48 md:h-56 lg:h-60"
                     >
-                        <LoadingImage
+                        <img
                             src={ABOUT_WIDE.src}
                             alt={ABOUT_WIDE.alt}
-                            className="h-40 md:h-48 lg:h-56 rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 group overflow-hidden"
-                            imgClassName="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                            loading="lazy"
+                            className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.05]"
                         />
+                        <div className="absolute inset-0 bg-linear-to-t from-[#003366]/65 via-transparent to-transparent" />
+                        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                            <span className="text-white font-black text-sm md:text-base drop-shadow-md">
+                                {ABOUT_WIDE.label}
+                            </span>
+                            <span className="bg-white/20 backdrop-blur-sm border border-white/30 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                                Trinay Hospital
+                            </span>
+                        </div>
                     </motion.div>
                 </motion.div>
             </div>
