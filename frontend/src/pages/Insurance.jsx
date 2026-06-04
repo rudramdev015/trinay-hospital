@@ -393,7 +393,7 @@ const Insurance = () => {
                     </motion.div>
 
                     <motion.div
-                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-3"
+                        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5"
                         variants={stagger}
                         initial="hidden"
                         whileInView="visible"
@@ -403,23 +403,23 @@ const Insurance = () => {
                             <motion.div
                                 key={ins.name}
                                 variants={cardItem}
-                                whileHover={{ y: -6, scale: 1.05 }}
+                                whileHover={{ y: -8, scale: 1.04 }}
                                 transition={{ type: "spring", stiffness: 280, damping: 18 }}
-                                className="group bg-white border border-slate-100 hover:border-blue-200 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 p-4 flex flex-col items-center gap-3 text-center cursor-default"
+                                className="group bg-white border border-slate-100 hover:border-blue-300 rounded-3xl shadow-sm hover:shadow-2xl hover:shadow-blue-100 transition-all duration-300 p-5 md:p-6 flex flex-col items-center gap-4 text-center cursor-default"
                             >
-                                <div className="w-12 h-12 rounded-xl border border-slate-100 bg-slate-50 group-hover:bg-blue-50 flex items-center justify-center overflow-hidden p-1.5 transition-colors">
+                                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border border-slate-100 bg-slate-50 group-hover:bg-blue-50 flex items-center justify-center overflow-hidden p-3 transition-all duration-300 shadow-sm group-hover:shadow-md">
                                     {ins.logo ? (
                                         <img
                                             src={ins.logo}
                                             alt={ins.name}
-                                            className="w-full h-full object-contain"
+                                            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
                                             loading="lazy"
                                         />
                                     ) : (
-                                        <ShieldCheck size={22} className="text-blue-400" />
+                                        <ShieldCheck size={36} className="text-blue-400" />
                                     )}
                                 </div>
-                                <p className="text-[11px] font-semibold text-slate-600 leading-snug group-hover:text-[#003366] transition-colors line-clamp-2">
+                                <p className="text-xs sm:text-sm font-bold text-slate-600 leading-snug group-hover:text-[#003366] transition-colors line-clamp-2">
                                     {ins.name}
                                 </p>
                             </motion.div>
