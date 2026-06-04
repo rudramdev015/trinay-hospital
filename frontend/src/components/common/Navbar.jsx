@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import {
     ChevronDown, Home, Stethoscope, UserRound, Shield,
     Phone, Image, Info, CalendarCheck, Facebook,
-    Instagram, Menu, X, Search, PhoneCall, MapPin, Clock, Users2
+    Instagram, Menu, X, PhoneCall, MapPin, Clock, Users2
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import hospitalLogo from "./trinayhospital_logo.jpg";
+const hospitalLogo = "/Copy of logo trinay (2).png";
 
 const CERT_LOGOS = [
     { src: "/DOCTOR IAMGES/NABH.png",       alt: "NABH Accredited" },
@@ -102,26 +102,28 @@ const Navbar = () => {
                                     decoding="sync"
                                     className={`transition-all duration-500 object-contain group-hover:scale-105 ${
                                         scrolled
-                                            ? "h-16 sm:h-18 lg:h-20"
-                                            : "h-20 sm:h-24 lg:h-36"
+                                            ? "h-10 sm:h-12 lg:h-14"
+                                            : "h-12 sm:h-14 lg:h-20"
                                     }`}
                                 />
                             </Link>
 
                             {/* Certification logos */}
-                            <div className="hidden md:flex items-center gap-4 pl-4 border-l-2 border-slate-200">
+                            <div className="hidden md:flex items-center gap-5 pl-5 border-l-2 border-slate-200">
                                 {CERT_LOGOS.map(({ src, alt }) => (
-                                    <div key={alt} className="flex flex-col items-center gap-1 group/cert">
-                                        <img
-                                            src={src}
-                                            alt={alt}
-                                            title={alt}
-                                            className={`w-auto object-contain transition-all duration-500 drop-shadow-sm group-hover/cert:scale-110 ${
-                                                scrolled ? "h-14 lg:h-16" : "h-18 lg:h-22"
-                                            }`}
-                                            onError={(e) => { e.currentTarget.parentElement.style.display = "none"; }}
-                                        />
-                                    </div>
+                                    <img
+                                        key={alt}
+                                        src={src}
+                                        alt={alt}
+                                        title={alt}
+                                        className="shrink-0 transition-all duration-300 hover:scale-110 hover:-translate-y-1 drop-shadow-md"
+                                        style={{
+                                            width:  scrolled ? "52px" : "72px",
+                                            height: scrolled ? "52px" : "72px",
+                                            objectFit: "cover",
+                                        }}
+                                        onError={(e) => { e.currentTarget.style.display = "none"; }}
+                                    />
                                 ))}
                             </div>
                         </div>
@@ -166,12 +168,9 @@ const Navbar = () => {
                             ))}
                         </div>
 
-                        {/* Search & Appointment Action Buttons */}
+                        {/* Appointment Action Button */}
                         <div className="hidden lg:flex items-center gap-4">
-                            <button className="p-3 text-slate-500 hover:bg-slate-100 rounded-full transition-all">
-                                <Search size={20} />
-                            </button>
-                            <Link 
+                            <Link
                                 to="/appointment" 
                                 className="bg-[#003366] hover:bg-blue-800 text-white px-7 xl:px-10 py-3.5 rounded-full text-[14px] xl:text-[15px] font-black uppercase tracking-widest transition-all shadow-xl hover:shadow-blue-200 active:scale-95"
                             >
@@ -206,7 +205,7 @@ const Navbar = () => {
                 {/* Panel */}
                 <div className="absolute top-0 right-0 h-full w-[85%] max-w-md bg-white shadow-2xl flex flex-col">
                     <div className="p-6 flex justify-between items-center border-b border-slate-100">
-                        <img src={hospitalLogo} alt="Logo" className="h-14" />
+                        <img src={hospitalLogo} alt="Logo" className="h-10 object-contain" />
                         <button onClick={() => setIsOpen(false)} className="p-2 bg-slate-100 rounded-full">
                             <X size={24} />
                         </button>
