@@ -25,7 +25,7 @@ import ab19 from "../assets/images/Artboard 19.jpg";
 import ab20 from "../assets/images/Artboard 20.jpg";
 import ab21 from "../assets/images/Artboard 21.jpg";
 import ab22 from "../assets/images/Artboard 22.jpg";
-import imgBed      from "../assets/images/Bed Facilities.jpeg";
+import imgBed      from "../assets/images/Artboard 18.jpg";
 import imgCritical from "../assets/images/critical care.jpg";
 
 /* ── constants ──────────────────────────────────────────────────────────── */

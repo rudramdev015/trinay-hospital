@@ -1,13 +1,19 @@
 import { motion } from "framer-motion";
 import LoadingLink from "../common/LoadingLink";
 
+import ab8  from "../../assets/images/Artboard 8.jpg";
+import ab9  from "../../assets/images/Artboard 9.jpg";
+import ab10 from "../../assets/images/Artboard 10.jpg";
+import ab11 from "../../assets/images/Artboard 11.jpg";
+import ab17 from "../../assets/images/Artboard 17.jpg";
+
 const ABOUT_IMAGES = [
-    { src: "/IMAGES/_DSC82612x.jpg.jpeg",              alt: "Hospital Facility",    label: "Modern Facility"   },
-    { src: "/IMAGES/CCCC2x.jpg.jpeg",                  alt: "Patient Care",         label: "Patient Care"      },
-    { src: "/IMAGES/_DSC82432x.jpg.jpeg",              alt: "Advanced Equipment",   label: "Advanced ICU"      },
-    { src: "/IMAGES/_DSC8250 - Copy2x.jpg.jpeg",       alt: "Operation Theatre",    label: "Operation Theatre" },
+    { src: ab8,  alt: "Trinay Hospital OT",       label: "Operation Theatre" },
+    { src: ab9,  alt: "Trinay Hospital ICU",       label: "Advanced ICU"      },
+    { src: ab10, alt: "Trinay Hospital Facility",  label: "Modern Facility"   },
+    { src: ab11, alt: "Trinay Hospital Care",      label: "Expert Care"       },
 ];
-const ABOUT_WIDE = { src: "/DOCTOR IAMGES/11 (7).jpg", alt: "Trinay Hospital Doctors Team", label: "Our Expert Medical Team" };
+const ABOUT_WIDE = { src: ab17, alt: "Trinay Hospital", label: "Trinay Hospital — Care With Compassion" };
 
 const gridVariants = {
     hidden: {},
