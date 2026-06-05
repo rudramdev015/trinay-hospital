@@ -7,7 +7,7 @@ import {
     ArrowLeft, Stethoscope, GraduationCap, Star, MapPin,
     Shield, Lock, Heart, Brain, Activity, Microscope,
     Pill, Wind, Baby, Eye, Bone, Smile, Zap, Sparkles,
-    Quote, PhoneCall,
+    PhoneCall,
 } from "lucide-react";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
@@ -422,7 +422,7 @@ const Step3 = ({ doctor, dept, onBack, onSubmit, loading }) => {
                         <label className="block text-xs font-black text-slate-600 mb-1.5 ml-1">Phone Number *</label>
                         <div className="relative">
                             <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#003366]/40 pointer-events-none" />
-                            <input name="phone" value={form.phone} onChange={handle} required placeholder="+91 XXXXX XXXXX" type="tel" inputMode="numeric" maxLength={13} className={inp} />
+                            <input name="phone" value={form.phone} onChange={e => { const v = e.target.value.replace(/\D/g, ''); if (v.length <= 10) handle({ target: { name: 'phone', value: v } }); }} required placeholder="10-digit mobile number" type="tel" inputMode="numeric" maxLength={10} pattern="[0-9]{10}" className={inp} />
                         </div>
                     </motion.div>
                     <motion.div variants={fieldAnim} className="md:col-span-2">
@@ -574,29 +574,7 @@ const InfoPanel = () => (
             </div>
         </div>
 
-        {/* Testimonial */}
-        <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl border border-blue-100 p-5 shadow-sm">
-            <Quote size={20} className="text-blue-200 mb-3" />
-            <p className="text-slate-600 text-sm leading-relaxed font-medium italic">
-                "The doctors at Trinay are incredibly knowledgeable and caring. Booked online and was seen on time — exceptional experience!"
-            </p>
-            <div className="flex items-center gap-2.5 mt-4">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white text-xs font-black shrink-0">
-                    P
-                </div>
-                <div>
-                    <p className="text-slate-700 font-black text-xs">Priya S.</p>
-                    <div className="flex gap-0.5 mt-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} size={9} fill="#FBBF24" className="text-amber-400" />
-                        ))}
-                    </div>
-                </div>
-                <span className="ml-auto text-[10px] font-bold text-slate-400">via Google</span>
-            </div>
-        </div>
-
-        {/* Trust signals */}
+{/* Trust signals */}
         <div className="grid grid-cols-2 gap-3">
             {[
                 { icon: <Lock size={16} className="text-indigo-500" />, title: "Data Private", bg: "bg-indigo-50", border: "border-indigo-100" },

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CalendarCheck, LayoutGrid } from "lucide-react";
 import LoadingLink from "../common/LoadingLink";
 
 import imgAnaesthesia   from "../../assets/images/anesthesiology.png";
@@ -21,23 +21,23 @@ import imgRespiratory   from "../../assets/images/Pulmonology.jpg";
 import imgPaediatrics   from "../../assets/images/PAEDIATRICS.png";
 
 const SERVICES = [
-    { title: "Anaesthesiology",           desc: "Safe perioperative & pain management",             img: imgAnaesthesia,  dept: "ANAESTHESIA & CRITICAL CARE" },
-    { title: "Cardiology",                desc: "Advanced heart care & interventional procedures",  img: imgCardiology,   dept: "CARDIOLOGY"                   },
-    { title: "General Surgery",           desc: "Laparoscopic & open surgical expertise",           img: imgSurgery,      dept: "GENERAL SURGERY"              },
-    { title: "Neurosurgery",              desc: "Precision brain & spinal cord surgeries",          img: imgNeuro,        dept: "NEUROSURGEON"                 },
-    { title: "Gynaecology & Obs.",        desc: "Full-spectrum women's health & maternity",         img: imgGynae,        dept: "OBS. & GYNAE."                },
-    { title: "Orthopaedics",              desc: "Joint replacement, trauma & spine surgery",        img: imgOrtho,        dept: "ORTHOPAEDICS"                 },
-    { title: "Physiotherapy",             desc: "Rehabilitation & mobility restoration",            img: imgPhysio,       dept: "PHYSIOTHERAPIST"              },
-    { title: "Radiology",                 desc: "CT, MRI, Ultrasound & X-Ray diagnostics",         img: imgRadiology,    dept: "RADIOLOGY"                    },
-    { title: "Urology",                   desc: "Kidney, bladder & prostate care",                  img: imgUrology,      dept: "UROLOGIST"                    },
-    { title: "General Medicine",          desc: "Comprehensive primary & preventive healthcare",    img: imgGenMed,       dept: "GENERAL MEDICINE"             },
-    { title: "Dietetics & Nutrition",     desc: "Clinical nutrition & personalised diet plans",     img: imgDietetics,    dept: "DIETETICS"                    },
-    { title: "Dentistry",                 desc: "Dental surgery, implants & cosmetic dentistry",   img: imgDentistry,    dept: "DENTISTRY"                    },
-    { title: "Surgical Oncology",         desc: "Cancer surgery with minimally invasive techniques",img: imgOncology,    dept: "SURGICAL ONCOLOGY"            },
-    { title: "ENT",                       desc: "Ear, nose & throat disorders & surgery",           img: imgEnt,          dept: "ENT"                          },
-    { title: "Plastic & Cosmetic Surgery",desc: "Reconstructive & aesthetic surgical procedures",  img: imgPlastic,      dept: "PLASTIC & COSMETIC SURGERY"   },
-    { title: "Respiratory Medicine",      desc: "Asthma, COPD & lung disease management",          img: imgRespiratory,  dept: "RESPIRATORY MEDICINE"         },
-    { title: "Paediatrics",               desc: "Expert child health from neonates to adolescents", img: imgPaediatrics,  dept: "PAEDIATRICS"                  },
+    { title: "Anaesthesiology",            desc: "Safe perioperative & pain management",              img: imgAnaesthesia, dept: "ANAESTHESIA & CRITICAL CARE", slug: "anaesthesiology-critical-care" },
+    { title: "Cardiology",                 desc: "Advanced heart care & interventional procedures",   img: imgCardiology,  dept: "CARDIOLOGY",                  slug: "cardiology"                    },
+    { title: "General Surgery",            desc: "Laparoscopic & open surgical expertise",            img: imgSurgery,     dept: "GENERAL SURGERY",             slug: "general-surgery"               },
+    { title: "Neurosurgery",               desc: "Precision brain & spinal cord surgeries",           img: imgNeuro,       dept: "NEUROSURGEON",                slug: "neurosurgery"                  },
+    { title: "Gynaecology & Obs.",         desc: "Full-spectrum women's health & maternity",          img: imgGynae,       dept: "OBS. & GYNAE.",               slug: "obs-gynae"                     },
+    { title: "Orthopaedics",               desc: "Joint replacement, trauma & spine surgery",         img: imgOrtho,       dept: "ORTHOPAEDICS",                slug: "orthopaedics"                  },
+    { title: "Physiotherapy",              desc: "Rehabilitation & mobility restoration",             img: imgPhysio,      dept: "PHYSIOTHERAPIST",             slug: "physiotherapy"                 },
+    { title: "Radiology",                  desc: "CT, MRI, Ultrasound & X-Ray diagnostics",          img: imgRadiology,   dept: "RADIOLOGY",                   slug: "radiology"                     },
+    { title: "Urology",                    desc: "Kidney, bladder & prostate care",                   img: imgUrology,     dept: "UROLOGIST",                   slug: "urology"                       },
+    { title: "General Medicine",           desc: "Comprehensive primary & preventive healthcare",     img: imgGenMed,      dept: "GENERAL MEDICINE",            slug: "general-medicine"              },
+    { title: "Dietetics & Nutrition",      desc: "Clinical nutrition & personalised diet plans",      img: imgDietetics,   dept: "DIETETICS",                   slug: "dietetics"                     },
+    { title: "Dentistry",                  desc: "Dental surgery, implants & cosmetic dentistry",    img: imgDentistry,   dept: "DENTISTRY",                   slug: "dentistry"                     },
+    { title: "Surgical Oncology",          desc: "Cancer surgery with minimally invasive techniques", img: imgOncology,   dept: "SURGICAL ONCOLOGY",           slug: "surgical-oncology"             },
+    { title: "ENT",                        desc: "Ear, nose & throat disorders & surgery",            img: imgEnt,         dept: "ENT",                         slug: "ent"                           },
+    { title: "Plastic & Cosmetic Surgery", desc: "Reconstructive & aesthetic surgical procedures",   img: imgPlastic,     dept: "PLASTIC & COSMETIC SURGERY",  slug: "plastic-cosmetic-surgery"      },
+    { title: "Respiratory Medicine",       desc: "Asthma, COPD & lung disease management",           img: imgRespiratory, dept: "RESPIRATORY MEDICINE",        slug: "respiratory-medicine"          },
+    { title: "Paediatrics",                desc: "Expert child health from neonates to adolescents",  img: imgPaediatrics, dept: "PAEDIATRICS",                 slug: "paediatrics"                   },
 ];
 
 const containerVariants = {
@@ -86,12 +86,10 @@ const KeyServices = () => (
                         variants={cardVariants}
                         whileHover={{ y: -6 }}
                         transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                        className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-400/30 transition-all duration-300 flex flex-col"
                     >
-                        <LoadingLink
-                            to={`/appointment?dept=${encodeURIComponent(svc.dept)}`}
-                            className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-400/30 transition-all duration-300 block h-full"
-                        >
-                            {/* Image */}
+                        {/* Image */}
+                        <LoadingLink to={`/services/${svc.slug}`} className="block">
                             <div className="h-44 overflow-hidden relative">
                                 <img
                                     src={svc.img}
@@ -102,25 +100,53 @@ const KeyServices = () => (
                                 />
                                 <div className="absolute inset-0 bg-linear-to-t from-[#003366]/60 to-transparent" />
                             </div>
+                        </LoadingLink>
 
-                            {/* Content */}
-                            <div className="p-4">
+                        {/* Content */}
+                        <div className="p-4 flex flex-col flex-1 gap-3">
+                            <div>
                                 <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug">
                                     {svc.title}
                                 </h3>
                                 <p className="text-slate-400 text-sm mt-1 leading-snug">{svc.desc}</p>
                             </div>
-                        </LoadingLink>
+
+                            {/* Two buttons */}
+                            <div className="flex gap-2 mt-auto pt-1">
+                                <LoadingLink
+                                    to={`/services/${svc.slug}`}
+                                    className="flex-1 text-center text-[11px] font-black uppercase tracking-wider text-cyan-300 border border-cyan-400/30 hover:bg-cyan-400 hover:text-[#003366] py-2 rounded-lg transition-all duration-200"
+                                >
+                                    Learn More
+                                </LoadingLink>
+                                <LoadingLink
+                                    to={`/appointment?dept=${encodeURIComponent(svc.dept)}`}
+                                    className="flex-1 text-center text-[11px] font-black uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-[#003366] py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
+                                >
+                                    <CalendarCheck size={12} />
+                                    Book
+                                </LoadingLink>
+                            </div>
+                        </div>
                     </motion.div>
                 ))}
             </motion.div>
 
-            <div className="flex justify-center mt-12">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-14">
+                <LoadingLink
+                    to="/appointment"
+                    className="inline-flex items-center gap-2.5 bg-white text-[#003366] px-8 py-4 rounded-full font-black text-[15px] hover:bg-cyan-400 hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl w-full sm:w-auto justify-center"
+                >
+                    <CalendarCheck size={18} />
+                    Book Appointment
+                </LoadingLink>
                 <LoadingLink
                     to="/services"
-                    className="inline-flex items-center gap-2 bg-white text-[#003366] px-8 py-4 rounded-full font-black text-base hover:bg-cyan-400 hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl"
+                    className="inline-flex items-center gap-2.5 bg-white/15 border border-white/30 text-white px-8 py-4 rounded-full font-black text-[15px] hover:bg-white hover:text-[#003366] transition-all duration-300 hover:scale-105 active:scale-95 backdrop-blur-sm w-full sm:w-auto justify-center"
                 >
-                    View All Services <ArrowRight size={18} />
+                    <LayoutGrid size={18} />
+                    View All Departments
+                    <ArrowRight size={16} />
                 </LoadingLink>
             </div>
         </div>

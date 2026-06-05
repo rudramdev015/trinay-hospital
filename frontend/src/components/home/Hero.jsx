@@ -134,21 +134,9 @@ const Hero = () => {
             {/* Content */}
             <div className="absolute inset-0 flex flex-col justify-between px-6 sm:px-10 lg:px-20 pt-28 sm:pt-32 pb-8 sm:pb-10">
 
-                {/* Top badge */}
-                <motion.div
-                    initial={{ opacity: 0, y: -16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.65, delay: 0.2 }}
-                >
-                    <div className="inline-flex items-center gap-2 bg-white/10 border border-white/25 backdrop-blur-md rounded-full px-4 py-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                        <span className="text-white/90 text-xs sm:text-sm font-bold uppercase tracking-widest">
-                            Jodhpur's Premier Multi-Speciality Hospital
-                        </span>
-                    </div>
-                </motion.div>
+                <div />
 
-                {/* Main text block */}
+{/* Main text block */}
                 <div className="max-w-3xl">
                     <motion.h1
                         initial={{ opacity: 0, y: 32 }}

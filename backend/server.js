@@ -6,7 +6,68 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const path = require('path');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
+
+// ── Email Transporter ─────────────────────────────────────────────────────────
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: false,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+    },
+});
+
+const NOTIFY_EMAIL = 'info@trinay.in';
+
+async function sendAppointmentEmail(appt) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+    try {
+        await transporter.sendMail({
+            from: `"Trinay Hospital Website" <${process.env.SMTP_USER}>`,
+            to: NOTIFY_EMAIL,
+            subject: `New Appointment Request — ${appt.name}`,
+            html: `
+                <h2 style="color:#003366">New Appointment Request</h2>
+                <table style="border-collapse:collapse;width:100%;font-family:sans-serif">
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Name</td><td style="padding:8px;border:1px solid #ddd">${appt.name || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Phone</td><td style="padding:8px;border:1px solid #ddd">${appt.phone || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Email</td><td style="padding:8px;border:1px solid #ddd">${appt.email || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Department</td><td style="padding:8px;border:1px solid #ddd">${appt.department || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Doctor</td><td style="padding:8px;border:1px solid #ddd">${appt.doctor || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Date</td><td style="padding:8px;border:1px solid #ddd">${appt.date || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Time</td><td style="padding:8px;border:1px solid #ddd">${appt.time || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Message</td><td style="padding:8px;border:1px solid #ddd">${appt.message || '—'}</td></tr>
+                </table>
+                <p style="color:#666;margin-top:16px">Submitted via trinay-hospital.vercel.app</p>
+            `,
+        });
+    } catch (e) { console.error('Email send error:', e.message); }
+}
+
+async function sendFeedbackEmail(fb) {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+    try {
+        await transporter.sendMail({
+            from: `"Trinay Hospital Website" <${process.env.SMTP_USER}>`,
+            to: NOTIFY_EMAIL,
+            subject: `New Contact/Feedback — ${fb.name}`,
+            html: `
+                <h2 style="color:#003366">New Contact Form Submission</h2>
+                <table style="border-collapse:collapse;width:100%;font-family:sans-serif">
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Name</td><td style="padding:8px;border:1px solid #ddd">${fb.name || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Phone</td><td style="padding:8px;border:1px solid #ddd">${fb.phone || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Email</td><td style="padding:8px;border:1px solid #ddd">${fb.email || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Subject</td><td style="padding:8px;border:1px solid #ddd">${fb.subject || '—'}</td></tr>
+                    <tr><td style="padding:8px;border:1px solid #ddd;font-weight:bold">Message</td><td style="padding:8px;border:1px solid #ddd">${fb.message || '—'}</td></tr>
+                </table>
+                <p style="color:#666;margin-top:16px">Submitted via trinay-hospital.vercel.app</p>
+            `,
+        });
+    } catch (e) { console.error('Email send error:', e.message); }
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -262,6 +323,7 @@ app.post('/api/admin/login', async (req, res) => {
 app.post('/api/appointments', async (req, res) => {
     try {
         const appointment = await Appointment.create(req.body);
+        sendAppointmentEmail(appointment).catch(() => {});
         res.status(201).json({ success: true, appointment });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
@@ -311,6 +373,7 @@ app.post('/api/feedback', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Name, phone, subject and message are required' });
         }
         const feedback = await Feedback.create({ name, email, phone, subject, message });
+        sendFeedbackEmail({ name, email, phone, subject, message }).catch(() => {});
         return res.status(201).json({ success: true, feedback });
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });

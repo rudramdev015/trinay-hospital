@@ -125,7 +125,7 @@ const DoctorDetail = () => {
                 pt-32 sm:pt-36 clears the top-bar (~36px) + main navbar (~72px)
                 so no content ever hides behind the navbar on any screen size.
             */}
-            <section className="relative pt-32 sm:pt-36 pb-14 sm:pb-16 overflow-hidden bg-linear-to-br from-[#003366] via-[#004d80] to-[#005f8e]">
+            <section className="relative pt-36 sm:pt-40 md:pt-44 lg:pt-48 pb-16 sm:pb-20 overflow-hidden bg-linear-to-br from-[#003366] via-[#004d80] to-[#005f8e]">
                 {/* Texture */}
                 <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(white_1px,transparent_1px)] [background-size:24px_24px]" />
                 {/* Glow blobs */}
@@ -213,27 +213,35 @@ const DoctorDetail = () => {
                             </motion.div>
                         </div>
 
-                        {/* RIGHT — photo (desktop: large, always visible) */}
+                        {/* RIGHT — photo */}
                         <motion.div
                             variants={fadeIn(0.3)}
                             initial="hidden"
                             animate="visible"
                             className="hidden lg:flex items-end justify-center"
                         >
-                            <div className="relative w-64 xl:w-72">
-                                <div className="absolute inset-x-0 bottom-0 h-4/5 rounded-t-[2rem] bg-white/10 backdrop-blur-sm" />
+                            <div className="relative w-72 xl:w-80">
+                                {/* Glow behind photo */}
+                                <div className="absolute inset-x-4 bottom-0 h-3/4 rounded-t-[2.5rem] bg-white/15 backdrop-blur-md border border-white/20 shadow-2xl" />
+                                {/* Decorative ring */}
+                                <div className="absolute -inset-3 rounded-t-[3rem] bg-linear-to-t from-white/5 to-transparent pointer-events-none" />
                                 {doc.avatar ? (
                                     <img
                                         src={doc.avatar}
                                         alt={doc.nameTitled}
-                                        className="relative w-full object-contain drop-shadow-2xl max-h-80 xl:max-h-96"
+                                        className="relative w-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.4)] max-h-96 xl:max-h-105"
                                         style={{ objectPosition: "center top" }}
                                     />
                                 ) : (
-                                    <div className="relative w-full h-64 xl:h-80 flex items-center justify-center">
-                                        <span className="text-[7rem] font-black text-white/20 select-none">{initials}</span>
+                                    <div className="relative w-full h-80 xl:h-96 flex items-center justify-center">
+                                        <span className="text-[8rem] font-black text-white/20 select-none">{initials}</span>
                                     </div>
                                 )}
+                                {/* Rating badge */}
+                                <div className="absolute top-4 -left-4 bg-white rounded-2xl shadow-xl px-3 py-2 flex items-center gap-2">
+                                    <Star size={14} fill="#FBBF24" className="text-amber-400" />
+                                    <span className="text-[#003366] font-black text-sm">Top Rated</span>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
@@ -348,24 +356,6 @@ const DoctorDetail = () => {
                         )}
                     </Section>
 
-                    {/* Patient Reviews */}
-                    <Section title="Patient Reviews" delay={0.3}>
-                        <div className="space-y-4">
-                            {[
-                                { name: "Priya K.",  text: `${doc.nameTitled} is an exceptional doctor — thorough, empathetic, and highly professional.`, rating: 5 },
-                                { name: "Rohit M.",  text: `Best experience I've had. Clear explanations, excellent care. The whole team at Trinay is outstanding.`, rating: 5 },
-                                { name: "Sunita D.", text: `Very knowledgeable and patient. Took time to explain every aspect of my condition. 5 stars!`, rating: 5 },
-                            ].map(({ name, text, rating }) => (
-                                <div key={name} className="bg-slate-50 rounded-2xl p-4 sm:p-5">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <p className="text-sm font-bold text-[#003366]">{name}</p>
-                                        <Stars n={rating} />
-                                    </div>
-                                    <p className="text-sm text-slate-600 italic leading-relaxed">&ldquo;{text}&rdquo;</p>
-                                </div>
-                            ))}
-                        </div>
-                    </Section>
                 </div>
 
                 {/* RIGHT COLUMN — sticky booking */}

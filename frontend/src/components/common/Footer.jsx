@@ -97,7 +97,6 @@ const Footer = () => {
                         <nav aria-label="Footer Patient Care Links" className="mt-8">
                             <ul className="space-y-4">
                                 <FooterLink to="/insurance">Insurance & TPA</FooterLink>
-                                <FooterLink to="/insurance">Govt. Schemes (RGHS)</FooterLink>
                                 <FooterLink to="/contact">Contact & Feedback</FooterLink>
                                 <FooterLink to="/careers">Careers</FooterLink>
                                 <FooterLink to="/privacy">Privacy Policy</FooterLink>

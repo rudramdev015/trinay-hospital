@@ -1,7 +1,6 @@
-import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    ArrowRight, Search, Sparkles, Stethoscope,
+    ArrowRight, Sparkles, Stethoscope,
     Users, Clock, Activity, PhoneCall, ChevronRight,
     HeartHandshake, CheckCircle2, Microscope,
 } from "lucide-react";
@@ -85,15 +84,7 @@ const ServiceCard = ({ svc, index }) => (
 );
 
 const Services = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-
-    const filteredServices = useMemo(() =>
-        SERVICES.filter(s =>
-            s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            s.desc.toLowerCase().includes(searchQuery.toLowerCase())
-        ),
-        [searchQuery]
-    );
+    const filteredServices = SERVICES;
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] font-sans overflow-x-hidden">
@@ -122,22 +113,6 @@ const Services = () => {
                             World-class medical expertise across every major discipline — delivered with compassion in Jodhpur.
                         </p>
 
-                        {/* Search */}
-                        <div className="max-w-3xl mx-auto relative group">
-                            <div className="absolute -inset-1 bg-linear-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition duration-700" />
-                            <div className="relative flex items-center bg-[#002244] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-                                <div className="pl-5 md:pl-6">
-                                    <Search className="h-5 w-5 md:h-6 md:w-6 text-cyan-500" />
-                                </div>
-                                <input
-                                    type="text"
-                                    placeholder="Search department or specialty…"
-                                    className="w-full pl-3 md:pl-4 pr-5 py-4 md:py-6 bg-transparent text-white placeholder-slate-500 focus:outline-none text-base md:text-lg"
-                                    value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
-                                />
-                            </div>
-                        </div>
                     </motion.div>
                 </div>
             </section>

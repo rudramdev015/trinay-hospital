@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
     ChevronDown, Home, Stethoscope, UserRound, Shield,
     Phone, Image, Info, CalendarCheck, Facebook,
-    Instagram, Menu, X, PhoneCall, MapPin, Clock, Users2
+    Instagram, Menu, X, PhoneCall, MapPin, Clock, Users2, Ambulance
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 const hospitalLogo = "/Copy of logo trinay (2).png";
@@ -60,8 +60,11 @@ const Navbar = () => {
                         </div>
                         <div className="hidden lg:flex items-center gap-2 opacity-90">
                             <MapPin size={14} />
-                            {/* Updated with Trinay Address */}
                             <span>Opp. Chopasni Garden, PF Office Road, Jodhpur</span>
+                        </div>
+                        <div className="hidden xl:flex items-center gap-2 text-cyan-300">
+                            <Ambulance size={15} className="shrink-0" />
+                            <span className="font-bold">24/7 Ambulance Available</span>
                         </div>
                     </div>
                     <div className="flex items-center gap-6">

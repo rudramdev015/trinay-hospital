@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, BadgeCheck, HeartHandshake, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { ShieldCheck, BadgeCheck, HeartHandshake, ChevronLeft, ChevronRight, ExternalLink, Clock, Train, Building2 } from "lucide-react";
 
 const SLIDES = [
     {
@@ -44,6 +44,43 @@ const SLIDES = [
         orb2: "rgba(239,68,68,0.20)",
         link: "https://health.rajasthan.gov.in",
         tag: "Up to ₹5 Lakh/year",
+        comingSoon: false,
+    },
+    {
+        src: null,
+        Icon: Train,
+        badge: "Coming Soon",
+        badgeGrad: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+        title: "RELHS Empanelment",
+        subtitle: "Railway Employees Liberal Health Scheme",
+        desc: "Trinay Hospital is in the process of empanelment under RELHS — providing cashless healthcare services to railway employees and their dependants across Jodhpur.",
+        glow: "#818cf8",
+        orb1: "rgba(99,102,241,0.35)",
+        orb2: "rgba(139,92,246,0.22)",
+        link: null,
+        tag: null,
+        comingSoon: true,
+        logoText: "RELHS",
+        logoSub: "Railways",
+        logoBg: "linear-gradient(135deg,#1e3a8a,#4338ca)",
+    },
+    {
+        src: null,
+        Icon: Building2,
+        badge: "Coming Soon",
+        badgeGrad: "linear-gradient(135deg,#0d9488,#0891b2)",
+        title: "RGHS Empanelment",
+        subtitle: "Rajasthan Government Health Scheme",
+        desc: "Trinay Hospital is actively pursuing empanelment under RGHS to serve Rajasthan government employees with cashless, quality healthcare at our facility.",
+        glow: "#2dd4bf",
+        orb1: "rgba(45,212,191,0.30)",
+        orb2: "rgba(8,145,178,0.22)",
+        link: null,
+        tag: null,
+        comingSoon: true,
+        logoText: "RGHS",
+        logoSub: "Rajasthan Govt.",
+        logoBg: "linear-gradient(135deg,#0f766e,#0369a1)",
     },
 ];
 
@@ -167,15 +204,28 @@ const Accreditations = () => {
                                                 className="absolute w-28 h-28 rounded-full blur-2xl opacity-50 pointer-events-none"
                                                 style={{ background: slide.glow }}
                                             />
-                                            <motion.img
-                                                src={slide.src}
-                                                alt={slide.title}
-                                                loading="lazy"
-                                                className="relative h-20 sm:h-24 w-auto object-contain"
-                                                style={{ filter: `drop-shadow(0 0 18px ${slide.glow}88)` }}
-                                                animate={offset === 0 ? { y: [0, -6, 0] } : { y: 0 }}
-                                                transition={offset === 0 ? { duration: 3, repeat: Infinity, ease: "easeInOut" } : {}}
-                                            />
+                                            {slide.src ? (
+                                                <motion.img
+                                                    src={slide.src}
+                                                    alt={slide.title}
+                                                    loading="lazy"
+                                                    className="relative h-20 sm:h-24 w-auto object-contain"
+                                                    style={{ filter: `drop-shadow(0 0 18px ${slide.glow}88)` }}
+                                                    animate={offset === 0 ? { y: [0, -6, 0] } : { y: 0 }}
+                                                    transition={offset === 0 ? { duration: 3, repeat: Infinity, ease: "easeInOut" } : {}}
+                                                />
+                                            ) : (
+                                                <motion.div
+                                                    className="relative h-24 w-24 rounded-2xl flex flex-col items-center justify-center"
+                                                    style={{ background: slide.logoBg, boxShadow: `0 0 30px ${slide.glow}66` }}
+                                                    animate={offset === 0 ? { y: [0, -6, 0] } : { y: 0 }}
+                                                    transition={offset === 0 ? { duration: 3, repeat: Infinity, ease: "easeInOut" } : {}}
+                                                >
+                                                    <slide.Icon size={28} className="text-white mb-1" />
+                                                    <span className="text-white font-black text-base leading-none">{slide.logoText}</span>
+                                                    <span className="text-white/60 text-[9px] font-bold uppercase tracking-wider mt-0.5">{slide.logoSub}</span>
+                                                </motion.div>
+                                            )}
                                         </div>
 
                                         {/* Divider */}
@@ -187,6 +237,16 @@ const Accreditations = () => {
                                             <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: slide.glow }}>{slide.subtitle}</p>
                                             <p className="text-blue-200/70 text-sm leading-relaxed">{slide.desc}</p>
                                         </div>
+
+                                        {/* Coming Soon pill */}
+                                        {slide.comingSoon && (
+                                            <div className="flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full">
+                                                <Clock size={13} className="text-yellow-300 animate-pulse" />
+                                                <span className="text-yellow-300 text-[11px] font-black uppercase tracking-widest">
+                                                    Coming Soon — Empanelment In Progress
+                                                </span>
+                                            </div>
+                                        )}
 
                                         {/* Optional tag + link */}
                                         {slide.tag && (

@@ -58,7 +58,7 @@ const About = () => (
                         institutions in Rajasthan.
                     </p>
                     <p className="text-slate-600 mt-4 leading-relaxed text-justify">
-                        Our state-of-the-art 100-bedded facility combines modern infrastructure with
+                        Our state-of-the-art <span className="font-black text-[#003366] bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-200">100-Bedded</span> facility combines modern infrastructure with
                         compassionate care. Led by a team of 24+ specialist doctors across 17 medical
                         specialties — from routine checkups to complex surgeries, emergency care
                         to preventive health programs.

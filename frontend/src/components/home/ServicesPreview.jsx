@@ -61,6 +61,7 @@ const FEATURES = [
         gradient: "from-violet-500 to-violet-700",
         bg: "bg-violet-50",
         ring: "ring-violet-200",
+        badge: "24/7",
     },
     {
         Icon: Baby,
@@ -114,8 +115,13 @@ const ServicesPreview = () => (
                         variants={cardVariants}
                         whileHover={{ y: -6, scale: 1.02 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="group rounded-2xl bg-white border border-slate-100 p-6 shadow-sm hover:shadow-xl transition-shadow duration-300"
+                        className="group relative rounded-2xl bg-white border border-slate-100 p-6 shadow-sm hover:shadow-xl transition-shadow duration-300"
                     >
+                        {f.badge && (
+                            <span className="absolute top-4 right-4 bg-violet-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wider animate-pulse">
+                                {f.badge} Available
+                            </span>
+                        )}
                         <div className={`w-12 h-12 rounded-2xl bg-linear-to-br ${f.gradient} flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300`}>
                             <f.Icon size={22} className="text-white" />
                         </div>

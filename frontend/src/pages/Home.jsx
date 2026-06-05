@@ -44,7 +44,12 @@ const Home = () => {
                     <Accreditations />
                 </Suspense>
 
-                {/* 5. Why Choose Us */}
+                {/* 5. Insurance Partners — after Govt Schemes */}
+                <Suspense fallback={<Skeleton h="min-h-[220px]" />}>
+                    <InsurancePartners />
+                </Suspense>
+
+                {/* 6. Why Choose Us */}
                 <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
                     <ServicesPreview />
                 </Suspense>
@@ -67,11 +72,6 @@ const Home = () => {
                 {/* 9. Health Packages */}
                 <Suspense fallback={<Skeleton h="min-h-[480px]" />}>
                     <HealthPackages />
-                </Suspense>
-
-                {/* 9. Insurance Partners */}
-                <Suspense fallback={<Skeleton h="min-h-[220px]" />}>
-                    <InsurancePartners />
                 </Suspense>
 
                 {/* 10. Emergency Call to Action */}

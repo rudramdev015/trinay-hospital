@@ -122,7 +122,7 @@ const Testimonials = () => {
                         <div>
                             <p className="font-black text-slate-800 text-base tracking-tight">Google Reviews</p>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="text-3xl font-black text-slate-900 leading-none">4.8</span>
+                                <span className="text-3xl font-black text-slate-900 leading-none">4.2</span>
                                 <StarRating rating={5} size={15} />
                                 <span className="text-slate-400 text-sm font-medium">Google</span>
                             </div>

@@ -163,8 +163,9 @@ const Contact = () => {
                                         <Clock className="w-6 h-6" />
                                     </div>
                                     <h4 className="font-bold text-slate-800 text-lg mb-2">OPD Timings</h4>
-                                    <p className="text-slate-600 text-[15px] font-medium">Mon-Sat: 9:00 AM - 8:00 PM</p>
-                                    <p className="text-slate-600 text-[15px] font-medium mt-1">Sunday: 9:00 AM - 2:00 PM</p>
+                                    <p className="text-slate-600 text-[15px] font-medium">Mon-Sat: 9:00 AM – 5:00 PM</p>
+                                    <p className="text-slate-600 text-[15px] font-medium mt-1">Sunday: 9:00 AM – 2:00 PM</p>
+                                    <p className="text-cyan-600 text-[14px] font-bold mt-2">📞 On Call OPD: Available 24/7</p>
                                 </motion.div>
 
                                 <motion.div variants={fadeUp} className="group bg-white/80 backdrop-blur-xl rounded-[32px] p-7 border border-white shadow-xl shadow-slate-200/50 hover:border-indigo-300 hover:bg-white transition-all duration-500">
