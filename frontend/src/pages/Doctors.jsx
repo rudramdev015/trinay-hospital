@@ -235,7 +235,7 @@ const DoctorsPage = () => {
             <Navbar />
 
             {/* ═══ HERO ══════════════════════════════════════════════ */}
-            <section className="pt-28 sm:pt-32 pb-16 sm:pb-20 bg-[#003366] relative overflow-hidden">
+            <section className="pt-36 sm:pt-40 md:pt-44 pb-20 sm:pb-24 bg-[#003366] relative overflow-hidden">
                 {/* Decorative dots grid */}
                 <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(white_1px,transparent_1px)] bg-size-[26px_26px]" />
                 {/* Glow blobs */}

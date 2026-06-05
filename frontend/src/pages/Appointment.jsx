@@ -662,7 +662,7 @@ const Appointment = () => {
                 <div className="absolute bottom-0 left-0 right-0 h-16 rounded-t-[2.5rem]"
                     style={{ background: "linear-gradient(160deg,#f0f4ff 0%,#e8efff 50%,#f5f8ff 100%)" }} />
 
-                <div className="relative pt-28 pb-14 md:pt-36 md:pb-16 max-w-7xl mx-auto px-5 md:px-10 text-center">
+                <div className="relative pt-36 pb-20 md:pt-48 md:pb-28 max-w-7xl mx-auto px-5 md:px-10 text-center">
                     <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
                         className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-cyan-300 text-[11px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full mb-5 backdrop-blur-sm">
                         <MapPin size={12} /> Trinay Hospital · Jodhpur, Rajasthan
