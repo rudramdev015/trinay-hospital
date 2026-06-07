@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import { buildApiUrl } from "../utils/api";
 
 /* ─────────────────────────────────────────────────────────
    ANIMATED COUNTER
@@ -374,7 +375,22 @@ const DirectorSection = ({ d, idx }) => {
 /* ─────────────────────────────────────────────────────────
    PAGE
 ───────────────────────────────────────────────────────── */
-const Leadership = () => (
+const Leadership = () => {
+    const [directors, setDirectors] = useState(DIRECTORS);
+
+    useEffect(() => {
+        fetch(buildApiUrl("/api/leadership-photos"))
+            .then(r => r.json())
+            .then(({ success, photos }) => {
+                if (!success || !photos?.length) return;
+                const byId = {};
+                photos.forEach(p => { byId[p.directorId] = p.data; });
+                setDirectors(DIRECTORS.map(d => byId[d.id] ? { ...d, photo: byId[d.id] } : d));
+            })
+            .catch(() => {});
+    }, []);
+
+    return (
     <div className="min-h-screen bg-white">
         <Navbar />
 
@@ -438,7 +454,7 @@ const Leadership = () => (
 
                         {/* Director anchor cards */}
                         <div className="mt-12 flex flex-wrap justify-center gap-4">
-                            {DIRECTORS.map((d) => (
+                            {directors.map((d) => (
                                 <a key={d.id} href={`#${d.id}`}
                                     className="group flex items-center gap-4 rounded-2xl border px-5 py-3.5 hover:scale-[1.03] transition-all duration-300"
                                     style={{
@@ -477,7 +493,7 @@ const Leadership = () => (
             </section>
 
             {/* ── DIRECTORS ─────────────────────────────── */}
-            {DIRECTORS.map((d, i) => (
+            {directors.map((d, i) => (
                 <DirectorSection key={d.id} d={d} idx={i} />
             ))}
 
@@ -501,7 +517,7 @@ const Leadership = () => (
                 >
                     {/* Two avatars */}
                     <div className="flex justify-center gap-3 mb-10">
-                        {DIRECTORS.map((d) => (
+                        {directors.map((d) => (
                             <div key={d.id} className="w-14 h-14 rounded-full border-2 flex items-center justify-center text-lg font-black"
                                 style={{ borderColor: `${d.goldAccent}60`, color: d.goldAccent, background: `${d.goldAccent}15` }}>
                                 {d.initials}
@@ -531,6 +547,7 @@ const Leadership = () => (
 
         <Footer />
     </div>
-);
+    );
+};
 
 export default Leadership;

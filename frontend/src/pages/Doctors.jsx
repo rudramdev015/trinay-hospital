@@ -46,11 +46,14 @@ const useDebounce = (value, delay) => {
 const FEMALE_NAMES_SET = ["RASHMI","PRIYANKA","PUSHPA","POOJA","KULDEEP","JAISHREE","RITU","CHITRA","VIDHI","METALI","SHALINI"];
 const isFemaleDoc = (name) => FEMALE_NAMES_SET.some((n) => name.toUpperCase().includes(n));
 
-const normalizeDynamic = (d) => ({
+const normalizeDynamic = (d) => {
+    const nameTitled = d.name.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+    const slug = nameTitled.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    return {
     ...d,
     id: d._id,
-    nameTitled: d.name.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" "),
-    slug: d._id,
+    nameTitled,
+    slug,
     isFemale: isFemaleDoc(d.name),
     isSenior: (d.designation || "").includes("SR."),
     avatar: d.photo ? (d.photo.startsWith("data:") || d.photo.startsWith("http") ? d.photo : buildApiUrl(d.photo)) : null,
@@ -60,7 +63,8 @@ const normalizeDynamic = (d) => ({
     gradient: "from-blue-600 to-blue-800",
     deptDisplay: d.dept ? d.dept.charAt(0) + d.dept.slice(1).toLowerCase() : "General",
     patients: `${(d.experience || 0) * 500}+`,
-});
+    };
+};
 
 /* ── Doctor card ──────────────────────────────────────────────────── */
 const DoctorCard = memo(({ doc, eager }) => {
@@ -170,7 +174,7 @@ const DoctorCard = memo(({ doc, eager }) => {
                 {/* Action buttons */}
                 <div className="mt-auto pt-3 grid grid-cols-2 gap-1.5 sm:gap-2">
                     <Link
-                        to={`/doctors/${doc.id}`}
+                        to={`/doctors/${doc.slug}`}
                         className="flex items-center justify-center gap-1 border-2 border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white font-bold text-[10px] sm:text-[11px] py-2 sm:py-2.5 rounded-xl transition-all duration-200 active:scale-95 whitespace-nowrap"
                     >
                         Profile <ChevronRight size={10} />

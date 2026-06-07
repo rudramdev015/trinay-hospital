@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Camera, ChevronLeft, ChevronRight, Film, X, ZoomIn } from "lucide-react";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
+import { buildApiUrl } from "../utils/api";
 
 import ab1  from "../assets/images/Artboard 1.jpg";
 import ab2  from "../assets/images/Artboard 2.jpg";
@@ -40,7 +41,7 @@ const YT_VIDEOS = [
     { id: "3SljWY3-sWA", title: "Neurosurgery: Head Injuries, Paralysis & Spine Health" },
 ];
 
-const PHOTOS = [
+const STATIC_PHOTOS = [
     { id: 1,  title: "Trinay Hospital Facilities",        tag: "Facilities", src: "/IMAGES/1.jpeg" },
     { id: 2,  title: "Advanced Medical Infrastructure",   tag: "Facilities", src: "/IMAGES/2.jpeg" },
     { id: 3,  title: "Patient Care Services",             tag: "Services",   src: "/IMAGES/3.jpeg" },
@@ -86,8 +87,6 @@ const PHOTOS = [
     { id: 43, title: "Bed & Room Facilities",             tag: "Facilities", src: imgBed      },
     { id: 44, title: "Critical Care ICU",                 tag: "Emergency",  src: imgCritical },
 ];
-
-const TAGS = ["All", ...Array.from(new Set(PHOTOS.map(p => p.tag))).sort()];
 
 /* ── animations ─────────────────────────────────────────────────────────── */
 const cardAnim = {
@@ -289,8 +288,26 @@ const Gallery = () => {
     const [activeTag, setActiveTag]   = useState("All");
     const [lightboxIdx, setLightboxIdx] = useState(null);
     const [direction, setDirection]   = useState(1);
+    const [allPhotos, setAllPhotos]   = useState(STATIC_PHOTOS);
 
-    const filtered = activeTag === "All" ? PHOTOS : PHOTOS.filter(p => p.tag === activeTag);
+    useEffect(() => {
+        fetch(buildApiUrl("/api/gallery-photos"))
+            .then(r => r.json())
+            .then(({ success, photos }) => {
+                if (!success || !photos?.length) return;
+                const apiPhotos = photos.map((p, i) => ({
+                    id: `api-${p._id}`,
+                    title: p.title || "Trinay Hospital",
+                    tag: p.tag || "Facilities",
+                    src: p.data,
+                }));
+                setAllPhotos([...apiPhotos, ...STATIC_PHOTOS]);
+            })
+            .catch(() => {});
+    }, []);
+
+    const TAGS = ["All", ...Array.from(new Set(allPhotos.map(p => p.tag))).sort()];
+    const filtered = activeTag === "All" ? allPhotos : allPhotos.filter(p => p.tag === activeTag);
 
     const openPhoto = useCallback((idx) => {
         setDirection(1);
@@ -331,7 +348,7 @@ const Gallery = () => {
                     <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28, duration: 0.5 }}
                         className="flex flex-wrap justify-center gap-3">
                         {[
-                            { icon: <Camera size={15} />, label: `${PHOTOS.length} Photos` },
+                            { icon: <Camera size={15} />, label: `${allPhotos.length} Photos` },
                             { icon: <Film size={15} />,   label: `${YT_VIDEOS.length} YouTube Videos` },
                         ].map(({ icon, label }) => (
                             <div key={label} className="flex items-center gap-2 px-4 py-2 bg-white/10 border border-white/20 rounded-full text-white text-sm font-bold">
@@ -390,7 +407,7 @@ const Gallery = () => {
                                         key={photo.id}
                                         photo={photo}
                                         index={i}
-                                        onClick={() => openPhoto(PHOTOS.findIndex(p => p.id === photo.id))}
+                                        onClick={() => openPhoto(allPhotos.findIndex(p => p.id === photo.id))}
                                     />
                                 ))}
                             </AnimatePresence>
@@ -465,7 +482,7 @@ const Gallery = () => {
             <AnimatePresence>
                 {lightboxIdx !== null && (
                     <Lightbox
-                        photos={PHOTOS}
+                        photos={allPhotos}
                         index={lightboxIdx}
                         onClose={() => setLightboxIdx(null)}
                         direction={direction}

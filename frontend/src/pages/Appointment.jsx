@@ -503,24 +503,6 @@ const Step3 = ({ doctor, dept, onBack, onSubmit, loading }) => {
 const InfoPanel = () => (
     <div className="space-y-5">
 
-        {/* Hospital card */}
-        <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-            <img src={hospitalImg} alt="Trinay Hospital" className="w-full h-48 object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#001f4d]/95 via-[#003366]/50 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-5">
-                <p className="text-white font-black text-lg leading-tight">Trinay Hospital</p>
-                <div className="flex items-center gap-1.5 mt-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} size={12} fill="#FBBF24" className="text-amber-400" />
-                    ))}
-                    <span className="text-white/70 text-xs ml-1 font-semibold">4.9 · Google Reviews</span>
-                </div>
-                <p className="text-white/60 text-xs mt-1.5 flex items-center gap-1">
-                    <MapPin size={11} /> Opp. Chopasni Garden, PF Office Road, Jodhpur
-                </p>
-            </div>
-        </div>
-
         {/* Quick stats */}
         <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5">
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Why Trinay Hospital</p>
@@ -529,7 +511,7 @@ const InfoPanel = () => (
                     { v: "24+",  l: "Specialists",   color: "text-blue-600",   bg: "bg-blue-50"   },
                     { v: "17",   l: "Departments",   color: "text-violet-600", bg: "bg-violet-50" },
                     { v: "24/7", l: "Emergency",     color: "text-rose-500",   bg: "bg-rose-50"   },
-                    { v: "15yr", l: "Experience",    color: "text-emerald-600",bg: "bg-emerald-50" },
+                    { v: "24/7", l: "Ambulance",     color: "text-emerald-600",bg: "bg-emerald-50" },
                 ].map(({ v, l, color, bg }) => (
                     <div key={l} className={`${bg} rounded-2xl p-3.5 text-center`}>
                         <p className={`text-xl font-black ${color}`}>{v}</p>

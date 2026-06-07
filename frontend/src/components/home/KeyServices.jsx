@@ -21,7 +21,7 @@ import imgRespiratory   from "../../assets/images/Pulmonology.jpg";
 import imgPaediatrics   from "../../assets/images/PAEDIATRICS.png";
 
 const SERVICES = [
-    { title: "Anaesthesiology",            desc: "Safe perioperative & pain management",              img: imgAnaesthesia, dept: "ANAESTHESIA & CRITICAL CARE", slug: "anaesthesiology-critical-care" },
+    { title: "Anaesthesiology",            desc: "Safe perioperative & pain management",              img: imgAnaesthesia, dept: "ANAESTHESIA & CRITICAL CARE", slug: "anaesthesiology-critical-care", noBook: true },
     { title: "Cardiology",                 desc: "Advanced heart care & interventional procedures",   img: imgCardiology,  dept: "CARDIOLOGY",                  slug: "cardiology"                    },
     { title: "General Surgery",            desc: "Laparoscopic & open surgical expertise",            img: imgSurgery,     dept: "GENERAL SURGERY",             slug: "general-surgery"               },
     { title: "Neurosurgery",               desc: "Precision brain & spinal cord surgeries",           img: imgNeuro,       dept: "NEUROSURGEON",                slug: "neurosurgery"                  },
@@ -86,46 +86,48 @@ const KeyServices = () => (
                         variants={cardVariants}
                         whileHover={{ y: -6 }}
                         transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                        className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-400/30 transition-all duration-300 flex flex-col"
+                        className="group relative overflow-hidden rounded-2xl border border-white/10 hover:border-cyan-400/40 transition-all duration-300"
+                        style={{ height: '280px' }}
                     >
-                        {/* Image */}
-                        <LoadingLink to={`/services/${svc.slug}`} className="block">
-                            <div className="h-44 overflow-hidden relative">
-                                <img
-                                    src={svc.img}
-                                    alt={svc.title}
-                                    loading="lazy"
-                                    decoding="async"
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.07]"
-                                />
-                                <div className="absolute inset-0 bg-linear-to-t from-[#003366]/60 to-transparent" />
-                            </div>
-                        </LoadingLink>
+                        {/* Full card image */}
+                        <img
+                            src={svc.img}
+                            alt={svc.title}
+                            loading="lazy"
+                            decoding="async"
+                            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block', transition: 'transform 0.5s ease' }}
+                            className="group-hover:scale-[1.07]"
+                        />
 
-                        {/* Content */}
-                        <div className="p-4 flex flex-col flex-1 gap-3">
+                        {/* Dark gradient so text is readable */}
+                        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,30,80,0.95) 0%, rgba(0,30,80,0.5) 50%, rgba(0,0,0,0.1) 100%)' }} />
+
+                        {/* Content overlaid at bottom */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 flex flex-col gap-2.5">
                             <div>
-                                <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors leading-snug">
+                                <h3 className="text-sm font-black text-white group-hover:text-cyan-300 transition-colors leading-snug">
                                     {svc.title}
                                 </h3>
-                                <p className="text-slate-400 text-sm mt-1 leading-snug">{svc.desc}</p>
+                                <p className="text-white/60 text-xs mt-0.5 leading-snug">{svc.desc}</p>
                             </div>
 
-                            {/* Two buttons */}
-                            <div className="flex gap-2 mt-auto pt-1">
+                            {/* Buttons */}
+                            <div className="flex gap-2">
                                 <LoadingLink
                                     to={`/services/${svc.slug}`}
-                                    className="flex-1 text-center text-[11px] font-black uppercase tracking-wider text-cyan-300 border border-cyan-400/30 hover:bg-cyan-400 hover:text-[#003366] py-2 rounded-lg transition-all duration-200"
+                                    className="flex-1 text-center text-[11px] font-black uppercase tracking-wider text-cyan-300 border border-cyan-400/50 hover:bg-cyan-400 hover:text-[#003366] py-1.5 rounded-lg transition-all duration-200"
                                 >
                                     Learn More
                                 </LoadingLink>
-                                <LoadingLink
-                                    to={`/appointment?dept=${encodeURIComponent(svc.dept)}`}
-                                    className="flex-1 text-center text-[11px] font-black uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-[#003366] py-2 rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
-                                >
-                                    <CalendarCheck size={12} />
-                                    Book
-                                </LoadingLink>
+                                {!svc.noBook && (
+                                    <LoadingLink
+                                        to={`/appointment?dept=${encodeURIComponent(svc.dept)}`}
+                                        className="flex-1 text-center text-[11px] font-black uppercase tracking-wider bg-cyan-500 hover:bg-cyan-400 text-[#003366] py-1.5 rounded-lg transition-all duration-200 flex items-center justify-center gap-1"
+                                    >
+                                        <CalendarCheck size={12} />
+                                        Book
+                                    </LoadingLink>
+                                )}
                             </div>
                         </div>
                     </motion.div>

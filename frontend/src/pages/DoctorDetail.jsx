@@ -50,10 +50,12 @@ const FEMALE_SET = ["RASHMI","PRIYANKA","PUSHPA","POOJA","KULDEEP","JAISHREE","R
 const normalizeDynamic = (d) => {
     const isFemale = FEMALE_SET.some((n) => d.name.toUpperCase().includes(n));
     const nameTitled = d.name.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+    const slug = nameTitled.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     return {
         ...d,
         id: d._id,
         nameTitled,
+        slug,
         isFemale,
         isSenior: (d.designation || "").includes("SR."),
         avatar: d.photo ? (d.photo.startsWith("data:") || d.photo.startsWith("http") ? d.photo : buildApiUrl(d.photo)) : null,
@@ -82,9 +84,12 @@ const DoctorDetail = () => {
 
     useEffect(() => {
         if (doc) return;
-        if (!/^[0-9a-f]{24}$/i.test(id)) { setNotFound(true); return; }
         setLoading(true);
-        fetch(buildApiUrl(`/api/doctors/dynamic/${id}`))
+        const isMongoId = /^[0-9a-f]{24}$/i.test(id);
+        const url = isMongoId
+            ? buildApiUrl(`/api/doctors/dynamic/${id}`)
+            : buildApiUrl(`/api/doctors/dynamic/by-slug/${id}`);
+        fetch(url)
             .then((r) => (r.ok ? r.json() : null))
             .then((data) => {
                 if (data?.success && data.doctor) setDoc(normalizeDynamic(data.doctor));
@@ -448,7 +453,7 @@ const DoctorDetail = () => {
                                 <h4 className="font-black text-[#003366] mb-4 text-sm sm:text-base">Related Specialists</h4>
                                 <div className="space-y-2.5">
                                     {related.map((rd) => (
-                                        <Link key={rd.id} to={`/doctors/${rd.id}`}
+                                        <Link key={rd.id} to={`/doctors/${rd.slug}`}
                                             className="flex items-center gap-3 p-2.5 sm:p-3 rounded-xl hover:bg-slate-50 transition-colors group">
                                             <img
                                                 src={rd.avatar}

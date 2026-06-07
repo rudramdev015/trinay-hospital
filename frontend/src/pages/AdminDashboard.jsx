@@ -4,7 +4,7 @@ import {
     ClipboardList, MessageSquareQuote, Users, UserPlus,
     Search, Trash2, Eye, EyeOff, X, CalendarDays, Stethoscope, ImagePlus, Plus,
     Pencil, ExternalLink, Star, Clock, GraduationCap, Filter, Film, LayoutTemplate,
-    ToggleLeft, ToggleRight, Monitor, Smartphone,
+    ToggleLeft, ToggleRight, Monitor, Smartphone, Camera,
 } from "lucide-react";
 import hospitalLogo from "../components/common/trinayhospital_logo.jpg";
 import Toast from "../components/common/Toast";
@@ -25,6 +25,46 @@ const emptyDoctorForm = {
     name: "", designation: "CONSULTANT", dept: "", qualification: "",
     timing: "", experience: "", camp: "", bio: "", expertise: "", photo: "",
 };
+
+const ABOUT_SLOT_DEFS = [
+    { slot: 1, label: "Modern Facility",   alt: "Trinay Hospital Facility" },
+    { slot: 2, label: "Operation Theatre", alt: "Trinay Hospital OT"       },
+    { slot: 3, label: "Advanced ICU",      alt: "Trinay Hospital ICU"      },
+    { slot: 4, label: "Expert Care",       alt: "Trinay Hospital Care"     },
+    { slot: 5, label: "Wide Banner",       alt: "Trinay Hospital"          },
+];
+
+const compressAboutImage = (file, isWide = false) => new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+        const MAX = isWide ? 1400 : 900;
+        const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+    };
+    img.src = url;
+});
+
+const compressGalleryImage = (file) => new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+        const MAX = 1200;
+        const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+    };
+    img.src = url;
+});
 
 const compressHeroImage = (file) => new Promise((resolve) => {
     const img = new Image();
@@ -192,6 +232,33 @@ const AdminDashboard = () => {
     const [heroFormError, setHeroFormError] = useState("");
     const [isSavingHero, setIsSavingHero] = useState(false);
     const [pendingDeleteHero, setPendingDeleteHero] = useState(null);
+
+    // ── about images state ──
+    const [aboutImageList, setAboutImageList] = useState([]);
+    const [isAboutLoading, setIsAboutLoading] = useState(false);
+    const [showAboutForm, setShowAboutForm] = useState(false);
+    const [aboutFormState, setAboutFormState] = useState({ slot: 1, label: "", alt: "", imageData: "" });
+    const [aboutFormError, setAboutFormError] = useState("");
+    const [isSavingAbout, setIsSavingAbout] = useState(false);
+    const [pendingDeleteAbout, setPendingDeleteAbout] = useState(null);
+
+    // ── leadership photos state ──
+    const [leadershipPhotos, setLeadershipPhotos] = useState([]);
+    const [isLeadershipLoading, setIsLeadershipLoading] = useState(false);
+    const [leadershipFormState, setLeadershipFormState] = useState({ directorId: "", imageData: "" });
+    const [leadershipFormError, setLeadershipFormError] = useState("");
+    const [showLeadershipForm, setShowLeadershipForm] = useState(false);
+    const [isSavingLeadership, setIsSavingLeadership] = useState(false);
+    const [pendingDeleteLeadership, setPendingDeleteLeadership] = useState(null);
+
+    // ── gallery state ──
+    const [galleryList, setGalleryList] = useState([]);
+    const [isGalleryLoading, setIsGalleryLoading] = useState(false);
+    const [showGalleryForm, setShowGalleryForm] = useState(false);
+    const [galleryFormState, setGalleryFormState] = useState({ title: "", tag: "Facilities", isFeatured: false, imageData: "" });
+    const [galleryFormError, setGalleryFormError] = useState("");
+    const [isSavingGallery, setIsSavingGallery] = useState(false);
+    const [pendingDeleteGallery, setPendingDeleteGallery] = useState(null);
 
     const getToken = useCallback(() => localStorage.getItem("adminToken"), []);
 
@@ -525,6 +592,60 @@ const AdminDashboard = () => {
 
     useEffect(() => { if (activeSection === "hero") fetchHeroMedia(); }, [activeSection, fetchHeroMedia]);
 
+    // ── fetch about images ──
+    const fetchAboutImages = useCallback(async () => {
+        const token = getToken();
+        if (!token) return;
+        setIsAboutLoading(true);
+        try {
+            const res = await fetch(buildApiUrl("/api/admin/about-images"), {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.status === 401) { handleUnauthorized(); return; }
+            const data = await res.json();
+            setAboutImageList(data.images || []);
+        } catch { /* silent */ }
+        finally { setIsAboutLoading(false); }
+    }, [getToken, handleUnauthorized]);
+
+    useEffect(() => { if (activeSection === "about") fetchAboutImages(); }, [activeSection, fetchAboutImages]);
+
+    // ── fetch gallery photos ──
+    const fetchGalleryPhotos = useCallback(async () => {
+        const token = getToken();
+        if (!token) return;
+        setIsGalleryLoading(true);
+        try {
+            const res = await fetch(buildApiUrl("/api/admin/gallery-photos"), {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.status === 401) { handleUnauthorized(); return; }
+            const data = await res.json();
+            setGalleryList(data.photos || []);
+        } catch { /* silent */ }
+        finally { setIsGalleryLoading(false); }
+    }, [getToken, handleUnauthorized]);
+
+    useEffect(() => { if (activeSection === "gallery") fetchGalleryPhotos(); }, [activeSection, fetchGalleryPhotos]);
+
+    // ── fetch leadership photos ──
+    const fetchLeadershipPhotos = useCallback(async () => {
+        const token = getToken();
+        if (!token) return;
+        setIsLeadershipLoading(true);
+        try {
+            const res = await fetch(buildApiUrl("/api/admin/leadership-photos"), {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.status === 401) { handleUnauthorized(); return; }
+            const data = await res.json();
+            setLeadershipPhotos(data.photos || []);
+        } catch { /* silent */ }
+        finally { setIsLeadershipLoading(false); }
+    }, [getToken, handleUnauthorized]);
+
+    useEffect(() => { if (activeSection === "leadership") fetchLeadershipPhotos(); }, [activeSection, fetchLeadershipPhotos]);
+
     // ── upload hero media ──
     const handleAddHeroMedia = async (e) => {
         e.preventDefault();
@@ -574,6 +695,229 @@ const AdminDashboard = () => {
                 `"${item.label || item.type}" is now ${item.isActive ? "hidden" : "live"} on the home page.`);
         } catch {
             showToast("error", "Update failed", "Hero media status could not be changed.");
+        }
+    };
+
+    // ── about images handlers ──
+    const handleAddAboutImage = async (e) => {
+        e.preventDefault();
+        setAboutFormError("");
+        setIsSavingAbout(true);
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl("/api/admin/about-images"), {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    slot: aboutFormState.slot,
+                    data: aboutFormState.imageData,
+                    mimeType: "image/jpeg",
+                    label: aboutFormState.label,
+                    alt: aboutFormState.alt,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Upload failed");
+            setAboutImageList((prev) => {
+                const filtered = prev.filter((img) => img.slot !== data.image.slot);
+                return [...filtered, data.image].sort((a, b) => a.slot - b.slot);
+            });
+            setShowAboutForm(false);
+            setAboutFormState({ slot: 1, label: "", alt: "", imageData: "" });
+            showToast("success", "Image uploaded", `Slot ${data.image.slot} updated on the About section.`);
+        } catch (err) {
+            setAboutFormError(err.message);
+        } finally {
+            setIsSavingAbout(false);
+        }
+    };
+
+    const toggleAboutActive = async (item) => {
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/about-images/${item._id}`), {
+                method: "PATCH",
+                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ isActive: !item.isActive }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error("Failed");
+            setAboutImageList((prev) => prev.map((m) => m._id === item._id ? data.image : m));
+            showToast("success", item.isActive ? "Image hidden" : "Image live",
+                `Slot ${item.slot} is now ${item.isActive ? "hidden" : "live"} on the About section.`);
+        } catch {
+            showToast("error", "Update failed", "Image status could not be changed.");
+        }
+    };
+
+    const handleDeleteAboutImage = async () => {
+        if (!pendingDeleteAbout) return;
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/about-images/${pendingDeleteAbout._id}`), {
+                method: "DELETE", headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Delete failed");
+            setAboutImageList((prev) => prev.filter((m) => m._id !== pendingDeleteAbout._id));
+            showToast("delete", "Image removed", `Slot ${pendingDeleteAbout.slot} removed. Default image will show.`);
+        } catch {
+            showToast("error", "Delete failed", "Image could not be removed.");
+        } finally {
+            setPendingDeleteAbout(null);
+        }
+    };
+
+    // ── gallery handlers ──
+    const handleAddGalleryPhoto = async (e) => {
+        e.preventDefault();
+        if (!galleryFormState.imageData) { setGalleryFormError("Please select an image."); return; }
+        setIsSavingGallery(true);
+        setGalleryFormError("");
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl("/api/admin/gallery-photos"), {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    data: galleryFormState.imageData,
+                    mimeType: "image/jpeg",
+                    title: galleryFormState.title,
+                    tag: galleryFormState.tag,
+                    isFeatured: galleryFormState.isFeatured,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Upload failed");
+            setGalleryList((prev) => [data.photo, ...prev]);
+            setShowGalleryForm(false);
+            setGalleryFormState({ title: "", tag: "Facilities", isFeatured: false, imageData: "" });
+            showToast("success", "Photo added", `"${data.photo.title || data.photo.tag}" added to gallery.`);
+        } catch (err) {
+            setGalleryFormError(err.message || "Upload failed");
+        } finally {
+            setIsSavingGallery(false);
+        }
+    };
+
+    const toggleGalleryActive = async (item) => {
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/gallery-photos/${item._id}`), {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ isActive: !item.isActive }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error("Failed");
+            setGalleryList((prev) => prev.map((m) => m._id === item._id ? data.photo : m));
+            showToast("success", item.isActive ? "Photo hidden" : "Photo live",
+                `Photo is now ${item.isActive ? "hidden from" : "visible on"} the gallery.`);
+        } catch {
+            showToast("error", "Update failed", "Photo status could not be changed.");
+        }
+    };
+
+    const toggleGalleryFeatured = async (item) => {
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/gallery-photos/${item._id}`), {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ isFeatured: !item.isFeatured }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error("Failed");
+            setGalleryList((prev) => prev.map((m) => m._id === item._id ? data.photo : m));
+            showToast("success", item.isFeatured ? "Removed from homepage" : "Featured on homepage",
+                item.isFeatured ? "Photo removed from homepage highlights." : "Photo will show in homepage gallery preview.");
+        } catch {
+            showToast("error", "Update failed", "Featured status could not be changed.");
+        }
+    };
+
+    const handleDeleteGalleryPhoto = async () => {
+        if (!pendingDeleteGallery) return;
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/gallery-photos/${pendingDeleteGallery._id}`), {
+                method: "DELETE", headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Delete failed");
+            setGalleryList((prev) => prev.filter((m) => m._id !== pendingDeleteGallery._id));
+            showToast("delete", "Photo deleted", "Photo removed from gallery.");
+        } catch {
+            showToast("error", "Delete failed", "Photo could not be deleted.");
+        } finally {
+            setPendingDeleteGallery(null);
+        }
+    };
+
+    // ── leadership photo handlers ──
+    const handleSaveLeadershipPhoto = async (e) => {
+        e.preventDefault();
+        if (!leadershipFormState.imageData) { setLeadershipFormError("Please select an image."); return; }
+        if (!leadershipFormState.directorId) { setLeadershipFormError("Director is required."); return; }
+        setIsSavingLeadership(true);
+        setLeadershipFormError("");
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl("/api/admin/leadership-photos"), {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    directorId: leadershipFormState.directorId,
+                    data: leadershipFormState.imageData,
+                    mimeType: "image/jpeg",
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Upload failed");
+            setLeadershipPhotos((prev) => {
+                const filtered = prev.filter(p => p.directorId !== leadershipFormState.directorId);
+                return [...filtered, data.photo];
+            });
+            setShowLeadershipForm(false);
+            setLeadershipFormState({ directorId: "", imageData: "" });
+            showToast("success", "Photo saved", "Leadership photo updated successfully.");
+        } catch (err) {
+            setLeadershipFormError(err.message || "Upload failed");
+        } finally {
+            setIsSavingLeadership(false);
+        }
+    };
+
+    const toggleLeadershipActive = async (item) => {
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/leadership-photos/${item._id}`), {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ isActive: !item.isActive }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error("Failed");
+            setLeadershipPhotos((prev) => prev.map((m) => m._id === item._id ? data.photo : m));
+            showToast("success", item.isActive ? "Photo hidden" : "Photo live",
+                `${item.directorId} photo is now ${item.isActive ? "hidden" : "visible"}.`);
+        } catch {
+            showToast("error", "Update failed", "Photo status could not be changed.");
+        }
+    };
+
+    const handleDeleteLeadershipPhoto = async () => {
+        if (!pendingDeleteLeadership) return;
+        const token = getToken();
+        try {
+            const res = await fetch(buildApiUrl(`/api/admin/leadership-photos/${pendingDeleteLeadership._id}`), {
+                method: "DELETE", headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Delete failed");
+            setLeadershipPhotos((prev) => prev.filter((m) => m._id !== pendingDeleteLeadership._id));
+            showToast("delete", "Photo removed", "Default portrait will show instead.");
+        } catch {
+            showToast("error", "Delete failed", "Photo could not be removed.");
+        } finally {
+            setPendingDeleteLeadership(null);
         }
     };
 
@@ -824,6 +1168,27 @@ const AdminDashboard = () => {
                             icon={LayoutTemplate}
                             label="Hero Media"
                             count={heroMediaList.length}
+                        />
+                        <SectionTab
+                            active={activeSection === "about"}
+                            onClick={() => setActiveSection("about")}
+                            icon={ImagePlus}
+                            label="About Images"
+                            count={aboutImageList.length}
+                        />
+                        <SectionTab
+                            active={activeSection === "gallery"}
+                            onClick={() => setActiveSection("gallery")}
+                            icon={Camera}
+                            label="Gallery"
+                            count={galleryList.length}
+                        />
+                        <SectionTab
+                            active={activeSection === "leadership"}
+                            onClick={() => setActiveSection("leadership")}
+                            icon={Star}
+                            label="Leadership"
+                            count={leadershipPhotos.length}
                         />
                     </div>
                 </section>
@@ -1327,6 +1692,7 @@ const AdminDashboard = () => {
                                             const isStatic = doc._kind === "static";
                                             const isOverride = doc._kind === "override";
                                             const nameTitled = (doc.name || "").split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+                                            const docSlug = doc.slug || nameTitled.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
                                             return (
                                                 <div key={doc._id || `static-${i}`} className="group relative rounded-3xl border border-slate-100 bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
@@ -1386,7 +1752,7 @@ const AdminDashboard = () => {
                                                                 <Pencil className="h-3 w-3" /> Edit
                                                             </button>
                                                             <a
-                                                                href={`/doctors/${doc._id || doc.id}`}
+                                                                href={`/doctors/${docSlug}`}
                                                                 target="_blank"
                                                                 rel="noreferrer"
                                                                 className="flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 transition"
@@ -1574,6 +1940,325 @@ const AdminDashboard = () => {
                                             </div>
                                         </div>
                                     ))}
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
+
+                {/* ── About Images Section ──────────────────────────────── */}
+                {activeSection === "about" && (
+                    <section className="rounded-[28px] border border-blue-100 bg-white shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)]">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-blue-50 px-5 py-5 sm:px-7">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">About Section</p>
+                                <h2 className="mt-0.5 text-2xl font-bold text-slate-900">About Section Images</h2>
+                                <p className="mt-1 text-sm text-slate-500">Upload custom images for the 5-image grid in the About section on the home page.</p>
+                            </div>
+                        </div>
+
+                        <div className="mx-5 mt-4 sm:mx-7 rounded-2xl bg-blue-50 border border-blue-100 px-4 py-3 text-sm text-blue-800">
+                            <strong>How it works:</strong> Upload one image per slot (1–4 for the grid, 5 for the wide banner). Active images replace the built-in defaults. Deactivate or delete to revert to the default.
+                        </div>
+
+                        <div className="p-5 sm:p-7">
+                            {isAboutLoading ? (
+                                <div className="rounded-3xl border border-blue-100 bg-slate-50 p-16 text-center text-slate-500">
+                                    <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+                                    Loading about images…
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                    {ABOUT_SLOT_DEFS.map((def) => {
+                                        const item = aboutImageList.find((img) => img.slot === def.slot);
+                                        return (
+                                            <div
+                                                key={def.slot}
+                                                className={`relative rounded-2xl border-2 overflow-hidden ${
+                                                    item?.isActive ? "border-emerald-200 bg-emerald-50/40"
+                                                    : item ? "border-slate-200 bg-white"
+                                                    : "border-dashed border-slate-200 bg-slate-50"
+                                                }`}
+                                            >
+                                                {item?.data ? (
+                                                    <div className="relative h-32 overflow-hidden bg-slate-100">
+                                                        <img src={item.data} alt={item.alt || def.alt} className="w-full h-full object-cover" />
+                                                        {!item.isActive && (
+                                                            <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                                                                <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Hidden</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div className="h-32 flex items-center justify-center bg-slate-50">
+                                                        <div className="text-center">
+                                                            <ImagePlus className="mx-auto h-8 w-8 text-slate-300 mb-1" />
+                                                            <p className="text-xs text-slate-400 font-semibold">No custom image</p>
+                                                            <p className="text-[10px] text-slate-400">Default image showing</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex items-center gap-3 px-4 pt-3 pb-2">
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="font-bold text-slate-900 text-sm">
+                                                            Slot {def.slot} — {def.slot === 5 ? "Wide Banner" : `Grid ${def.slot}`}
+                                                        </p>
+                                                        <p className="text-xs text-slate-500 truncate mt-0.5">{item?.label || def.label}</p>
+                                                    </div>
+                                                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${
+                                                        item?.isActive ? "bg-emerald-100 text-emerald-700"
+                                                        : item ? "bg-slate-100 text-slate-500"
+                                                        : "bg-blue-50 text-blue-500"
+                                                    }`}>
+                                                        {item?.isActive ? "Live" : item ? "Hidden" : "Default"}
+                                                    </span>
+                                                </div>
+
+                                                <div className="flex items-center gap-2 px-4 pb-4 pt-2 border-t border-slate-100">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setAboutFormState({
+                                                                slot: def.slot,
+                                                                label: item?.label || def.label,
+                                                                alt: item?.alt || def.alt,
+                                                                imageData: "",
+                                                            });
+                                                            setAboutFormError("");
+                                                            setShowAboutForm(true);
+                                                        }}
+                                                        className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition"
+                                                    >
+                                                        <ImagePlus className="h-3.5 w-3.5" />
+                                                        {item ? "Replace" : "Upload"}
+                                                    </button>
+                                                    {item && (
+                                                        <>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => toggleAboutActive(item)}
+                                                                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition ${
+                                                                    item.isActive
+                                                                        ? "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
+                                                                        : "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
+                                                                }`}
+                                                            >
+                                                                {item.isActive ? <ToggleLeft className="h-4 w-4" /> : <ToggleRight className="h-4 w-4" />}
+                                                                {item.isActive ? "Hide" : "Show"}
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setPendingDeleteAbout(item)}
+                                                                className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition ml-auto"
+                                                            >
+                                                                <Trash2 className="h-3.5 w-3.5" /> Delete
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
+
+                {/* ── Gallery Section ───────────────────────────────────── */}
+                {activeSection === "gallery" && (
+                    <section className="rounded-[28px] border border-blue-100 bg-white shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)]">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-blue-50 px-5 py-5 sm:px-7">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Photo Gallery</p>
+                                <h2 className="mt-0.5 text-2xl font-bold text-slate-900">Gallery Management</h2>
+                                <p className="mt-1 text-sm text-slate-500">Upload and manage photos for the gallery page. Mark photos as <strong>Featured</strong> to show them on the homepage preview.</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => { setGalleryFormState({ title: "", tag: "Facilities", isFeatured: false, imageData: "" }); setGalleryFormError(""); setShowGalleryForm(true); }}
+                                className="shrink-0 flex items-center gap-2 rounded-2xl bg-blue-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-800 transition"
+                            >
+                                <Plus className="h-4 w-4" /> Add Photo
+                            </button>
+                        </div>
+
+                        <div className="mx-5 mt-4 sm:mx-7 rounded-2xl bg-blue-50 border border-blue-100 px-4 py-3 text-sm text-blue-800">
+                            <strong>Homepage Preview:</strong> Photos marked as <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-xs font-black">⭐ Featured</span> appear in the home page gallery section (max 6). Toggle off to remove from homepage without deleting.
+                        </div>
+
+                        <div className="p-5 sm:p-7">
+                            {isGalleryLoading ? (
+                                <div className="rounded-3xl border border-blue-100 bg-slate-50 p-16 text-center text-slate-500">
+                                    <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+                                    Loading gallery…
+                                </div>
+                            ) : galleryList.length === 0 ? (
+                                <div className="rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 p-16 text-center">
+                                    <Camera className="mx-auto h-12 w-12 text-slate-300 mb-3" />
+                                    <p className="text-slate-500 font-semibold">No photos yet</p>
+                                    <p className="text-slate-400 text-sm mt-1">Click "Add Photo" to upload your first gallery image.</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => { setGalleryFormState({ title: "", tag: "Facilities", isFeatured: false, imageData: "" }); setGalleryFormError(""); setShowGalleryForm(true); }}
+                                        className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-blue-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-blue-800 transition"
+                                    >
+                                        <Plus className="h-4 w-4" /> Add First Photo
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    {galleryList.map((item) => (
+                                        <div
+                                            key={item._id}
+                                            className={`relative rounded-2xl border-2 overflow-hidden ${
+                                                !item.isActive ? "border-slate-200 opacity-60" : item.isFeatured ? "border-yellow-300 bg-yellow-50/30" : "border-blue-100"
+                                            }`}
+                                        >
+                                            <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+                                                <img src={item.data} alt={item.title || item.tag} className="w-full h-full object-cover" />
+                                                {!item.isActive && (
+                                                    <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                                                        <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Hidden</span>
+                                                    </div>
+                                                )}
+                                                {item.isFeatured && item.isActive && (
+                                                    <span className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full">
+                                                        ⭐ Featured
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="px-3 pt-2.5 pb-1">
+                                                <p className="font-bold text-slate-900 text-xs truncate">{item.title || "—"}</p>
+                                                <span className="inline-block mt-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5">{item.tag}</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5 px-3 pb-3 pt-1.5 border-t border-slate-100 mt-1.5 flex-wrap">
+                                                <button
+                                                    type="button"
+                                                    title={item.isFeatured ? "Remove from homepage" : "Feature on homepage"}
+                                                    onClick={() => toggleGalleryFeatured(item)}
+                                                    className={`flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-semibold transition ${
+                                                        item.isFeatured
+                                                            ? "bg-yellow-50 text-yellow-700 border border-yellow-200 hover:bg-yellow-100"
+                                                            : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100"
+                                                    }`}
+                                                >
+                                                    <span>{item.isFeatured ? "⭐" : "☆"}</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleGalleryActive(item)}
+                                                    className={`flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-semibold transition ${
+                                                        item.isActive
+                                                            ? "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
+                                                            : "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
+                                                    }`}
+                                                >
+                                                    {item.isActive ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                                                    {item.isActive ? "Hide" : "Show"}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setPendingDeleteGallery(item)}
+                                                    className="flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-semibold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition"
+                                                >
+                                                    <Trash2 className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
+
+                {/* ── Leadership Section ───────────────────────────────── */}
+                {activeSection === "leadership" && (
+                    <section className="rounded-[28px] border border-blue-100 bg-white shadow-[0_24px_60px_-40px_rgba(15,23,42,0.45)]">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-blue-50 px-5 py-5 sm:px-7">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-600">Visionary Leadership</p>
+                                <h2 className="mt-0.5 text-2xl font-bold text-slate-900">Leadership Photos</h2>
+                                <p className="mt-1 text-sm text-slate-500">Upload photos for Er. Navneet Agarwal and Dr. Dhruva Sharma on the Leadership page.</p>
+                            </div>
+                        </div>
+
+                        <div className="p-5 sm:p-7">
+                            {isLeadershipLoading ? (
+                                <div className="rounded-3xl border border-blue-100 bg-slate-50 p-16 text-center text-slate-500">
+                                    <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+                                    Loading…
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    {[
+                                        { id: "navneet", name: "Er. Navneet Agarwal", role: "Founder & Director" },
+                                        { id: "dhruva",  name: "Dr. Dhruva Sharma",  role: "Director & Interventional Cardiologist" },
+                                    ].map((def) => {
+                                        const item = leadershipPhotos.find(p => p.directorId === def.id);
+                                        return (
+                                            <div key={def.id} className={`rounded-2xl border-2 overflow-hidden ${item?.isActive ? "border-emerald-200" : item ? "border-slate-200" : "border-dashed border-slate-200 bg-slate-50"}`}>
+                                                {item?.data ? (
+                                                    <div className="relative h-52 overflow-hidden bg-slate-100">
+                                                        <img src={item.data} alt={def.name} className="w-full h-full object-cover object-top" />
+                                                        {!item.isActive && (
+                                                            <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                                                                <span className="text-xs font-black text-slate-500 uppercase tracking-wider">Hidden</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div className="h-52 flex items-center justify-center bg-slate-50">
+                                                        <div className="text-center">
+                                                            <div className="w-20 h-20 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-3">
+                                                                <span className="text-2xl font-black text-slate-400">{def.name.split(" ").filter(w => /^[A-Za-z]/.test(w)).slice(0,2).map(w=>w[0]).join("")}</span>
+                                                            </div>
+                                                            <p className="text-xs text-slate-400 font-semibold">No photo uploaded</p>
+                                                            <p className="text-[10px] text-slate-400">Default initials portrait showing</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <div className="px-4 pt-3 pb-1">
+                                                    <p className="font-bold text-slate-900 text-sm">{def.name}</p>
+                                                    <p className="text-xs text-slate-500 mt-0.5">{def.role}</p>
+                                                    <span className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider ${item?.isActive ? "bg-emerald-100 text-emerald-700" : item ? "bg-slate-100 text-slate-500" : "bg-blue-50 text-blue-500"}`}>
+                                                        {item?.isActive ? "Live" : item ? "Hidden" : "Default"}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-2 px-4 pb-4 pt-2 border-t border-slate-100 mt-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setLeadershipFormState({ directorId: def.id, imageData: "" }); setLeadershipFormError(""); setShowLeadershipForm(true); }}
+                                                        className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition"
+                                                    >
+                                                        <ImagePlus className="h-3.5 w-3.5" />
+                                                        {item ? "Replace" : "Upload"}
+                                                    </button>
+                                                    {item && (
+                                                        <>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => toggleLeadershipActive(item)}
+                                                                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition ${item.isActive ? "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100" : "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"}`}
+                                                            >
+                                                                {item.isActive ? <ToggleLeft className="h-4 w-4" /> : <ToggleRight className="h-4 w-4" />}
+                                                                {item.isActive ? "Hide" : "Show"}
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setPendingDeleteLeadership(item)}
+                                                                className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition"
+                                                            >
+                                                                <Trash2 className="h-3.5 w-3.5" />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
@@ -1834,6 +2519,337 @@ const AdminDashboard = () => {
                             </button>
                             <button type="button" onClick={handleDeleteHeroMedia} className="flex-1 rounded-2xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700">
                                 Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── About Image Upload Modal ─────────────────────────────── */}
+            {showAboutForm && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm overflow-y-auto py-8">
+                    <div className="w-full max-w-lg rounded-[28px] border border-blue-100 bg-white shadow-2xl">
+                        <div className="flex items-center justify-between border-b border-blue-100 px-6 py-5">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900">
+                                    {aboutFormState.slot === 5 ? "Wide Banner Image" : `Grid Image — Slot ${aboutFormState.slot}`}
+                                </h3>
+                                <p className="mt-0.5 text-sm text-slate-500">Upload an image for this About section position.</p>
+                            </div>
+                            <button type="button" onClick={() => setShowAboutForm(false)} className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleAddAboutImage} className="p-6 space-y-4">
+                            {aboutFormError && (
+                                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{aboutFormError}</div>
+                            )}
+
+                            <label className="flex flex-col gap-1.5 text-sm font-semibold text-slate-700">
+                                Label (shown on hover)
+                                <input
+                                    type="text"
+                                    value={aboutFormState.label}
+                                    onChange={(e) => setAboutFormState((p) => ({ ...p, label: e.target.value }))}
+                                    placeholder={aboutFormState.slot === 5 ? "e.g. Trinay Hospital — Care With Compassion" : "e.g. Modern Facility"}
+                                    className="rounded-2xl border border-slate-200 px-4 py-2.5 font-normal outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                            </label>
+
+                            <label className="flex flex-col gap-1.5 text-sm font-semibold text-slate-700">
+                                Alt Text (accessibility)
+                                <input
+                                    type="text"
+                                    value={aboutFormState.alt}
+                                    onChange={(e) => setAboutFormState((p) => ({ ...p, alt: e.target.value }))}
+                                    placeholder="Describe the image for screen readers"
+                                    className="rounded-2xl border border-slate-200 px-4 py-2.5 font-normal outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                            </label>
+
+                            <div className="flex flex-col gap-1.5">
+                                <span className="text-sm font-semibold text-slate-700">
+                                    Image File * <span className="text-slate-400 font-normal">(JPG/PNG — auto-resized)</span>
+                                </span>
+                                <label className="flex items-center gap-3 cursor-pointer rounded-2xl border-2 border-dashed border-blue-200 bg-blue-50 px-4 py-4 hover:bg-blue-100 transition">
+                                    <ImagePlus className="h-6 w-6 text-blue-400 shrink-0" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-blue-700">Click to upload image</p>
+                                        <p className="text-xs text-slate-500">
+                                            {aboutFormState.slot === 5 ? "Recommended: 1200×500 wide landscape" : "Recommended: 800×600 or square"}
+                                        </p>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            const b64 = await compressAboutImage(file, aboutFormState.slot === 5);
+                                            setAboutFormState((p) => ({ ...p, imageData: b64 }));
+                                        }}
+                                    />
+                                </label>
+                                {aboutFormState.imageData && (
+                                    <div className="mt-2 relative rounded-2xl overflow-hidden border border-slate-200">
+                                        <img
+                                            src={aboutFormState.imageData}
+                                            alt="preview"
+                                            className={`w-full ${aboutFormState.slot === 5 ? "h-28" : "h-32"} object-cover`}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setAboutFormState((p) => ({ ...p, imageData: "" }))}
+                                            className="absolute top-2 right-2 bg-white/90 rounded-full p-1 text-red-600 hover:bg-white transition shadow"
+                                        >
+                                            <X className="h-3.5 w-3.5" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setShowAboutForm(false)} className="rounded-2xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+                                <button
+                                    type="submit"
+                                    disabled={isSavingAbout || !aboutFormState.imageData}
+                                    className="rounded-2xl bg-blue-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
+                                >
+                                    {isSavingAbout ? "Uploading…" : "Upload Image"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ── About Image Delete Confirm ────────────────────────────── */}
+            {pendingDeleteAbout && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm">
+                    <div className="w-full max-w-sm rounded-[28px] border border-red-100 bg-white p-6 shadow-2xl text-center">
+                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Trash2 className="h-6 w-6 text-red-500" />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 mb-1">Remove About Image?</h3>
+                        <p className="text-sm text-slate-500 mb-6">
+                            Slot {pendingDeleteAbout.slot} image will be removed. The default built-in image will show instead.
+                        </p>
+                        <div className="flex gap-3">
+                            <button type="button" onClick={() => setPendingDeleteAbout(null)} className="flex-1 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                                Cancel
+                            </button>
+                            <button type="button" onClick={handleDeleteAboutImage} className="flex-1 rounded-2xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Add Gallery Photo Modal ───────────────────────────────── */}
+            {showGalleryForm && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm overflow-y-auto py-8">
+                    <div className="w-full max-w-lg rounded-[28px] border border-blue-100 bg-white shadow-2xl">
+                        <div className="flex items-center justify-between border-b border-blue-100 px-6 py-5">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900">Add Gallery Photo</h3>
+                                <p className="mt-0.5 text-sm text-slate-500">Upload a photo to the gallery. Mark as Featured to show it on the homepage.</p>
+                            </div>
+                            <button type="button" onClick={() => setShowGalleryForm(false)} className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleAddGalleryPhoto} className="p-6 space-y-4">
+                            {galleryFormError && (
+                                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{galleryFormError}</div>
+                            )}
+                            <div className="flex flex-col gap-1.5">
+                                <span className="text-sm font-semibold text-slate-700">Photo Title</span>
+                                <input
+                                    type="text"
+                                    value={galleryFormState.title}
+                                    onChange={(e) => setGalleryFormState((p) => ({ ...p, title: e.target.value }))}
+                                    placeholder="e.g. ICU Ward, Hospital Lobby"
+                                    className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-1.5">
+                                <span className="text-sm font-semibold text-slate-700">Category Tag *</span>
+                                <select
+                                    value={galleryFormState.tag}
+                                    onChange={(e) => setGalleryFormState((p) => ({ ...p, tag: e.target.value }))}
+                                    className="rounded-2xl border border-slate-200 px-4 py-2.5 text-sm outline-none transition focus:border-blue-500"
+                                >
+                                    {["Facilities", "Services", "Team", "Emergency", "Building", "Tour"].map(t => (
+                                        <option key={t} value={t}>{t}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <label className="flex items-center gap-3 cursor-pointer rounded-2xl border border-slate-200 px-4 py-3 hover:bg-slate-50 transition">
+                                <input
+                                    type="checkbox"
+                                    checked={galleryFormState.isFeatured}
+                                    onChange={(e) => setGalleryFormState((p) => ({ ...p, isFeatured: e.target.checked }))}
+                                    className="w-4 h-4 rounded accent-blue-600"
+                                />
+                                <div>
+                                    <p className="text-sm font-semibold text-slate-700">⭐ Feature on Homepage</p>
+                                    <p className="text-xs text-slate-400">This photo will appear in the homepage gallery preview section (max 6 featured).</p>
+                                </div>
+                            </label>
+                            <div className="flex flex-col gap-1.5">
+                                <span className="text-sm font-semibold text-slate-700">Photo *</span>
+                                <label className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-6 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
+                                    <Camera className="h-8 w-8 text-slate-300" />
+                                    <span className="text-sm text-slate-500 font-medium">Click to select image</span>
+                                    <span className="text-xs text-slate-400">JPG, PNG, WebP — will be compressed to 1200px</span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            const compressed = await compressGalleryImage(file);
+                                            setGalleryFormState((p) => ({ ...p, imageData: compressed }));
+                                        }}
+                                    />
+                                </label>
+                                {galleryFormState.imageData && (
+                                    <div className="relative rounded-2xl overflow-hidden border border-slate-200 mt-1">
+                                        <img src={galleryFormState.imageData} alt="preview" className="w-full h-36 object-cover" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setGalleryFormState((p) => ({ ...p, imageData: "" }))}
+                                            className="absolute top-2 right-2 bg-white/90 rounded-full p-1 text-red-600 hover:bg-white transition shadow"
+                                        >
+                                            <X className="h-3.5 w-3.5" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setShowGalleryForm(false)} className="rounded-2xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+                                <button
+                                    type="submit"
+                                    disabled={isSavingGallery || !galleryFormState.imageData}
+                                    className="rounded-2xl bg-blue-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
+                                >
+                                    {isSavingGallery ? "Uploading…" : "Add to Gallery"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Gallery Delete Confirm ────────────────────────────────── */}
+            {pendingDeleteGallery && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm">
+                    <div className="w-full max-w-sm rounded-[28px] border border-red-100 bg-white p-6 shadow-2xl text-center">
+                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Trash2 className="h-6 w-6 text-red-500" />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 mb-1">Delete Photo?</h3>
+                        <p className="text-sm text-slate-500 mb-6">
+                            "{pendingDeleteGallery.title || pendingDeleteGallery.tag}" will be permanently deleted from the gallery.
+                        </p>
+                        <div className="flex gap-3">
+                            <button type="button" onClick={() => setPendingDeleteGallery(null)} className="flex-1 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                                Cancel
+                            </button>
+                            <button type="button" onClick={handleDeleteGalleryPhoto} className="flex-1 rounded-2xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Upload Leadership Photo Modal ─────────────────────────── */}
+            {showLeadershipForm && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm overflow-y-auto py-8">
+                    <div className="w-full max-w-lg rounded-[28px] border border-blue-100 bg-white shadow-2xl">
+                        <div className="flex items-center justify-between border-b border-blue-100 px-6 py-5">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900">Upload Leadership Photo</h3>
+                                <p className="mt-0.5 text-sm text-slate-500">
+                                    {leadershipFormState.directorId === "navneet" ? "Er. Navneet Agarwal — Founder & Director" : "Dr. Dhruva Sharma — Director & Cardiologist"}
+                                </p>
+                            </div>
+                            <button type="button" onClick={() => setShowLeadershipForm(false)} className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSaveLeadershipPhoto} className="p-6 space-y-4">
+                            {leadershipFormError && (
+                                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{leadershipFormError}</div>
+                            )}
+                            <div className="flex flex-col gap-1.5">
+                                <span className="text-sm font-semibold text-slate-700">Photo *</span>
+                                <label className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-6 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition">
+                                    <ImagePlus className="h-8 w-8 text-slate-300" />
+                                    <span className="text-sm text-slate-500 font-medium">Click to select photo</span>
+                                    <span className="text-xs text-slate-400">JPG, PNG, WebP — portrait recommended · will be compressed</span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            const compressed = await compressAboutImage(file, false);
+                                            setLeadershipFormState((p) => ({ ...p, imageData: compressed }));
+                                        }}
+                                    />
+                                </label>
+                                {leadershipFormState.imageData && (
+                                    <div className="relative rounded-2xl overflow-hidden border border-slate-200 mt-1">
+                                        <img src={leadershipFormState.imageData} alt="preview" className="w-full h-48 object-cover object-top" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setLeadershipFormState((p) => ({ ...p, imageData: "" }))}
+                                            className="absolute top-2 right-2 bg-white/90 rounded-full p-1 text-red-600 hover:bg-white transition shadow"
+                                        >
+                                            <X className="h-3.5 w-3.5" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setShowLeadershipForm(false)} className="rounded-2xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+                                <button
+                                    type="submit"
+                                    disabled={isSavingLeadership || !leadershipFormState.imageData}
+                                    className="rounded-2xl bg-blue-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:opacity-50"
+                                >
+                                    {isSavingLeadership ? "Uploading…" : "Save Photo"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Leadership Delete Confirm ─────────────────────────────── */}
+            {pendingDeleteLeadership && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4 backdrop-blur-sm">
+                    <div className="w-full max-w-sm rounded-[28px] border border-red-100 bg-white p-6 shadow-2xl text-center">
+                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Trash2 className="h-6 w-6 text-red-500" />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 mb-1">Remove Photo?</h3>
+                        <p className="text-sm text-slate-500 mb-6">
+                            The photo will be removed. The default initials portrait will show instead.
+                        </p>
+                        <div className="flex gap-3">
+                            <button type="button" onClick={() => setPendingDeleteLeadership(null)} className="flex-1 rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+                                Cancel
+                            </button>
+                            <button type="button" onClick={handleDeleteLeadershipPhoto} className="flex-1 rounded-2xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700">
+                                Remove
                             </button>
                         </div>
                     </div>

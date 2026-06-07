@@ -240,6 +240,41 @@ const heroMediaSchema = new mongoose.Schema(
 
 const HeroMedia = mongoose.model('HeroMedia', heroMediaSchema);
 
+const aboutImageSchema = new mongoose.Schema(
+    {
+        data: { type: String, default: '' },
+        mimeType: { type: String, default: '' },
+        label: { type: String, default: '', trim: true, maxlength: 120 },
+        alt: { type: String, default: '', trim: true, maxlength: 200 },
+        slot: { type: Number, required: true, min: 1, max: 5 },
+        isActive: { type: Boolean, default: true },
+    },
+    { timestamps: true }
+);
+
+const AboutImage = mongoose.model('AboutImage', aboutImageSchema);
+
+const galleryPhotoSchema = new mongoose.Schema({
+    data: { type: String, default: '' },
+    mimeType: { type: String, default: 'image/jpeg' },
+    title: { type: String, default: '', trim: true, maxlength: 200 },
+    tag: { type: String, default: 'Facilities', trim: true, maxlength: 60 },
+    isFeatured: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
+    sortOrder: { type: Number, default: 0 },
+}, { timestamps: true });
+
+const GalleryPhoto = mongoose.model('GalleryPhoto', galleryPhotoSchema);
+
+const leadershipPhotoSchema = new mongoose.Schema({
+    directorId: { type: String, required: true, trim: true },
+    data: { type: String, default: '' },
+    mimeType: { type: String, default: 'image/jpeg' },
+    isActive: { type: Boolean, default: true },
+}, { timestamps: true });
+
+const LeadershipPhoto = mongoose.model('LeadershipPhoto', leadershipPhotoSchema);
+
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -826,6 +861,231 @@ app.get('/api/hero-media/:id/data', async (req, res) => {
         const item = await HeroMedia.findById(req.params.id);
         if (!item || !item.isActive) return res.status(404).json({ success: false, message: 'Not found' });
         return res.json({ success: true, data: item.data, url: item.url, type: item.type, mimeType: item.mimeType });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+
+// ── About Section Image Routes ────────────────────────────────────────────────
+
+app.get('/api/about-images', async (req, res) => {
+    try {
+        const items = await AboutImage.find({ isActive: true }).sort({ slot: 1 });
+        return res.json({ success: true, images: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/admin/about-images', authenticate, async (req, res) => {
+    try {
+        const items = await AboutImage.find().sort({ slot: 1 });
+        return res.json({ success: true, images: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.post('/api/admin/about-images', authenticate, express.json({ limit: '15mb' }), async (req, res) => {
+    try {
+        const { slot, data, mimeType, label, alt } = req.body || {};
+        if (!slot || slot < 1 || slot > 5) {
+            return res.status(400).json({ success: false, message: 'slot must be 1–5' });
+        }
+        if (!data) {
+            return res.status(400).json({ success: false, message: 'Image data (base64) is required' });
+        }
+        const item = await AboutImage.findOneAndUpdate(
+            { slot: Number(slot) },
+            {
+                slot: Number(slot),
+                data,
+                mimeType: mimeType || 'image/jpeg',
+                label: label?.trim() || '',
+                alt: alt?.trim() || '',
+                isActive: true,
+            },
+            { upsert: true, new: true, runValidators: true }
+        );
+        return res.status(201).json({ success: true, image: item });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.patch('/api/admin/about-images/:id', authenticate, async (req, res) => {
+    try {
+        const { isActive, label, alt } = req.body || {};
+        const update = {};
+        if (isActive !== undefined) update.isActive = Boolean(isActive);
+        if (label !== undefined) update.label = String(label).trim();
+        if (alt !== undefined) update.alt = String(alt).trim();
+        const item = await AboutImage.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
+        if (!item) return res.status(404).json({ success: false, message: 'About image not found' });
+        return res.json({ success: true, image: item });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.delete('/api/admin/about-images/:id', authenticate, async (req, res) => {
+    try {
+        await AboutImage.findByIdAndDelete(req.params.id);
+        return res.json({ success: true });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+
+// ── Leadership Photo Routes ───────────────────────────────────────────────────
+
+app.get('/api/leadership-photos', async (req, res) => {
+    try {
+        const items = await LeadershipPhoto.find({ isActive: true });
+        return res.json({ success: true, photos: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/admin/leadership-photos', authenticate, async (req, res) => {
+    try {
+        const items = await LeadershipPhoto.find();
+        return res.json({ success: true, photos: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.post('/api/admin/leadership-photos', authenticate, express.json({ limit: '15mb' }), async (req, res) => {
+    try {
+        const { directorId, data, mimeType } = req.body || {};
+        if (!directorId) return res.status(400).json({ success: false, message: 'directorId is required' });
+        if (!data) return res.status(400).json({ success: false, message: 'Image data is required' });
+        const item = await LeadershipPhoto.findOneAndUpdate(
+            { directorId },
+            { data, mimeType: mimeType || 'image/jpeg', isActive: true },
+            { upsert: true, new: true, runValidators: true }
+        );
+        return res.json({ success: true, photo: item });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.patch('/api/admin/leadership-photos/:id', authenticate, async (req, res) => {
+    try {
+        const { isActive } = req.body || {};
+        const update = {};
+        if (isActive !== undefined) update.isActive = Boolean(isActive);
+        const item = await LeadershipPhoto.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
+        if (!item) return res.status(404).json({ success: false, message: 'Photo not found' });
+        return res.json({ success: true, photo: item });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.delete('/api/admin/leadership-photos/:id', authenticate, async (req, res) => {
+    try {
+        await LeadershipPhoto.findByIdAndDelete(req.params.id);
+        return res.json({ success: true });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+
+// ── Doctor Slug Lookup ────────────────────────────────────────────────────────
+
+app.get('/api/doctors/dynamic/by-slug/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        const doctors = await DynamicDoctor.find({ isActive: true });
+        const match = doctors.find((d) => {
+            const nameSlug = d.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            return nameSlug === slug;
+        });
+        if (!match) return res.status(404).json({ success: false, message: 'Doctor not found' });
+        return res.json({ success: true, doctor: match });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+
+// ── Gallery Photo Routes ──────────────────────────────────────────────────────
+
+app.get('/api/gallery-photos', async (req, res) => {
+    try {
+        const items = await GalleryPhoto.find({ isActive: true }).sort({ sortOrder: -1, createdAt: -1 });
+        return res.json({ success: true, photos: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/gallery-photos/featured', async (req, res) => {
+    try {
+        const items = await GalleryPhoto.find({ isActive: true, isFeatured: true })
+            .sort({ sortOrder: -1, createdAt: -1 })
+            .limit(6);
+        return res.json({ success: true, photos: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/admin/gallery-photos', authenticate, async (req, res) => {
+    try {
+        const items = await GalleryPhoto.find().sort({ sortOrder: -1, createdAt: -1 });
+        return res.json({ success: true, photos: items });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.post('/api/admin/gallery-photos', authenticate, express.json({ limit: '15mb' }), async (req, res) => {
+    try {
+        const { data, mimeType, title, tag, isFeatured, sortOrder } = req.body || {};
+        if (!data) return res.status(400).json({ success: false, message: 'Image data is required' });
+        const photo = await GalleryPhoto.create({
+            data,
+            mimeType: mimeType || 'image/jpeg',
+            title: (title || '').trim(),
+            tag: (tag || 'Facilities').trim(),
+            isFeatured: Boolean(isFeatured),
+            sortOrder: Number(sortOrder) || 0,
+        });
+        return res.status(201).json({ success: true, photo });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.patch('/api/admin/gallery-photos/:id', authenticate, async (req, res) => {
+    try {
+        const { isActive, isFeatured, title, tag, sortOrder } = req.body || {};
+        const update = {};
+        if (isActive !== undefined) update.isActive = Boolean(isActive);
+        if (isFeatured !== undefined) update.isFeatured = Boolean(isFeatured);
+        if (title !== undefined) update.title = String(title).trim();
+        if (tag !== undefined) update.tag = String(tag).trim();
+        if (sortOrder !== undefined) update.sortOrder = Number(sortOrder);
+        const photo = await GalleryPhoto.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
+        if (!photo) return res.status(404).json({ success: false, message: 'Photo not found' });
+        return res.json({ success: true, photo });
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.delete('/api/admin/gallery-photos/:id', authenticate, async (req, res) => {
+    try {
+        await GalleryPhoto.findByIdAndDelete(req.params.id);
+        return res.json({ success: true });
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });
     }

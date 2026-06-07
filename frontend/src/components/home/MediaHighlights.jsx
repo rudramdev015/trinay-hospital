@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Camera } from "lucide-react";
+import { buildApiUrl } from "../../utils/api";
 
 import ab1  from "../../assets/images/Artboard 1.jpg";
 import ab3  from "../../assets/images/Artboard 3.jpg";
@@ -9,7 +11,7 @@ import ab8  from "../../assets/images/Artboard 8.jpg";
 import ab12 from "../../assets/images/Artboard 12.jpg";
 import ab17 from "../../assets/images/Artboard 17.jpg";
 
-const PHOTOS = [
+const STATIC_PHOTOS = [
     { src: ab1,  alt: "Trinay Hospital Facility Tour"  },
     { src: ab3,  alt: "Patient Care Services"          },
     { src: ab5,  alt: "Advanced Medical Excellence"    },
@@ -18,7 +20,20 @@ const PHOTOS = [
     { src: ab17, alt: "Emergency Care Unit"            },
 ];
 
-const MediaHighlights = () => (
+const MediaHighlights = () => {
+    const [photos, setPhotos] = useState(STATIC_PHOTOS);
+
+    useEffect(() => {
+        fetch(buildApiUrl("/api/gallery-photos/featured"))
+            .then(r => r.json())
+            .then(({ success, photos: api }) => {
+                if (!success || !api?.length) return;
+                setPhotos(api.map(p => ({ src: p.data, alt: p.title || "Trinay Hospital" })));
+            })
+            .catch(() => {});
+    }, []);
+
+    return (
     <section className="bg-white py-16 md:py-24 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
 
@@ -45,7 +60,7 @@ const MediaHighlights = () => (
 
             {/* Responsive equal grid — 2 cols on mobile, 3 cols on md+ */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-                {PHOTOS.map(({ src, alt }, i) => (
+                {photos.map(({ src, alt }, i) => (
                     <motion.div
                         key={alt}
                         className="relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] group cursor-pointer"
@@ -77,6 +92,7 @@ const MediaHighlights = () => (
             </div>
         </div>
     </section>
-);
+    );
+};
 
 export default MediaHighlights;
