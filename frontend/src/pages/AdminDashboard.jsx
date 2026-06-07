@@ -163,13 +163,13 @@ const SectionTab = ({ active, onClick, label, count, icon: Icon }) => (
     <button
         type="button"
         onClick={onClick}
-        className={`relative flex flex-1 items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-sm font-bold transition-all duration-200 ${
+        className={`relative flex shrink-0 items-center justify-between gap-2 rounded-2xl border px-3 py-2.5 text-sm font-bold whitespace-nowrap transition-all duration-200 sm:flex-1 sm:gap-3 sm:px-4 sm:py-3 ${
             active
                 ? "border-blue-600 bg-blue-700 text-white shadow-lg shadow-blue-700/30 scale-[1.02]"
                 : "border-blue-100 bg-white text-slate-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-900 hover:shadow-md"
         }`}
     >
-        <span className="flex items-center gap-2">
+        <span className="flex items-center gap-1.5 sm:gap-2">
             {createElement(Icon, { className: "h-4 w-4", "aria-hidden": "true" })}
             {label}
         </span>
@@ -1133,7 +1133,7 @@ const AdminDashboard = () => {
 
                 {/* Tab Bar */}
                 <section className="rounded-[28px] border border-white/20 bg-white/95 backdrop-blur-sm p-3 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.5)]">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                    <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
                         <SectionTab
                             active={activeSection === "appointments"}
                             onClick={() => setActiveSection("appointments")}
@@ -1407,7 +1407,7 @@ const AdminDashboard = () => {
                                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Staff</p>
                                 <h2 className="mt-1 text-2xl font-bold text-slate-900">Staff Management</h2>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setStaffView("members")}
@@ -1538,11 +1538,11 @@ const AdminDashboard = () => {
                                     </div>
                                 ) : (
                                     <div className="mt-6 overflow-hidden rounded-[24px] border border-blue-100">
-                                        <div className="flex items-center justify-between bg-blue-50 px-5 py-3">
+                                        <div className="flex flex-wrap items-center justify-between gap-2 bg-blue-50 px-5 py-3">
                                             <span className="text-sm font-semibold text-slate-700">
                                                 {attendanceDate} — {attendanceRecords.length} record{attendanceRecords.length !== 1 ? "s" : ""}
                                             </span>
-                                            <div className="flex gap-3 text-xs font-semibold">
+                                            <div className="flex flex-wrap gap-2 text-xs font-semibold sm:gap-3">
                                                 <span className="text-emerald-700">{attendanceRecords.filter(r => r.status === "present").length} Present</span>
                                                 <span className="text-amber-700">{attendanceRecords.filter(r => r.status === "late").length} Late</span>
                                                 <span className="text-orange-700">{attendanceRecords.filter(r => r.status === "half-day").length} Half-day</span>
