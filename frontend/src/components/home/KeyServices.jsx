@@ -21,7 +21,6 @@ import imgRespiratory   from "../../assets/images/Pulmonology.jpg";
 import imgPaediatrics   from "../../assets/images/PAEDIATRICS.png";
 
 const SERVICES = [
-    { title: "Anaesthesiology",            desc: "Safe perioperative & pain management",              img: imgAnaesthesia, dept: "ANAESTHESIA & CRITICAL CARE", slug: "anaesthesiology-critical-care", noBook: true },
     { title: "Cardiology",                 desc: "Advanced heart care & interventional procedures",   img: imgCardiology,  dept: "CARDIOLOGY",                  slug: "cardiology"                    },
     { title: "General Surgery",            desc: "Laparoscopic & open surgical expertise",            img: imgSurgery,     dept: "GENERAL SURGERY",             slug: "general-surgery"               },
     { title: "Neurosurgery",               desc: "Precision brain & spinal cord surgeries",           img: imgNeuro,       dept: "NEUROSURGEON",                slug: "neurosurgery"                  },
@@ -38,6 +37,7 @@ const SERVICES = [
     { title: "Plastic & Cosmetic Surgery", desc: "Reconstructive & aesthetic surgical procedures",   img: imgPlastic,     dept: "PLASTIC & COSMETIC SURGERY",  slug: "plastic-cosmetic-surgery"      },
     { title: "Respiratory Medicine",       desc: "Asthma, COPD & lung disease management",           img: imgRespiratory, dept: "RESPIRATORY MEDICINE",        slug: "respiratory-medicine"          },
     { title: "Paediatrics",                desc: "Expert child health from neonates to adolescents",  img: imgPaediatrics, dept: "PAEDIATRICS",                 slug: "paediatrics"                   },
+    { title: "Anaesthesiology",            desc: "Safe perioperative & pain management",              img: imgAnaesthesia, dept: "ANAESTHESIA & CRITICAL CARE", slug: "anaesthesiology-critical-care", noBook: true },
 ];
 
 const containerVariants = {
