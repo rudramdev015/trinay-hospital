@@ -104,10 +104,8 @@ const Mission = () => (
 
         {/* ── STATS STRIP ── */}
         <section className="bg-[#003366] py-16 px-6">
-            <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="max-w-5xl mx-auto grid grid-cols-2 gap-8 text-center">
                 {[
-                    { value: "24+",  label: "Expert Specialists" },
-                    { value: "17",   label: "Departments" },
                     { value: "100+", label: "Bed Capacity" },
                     { value: "24/7", label: "Emergency Care" },
                 ].map(({ value, label }, i) => (

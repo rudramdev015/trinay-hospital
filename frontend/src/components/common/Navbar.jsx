@@ -8,8 +8,8 @@ import { Link, useLocation } from "react-router-dom";
 const hospitalLogo = "/Copy of logo trinay (2).png";
 
 const CERT_LOGOS = [
-    { src: "/DOCTOR IAMGES/NABH.png",       alt: "NABH Accredited" },
-    { src: "/DOCTOR IAMGES/MAA JOGANA .png", alt: "Maa Yojana Approved" },
+    { src: "/nabh.jpeg",       alt: "NABH Accredited" },
+    { src: "/ma yogana.jpeg",  alt: "Maa Yojana Approved" },
 ];
 
 const Navbar = () => {
@@ -71,7 +71,7 @@ const Navbar = () => {
                         <div className="hidden xl:flex items-center gap-2 opacity-90">
                             <Clock size={14} />
                             {/* Updated with Trinay OPD Timings */}
-                            <span>OPD: Mon-Sat 9:00 AM - 8:00 PM</span>
+                            <span>OPD: Mon-Sat 9:00 AM - 6:00 PM</span>
                         </div>
                         <div className="flex items-center gap-4 border-l border-white/20 pl-4">
                             {/* Connected Trinay Social Links */}
@@ -112,21 +112,24 @@ const Navbar = () => {
                             </Link>
 
                             {/* Certification logos */}
-                            <div className="hidden md:flex items-center gap-5 pl-5 border-l-2 border-slate-200">
+                            <div className="hidden md:flex items-center gap-3 pl-5 border-l-2 border-slate-200">
                                 {CERT_LOGOS.map(({ src, alt }) => (
-                                    <img
+                                    <div
                                         key={alt}
-                                        src={src}
-                                        alt={alt}
                                         title={alt}
-                                        className="shrink-0 transition-all duration-300 hover:scale-110 hover:-translate-y-1 drop-shadow-md"
+                                        className="shrink-0 rounded-xl overflow-hidden bg-white border border-slate-100 shadow-sm hover:shadow-md hover:scale-105 hover:-translate-y-0.5 transition-all duration-300"
                                         style={{
-                                            width:  scrolled ? "52px" : "72px",
-                                            height: scrolled ? "52px" : "72px",
-                                            objectFit: "cover",
+                                            width:  scrolled ? "50px" : "68px",
+                                            height: scrolled ? "50px" : "68px",
                                         }}
-                                        onError={(e) => { e.currentTarget.style.display = "none"; }}
-                                    />
+                                    >
+                                        <img
+                                            src={src}
+                                            alt={alt}
+                                            className="w-full h-full object-contain p-1.5"
+                                            onError={(e) => { e.currentTarget.parentElement.style.display = "none"; }}
+                                        />
+                                    </div>
                                 ))}
                             </div>
                         </div>

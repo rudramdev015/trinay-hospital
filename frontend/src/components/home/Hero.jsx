@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { CalendarCheck, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { buildApiUrl } from "../../utils/api";
-import heroFallback from "../../assets/images/heroImage1.jpg";
+const heroFallback = "/image.png";
 
 const ACCREDITATIONS = [
     { src: "/DOCTOR IAMGES/NABH.png",        alt: "NABH Accredited" },
