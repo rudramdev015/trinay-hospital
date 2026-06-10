@@ -1,22 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, BadgeCheck, HeartHandshake, ChevronLeft, ChevronRight, ExternalLink, Clock, Train, Building2 } from "lucide-react";
+import { ShieldCheck, BadgeCheck, HeartHandshake, ChevronLeft, ChevronRight, ExternalLink, Clock, Train, Building2, Shield, Landmark } from "lucide-react";
 
 const SLIDES = [
-    {
-        src: "/DOCTOR IAMGES/NABH.png",
-        Icon: ShieldCheck,
-        badge: "National",
-        badgeGrad: "linear-gradient(135deg,#0ea5e9,#6366f1)",
-        title: "NABH Accredited",
-        subtitle: "National Accreditation Board for Hospitals",
-        desc: "Certified by the National Accreditation Board for Hospitals & Healthcare Providers — India's gold standard for patient safety and quality care.",
-        glow: "#38bdf8",
-        orb1: "rgba(56,189,248,0.35)",
-        orb2: "rgba(99,102,241,0.25)",
-        link: null,
-        tag: null,
-    },
     {
         src: "/DOCTOR IAMGES/ESIC.png",
         Icon: BadgeCheck,
@@ -45,6 +31,42 @@ const SLIDES = [
         link: "https://health.rajasthan.gov.in",
         tag: "Up to ₹5 Lakh/year",
         comingSoon: false,
+    },
+    {
+        src: null,
+        Icon: Shield,
+        badge: "Armed Forces",
+        badgeGrad: "linear-gradient(135deg,#15803d,#1e3a8a)",
+        title: "ECHS Empanelled",
+        subtitle: "Ex-Servicemen Contributory Health Scheme",
+        desc: "A flagship healthcare initiative managed through the Adjutant General's Branch of MoD (Army) — providing cashless allopathic and AYUSH care to retired Armed Forces personnel, ex-servicemen pensioners, their wives, widows, and authorised dependents.",
+        glow: "#4ade80",
+        orb1: "rgba(74,222,128,0.28)",
+        orb2: "rgba(21,128,61,0.20)",
+        link: null,
+        tag: "Cashless · Allopathic & AYUSH",
+        comingSoon: false,
+        logoText: "ECHS",
+        logoSub: "Army",
+        logoBg: "linear-gradient(135deg,#14532d,#1e3a8a)",
+    },
+    {
+        src: null,
+        Icon: Landmark,
+        badge: "Central Govt.",
+        badgeGrad: "linear-gradient(135deg,#1e40af,#4338ca)",
+        title: "CGHS Empanelled",
+        subtitle: "Central Government Health Scheme",
+        desc: "A comprehensive, subsidised healthcare program by the Ministry of Health & Family Welfare (MoHFW) — serving current and retired Central Government employees along with their eligible dependent family members.",
+        glow: "#60a5fa",
+        orb1: "rgba(96,165,250,0.28)",
+        orb2: "rgba(99,102,241,0.20)",
+        link: null,
+        tag: "Subsidised · MoHFW Approved",
+        comingSoon: false,
+        logoText: "CGHS",
+        logoSub: "Govt. of India",
+        logoBg: "linear-gradient(135deg,#1e3a8a,#4338ca)",
     },
     {
         src: null,
