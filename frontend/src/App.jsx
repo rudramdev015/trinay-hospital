@@ -26,6 +26,7 @@ const StaffPortal = lazy(() => import("./pages/StaffPortal"));
 const Mission = lazy(() => import("./pages/Mission"));
 const Leadership = lazy(() => import("./pages/Leadership"));
 const DepartmentDetail = lazy(() => import("./pages/DepartmentDetail"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
           <Route path="/staff" element={<StaffPortal />} />
           <Route path="/mission" element={<Mission />} />
           <Route path="/leadership" element={<Leadership />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

@@ -85,8 +85,11 @@ const About = () => {
                         </p>
                         <p className="text-slate-600 mt-4 leading-relaxed text-justify">
                             Our state-of-the-art <span className="font-black text-[#003366] bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-200">100-Bedded</span> facility combines modern infrastructure with
-                            compassionate care. Led by a team of 24+ specialist doctors across 17 medical
-                            specialties — from routine checkups to complex surgeries, emergency care
+                            compassionate care. Led by a team of{" "}
+                            <span className="inline-flex items-center gap-1 font-black text-white bg-[#003366] px-2 py-0.5 rounded-md shadow-sm">
+                                24+ specialist doctors
+                            </span>{" "}
+                            across <span className="font-black text-[#003366]">17 medical specialties</span> — from routine checkups to complex surgeries, emergency care
                             to preventive health programs.
                         </p>
 
