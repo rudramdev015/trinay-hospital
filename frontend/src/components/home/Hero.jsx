@@ -225,7 +225,7 @@ const Hero = () => {
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.95 }}
-                    className="flex flex-wrap items-center gap-3 sm:gap-4"
+                    className="hidden sm:flex flex-wrap items-center gap-3 sm:gap-4"
                 >
                     <span className="hidden sm:block text-white/35 text-[10px] font-black uppercase tracking-[0.2em]">
                         Certified &amp; Empanelled
