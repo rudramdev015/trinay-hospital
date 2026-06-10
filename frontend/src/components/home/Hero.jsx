@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { CalendarCheck, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { buildApiUrl } from "../../utils/api";
+import heroFallback from "../../assets/images/heroImage1.jpg";
 
 const ACCREDITATIONS = [
     { src: "/DOCTOR IAMGES/NABH.png",        alt: "NABH Accredited" },
@@ -26,15 +27,35 @@ const pickMedia = (items, isMobile) =>
     ) || null;
 
 const BackgroundMedia = ({ media, mediaData, isMobile }) => {
+    const [videoReady, setVideoReady] = useState(false);
+
     if (!media) {
         return (
-            <video
-                autoPlay loop muted playsInline preload="metadata"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ willChange: "transform", filter: "brightness(1.25) saturate(1.1)" }}
-            >
-                <source src={isMobile ? LOCAL_MOBILE : LOCAL_DESKTOP} type="video/mp4" />
-            </video>
+            <>
+                {/* Poster image — loads instantly from bundle cache, hides the black flash */}
+                <img
+                    src={heroFallback}
+                    alt=""
+                    aria-hidden="true"
+                    fetchPriority="high"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    style={{ filter: "brightness(1.25) saturate(1.1)" }}
+                />
+                {/* Video fades in once it can play */}
+                <video
+                    autoPlay loop muted playsInline preload="metadata"
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms]"
+                    style={{
+                        willChange: "transform",
+                        filter: "brightness(1.25) saturate(1.1)",
+                        opacity: videoReady ? 1 : 0,
+                    }}
+                    onCanPlay={() => setVideoReady(true)}
+                >
+                    <source src={isMobile ? LOCAL_MOBILE : LOCAL_DESKTOP} type="video/mp4" />
+                </video>
+            </>
         );
     }
     if (media.type === "image") {

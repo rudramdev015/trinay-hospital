@@ -163,7 +163,7 @@ const SectionTab = ({ active, onClick, label, count, icon: Icon }) => (
     <button
         type="button"
         onClick={onClick}
-        className={`relative flex shrink-0 items-center justify-between gap-2 rounded-2xl border px-3 py-2.5 text-sm font-bold whitespace-nowrap transition-all duration-200 sm:flex-1 sm:gap-3 sm:px-4 sm:py-3 ${
+        className={`relative flex shrink-0 items-center justify-between gap-2 rounded-2xl border px-3 py-2.5 text-sm font-bold whitespace-nowrap transition-all duration-200 sm:gap-3 sm:px-4 sm:py-3 ${
             active
                 ? "border-blue-600 bg-blue-700 text-white shadow-lg shadow-blue-700/30 scale-[1.02]"
                 : "border-blue-100 bg-white text-slate-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-900 hover:shadow-md"
@@ -1781,7 +1781,6 @@ const AdminDashboard = () => {
                         </section>
                     );
                 })()}
-            </div>
 
             {/* ── Delete Appointment/Feedback Confirmation ─────────────── */}
             {pendingDelete && (
@@ -2264,6 +2263,7 @@ const AdminDashboard = () => {
                         </div>
                     </section>
                 )}
+            </div>
 
             {/* ── Add / Edit Doctor Modal ───────────────────────────────── */}
             {showAddDoctor && (
