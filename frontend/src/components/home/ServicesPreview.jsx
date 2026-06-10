@@ -45,6 +45,7 @@ const FEATURES = [
         gradient: "from-red-500 to-red-700",
         bg: "bg-red-50",
         ring: "ring-red-200",
+        badge: "24/7",
     },
     {
         Icon: FlaskConical,
@@ -118,7 +119,7 @@ const ServicesPreview = () => (
                         className="group relative rounded-2xl bg-white border border-slate-100 p-6 shadow-sm hover:shadow-xl transition-shadow duration-300"
                     >
                         {f.badge && (
-                            <span className="absolute top-4 right-4 bg-violet-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wider animate-pulse">
+                            <span className={`absolute top-4 right-4 text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wider animate-pulse ${f.title === "Emergency Ambulance" ? "bg-red-600" : "bg-violet-600"}`}>
                                 {f.badge} Available
                             </span>
                         )}
