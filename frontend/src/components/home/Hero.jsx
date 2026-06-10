@@ -3,7 +3,8 @@ import { motion } from "framer-motion";
 import { CalendarCheck, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { buildApiUrl } from "../../utils/api";
-const heroFallback = "/image.png";
+const heroFallback       = "/home%20hero.jpeg";
+const heroFallbackMobile = "/home%20hero%20mobile.jpeg";
 
 const ACCREDITATIONS = [
     { src: "/DOCTOR IAMGES/NABH.png",        alt: "NABH Accredited" },
@@ -28,26 +29,30 @@ const pickMedia = (items, isMobile) =>
 
 const BackgroundMedia = ({ media, mediaData, isMobile }) => {
     const [videoReady, setVideoReady] = useState(false);
+    const poster = isMobile ? heroFallbackMobile : heroFallback;
 
     if (!media) {
         return (
             <>
-                {/* Poster image — loads instantly from bundle cache, hides the black flash */}
+                {/* Poster — shown instantly before video loads */}
                 <img
-                    src={heroFallback}
+                    src={poster}
                     alt=""
                     aria-hidden="true"
                     fetchPriority="high"
-                    decoding="async"
+                    decoding="sync"
+                    loading="eager"
                     className="absolute inset-0 w-full h-full object-cover"
                     style={{ filter: "brightness(1.25) saturate(1.1)" }}
                 />
-                {/* Video fades in once it can play */}
+                {/* Video fades in over poster once ready */}
                 <video
-                    autoPlay loop muted playsInline preload="metadata"
+                    autoPlay loop muted playsInline
+                    preload={isMobile ? "none" : "metadata"}
+                    poster={poster}
                     className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1200ms]"
                     style={{
-                        willChange: "transform",
+                        willChange: "opacity",
                         filter: "brightness(1.25) saturate(1.1)",
                         opacity: videoReady ? 1 : 0,
                     }}
